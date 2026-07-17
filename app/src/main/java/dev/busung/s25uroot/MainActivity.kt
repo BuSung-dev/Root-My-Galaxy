@@ -9,6 +9,8 @@ import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -487,12 +489,26 @@ private fun SideChoiceMenu(
                 topOffset,
                 maxHeight - estimatedHeight - 24.dp,
             ).coerceAtLeast(16.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onDismiss,
+                    ),
+            )
             Surface(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = constrainedTop, end = 18.dp)
                     .width(196.dp)
-                    .heightIn(max = 620.dp),
+                    .heightIn(max = 620.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {},
+                    ),
                 shape = MaterialTheme.shapes.extraLarge,
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 tonalElevation = 8.dp,
