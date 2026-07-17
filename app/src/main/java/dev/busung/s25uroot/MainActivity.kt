@@ -16,10 +16,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Home
@@ -54,7 +58,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.busung.s25uroot.ui.theme.RootMyGalaxyTheme
 
@@ -325,8 +332,7 @@ private fun SettingsPage(
     val currentLanguageTag = AppPreferences.languageTag(context)
 
     if (showLanguageDialog) {
-        ChoiceDialog(
-            title = stringResource(R.string.language),
+        SideChoiceMenu(
             choices = languageOptions.map { stringResource(it.label) },
             selectedIndex = languageOptions.indexOfFirst {
                 it.tag.isEmpty() && currentLanguageTag.isEmpty() ||
@@ -342,8 +348,7 @@ private fun SettingsPage(
 
     if (showColorDialog) {
         val colors = AccentColor.entries
-        ChoiceDialog(
-            title = stringResource(R.string.material_color),
+        SideChoiceMenu(
             choices = colors.map { accentLabel(it) },
             selectedIndex = colors.indexOf(accentColor),
             onSelected = { index ->
@@ -419,51 +424,110 @@ private fun SettingsCard(
         ),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 22.dp, vertical = 21.dp),
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 18.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(30.dp))
+            Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleMedium)
-                Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
-            Text(value, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+            Text(
+                value,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 1,
+            )
         }
     }
 }
 
 @Composable
-private fun ChoiceDialog(
-    title: String,
+private fun SideChoiceMenu(
     choices: List<String>,
     selectedIndex: Int,
     onSelected: (Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                choices.forEachIndexed { index, choice ->
-                    TextButton(onClick = { onSelected(index) }, modifier = Modifier.fillMaxWidth()) {
-                        Row(
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false,
+        ),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 32.dp, end = 18.dp, bottom = 96.dp),
+            contentAlignment = Alignment.TopEnd,
+        ) {
+            Surface(
+                modifier = Modifier
+                    .width(196.dp)
+                    .heightIn(max = 620.dp),
+                shape = MaterialTheme.shapes.extraLarge,
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                tonalElevation = 8.dp,
+                shadowElevation = 10.dp,
+            ) {
+                LazyColumn(
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    itemsIndexed(choices) { index, choice ->
+                        val selected = index == selectedIndex
+                        Surface(
+                            onClick = { onSelected(index) },
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            shape = if (selected) {
+                                MaterialTheme.shapes.extraLarge
+                            } else {
+                                MaterialTheme.shapes.medium
+                            },
+                            color = if (selected) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                Color.Transparent
+                            },
+                            contentColor = if (selected) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            },
                         ) {
-                            Text(choice)
-                            if (index == selectedIndex) {
-                                Icon(Icons.Rounded.CheckCircle, contentDescription = null)
+                            Row(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            ) {
+                                if (selected) {
+                                    Icon(
+                                        Icons.Rounded.Check,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(22.dp),
+                                    )
+                                }
+                                Text(
+                                    text = choice,
+                                    modifier = Modifier.weight(1f),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1,
+                                )
                             }
                         }
                     }
                 }
             }
-        },
-        confirmButton = {},
-    )
+        }
+    }
 }
 
 @Composable
