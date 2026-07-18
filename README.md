@@ -1,8 +1,8 @@
 # Root My Galaxy
 
-<img width="380" alt="KakaoTalk_20260718_170922353" src="https://github.com/user-attachments/assets/3f562ea4-8c39-4ade-bfd3-93eea1a1cc24" />
-<img width="380" alt="KakaoTalk_20260718_170922353_02" src="https://github.com/user-attachments/assets/d6dd3be8-2383-46b7-9aed-b757ffdc3231" />
-<img width="380" alt="KakaoTalk_20260718_170922353_01" src="https://github.com/user-attachments/assets/a7d06709-1f70-46e6-a8a8-2edbad0a3216" />
+<img width="280" alt="KakaoTalk_20260718_170922353" src="https://github.com/user-attachments/assets/3f562ea4-8c39-4ade-bfd3-93eea1a1cc24" />
+<img width="280" alt="KakaoTalk_20260718_170922353_02" src="https://github.com/user-attachments/assets/d6dd3be8-2383-46b7-9aed-b757ffdc3231" />
+<img width="280" alt="KakaoTalk_20260718_170922353_01" src="https://github.com/user-attachments/assets/a7d06709-1f70-46e6-a8a8-2edbad0a3216" />
 
 
 Root My Galaxy is a one-click installer for explicitly
