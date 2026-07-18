@@ -19,6 +19,7 @@ data class TargetProfile(
     val model: String,
     val device: String,
     val kernelRelease: String,
+    val kernelVersion: String,
     val buildDisplay: String,
     val buildFingerprint: String,
     val sdk: Int,
@@ -28,7 +29,8 @@ data class TargetProfile(
     val kernelSu: KernelSuArtifact,
 ) {
     fun matchesKernel(snapshot: DeviceSnapshot): Boolean =
-        kernelRelease == snapshot.kernelRelease
+        kernelRelease == snapshot.kernelRelease &&
+            kernelVersion == snapshot.kernelVersion
 
     fun matches(snapshot: DeviceSnapshot): Boolean =
         matchesKernel(snapshot) &&
@@ -60,6 +62,7 @@ data class SupportManifest(
                             model = target.getString("model"),
                             device = target.getString("device"),
                             kernelRelease = target.getString("kernelRelease"),
+                            kernelVersion = target.getString("kernelVersion"),
                             buildDisplay = target.getString("buildDisplay"),
                             buildFingerprint = target.getString("buildFingerprint"),
                             sdk = target.getInt("sdk"),
