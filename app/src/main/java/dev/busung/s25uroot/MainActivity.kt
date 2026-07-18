@@ -37,7 +37,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -61,18 +65,25 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
@@ -115,24 +126,28 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.Date
+import java.util.UUID
 
 class MainActivity : ComponentActivity() {
     private val installViewModel by viewModels<InstallViewModel>()
     private var resumedOnce = false
     private var accentColor by mutableStateOf(AccentColor.Dynamic)
     private var themeMode by mutableStateOf(AppThemeMode.System)
+    private var advancedMode by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         accentColor = AppPreferences.accentColor(this)
         themeMode = AppPreferences.themeMode(this)
+        advancedMode = AppPreferences.advancedMode(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
                     installViewModel = installViewModel,
                     accentColor = accentColor,
                     themeMode = themeMode,
+                    advancedMode = advancedMode,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -141,11 +156,17 @@ class MainActivity : ComponentActivity() {
                         AppPreferences.setThemeMode(this, mode)
                         themeMode = mode
                     },
-                    openInstaller = {
-                        startActivity(
-                            Intent(this, InstallActivity::class.java)
-                                .putExtra(InstallActivity.EXTRA_START_INSTALL, true),
-                        )
+                    onAdvancedModeChanged = { enabled ->
+                        AppPreferences.setAdvancedMode(this, enabled)
+                        advancedMode = enabled
+                    },
+                    openInstaller = { profileId ->
+                        val installer = Intent(this, InstallActivity::class.java)
+                            .putExtra(InstallActivity.EXTRA_INSTALL_REQUEST_ID, UUID.randomUUID().toString())
+                        if (profileId != null) {
+                            installer.putExtra(InstallActivity.EXTRA_PROFILE_ID, profileId)
+                        }
+                        startActivity(installer)
                     },
                 )
             }
@@ -166,6 +187,11 @@ private enum class AppPage(@StringRes val label: Int, val icon: ImageVector) {
 
 private data class LanguageOption(@StringRes val label: Int, val tag: String)
 
+private enum class CompatibilityWarning {
+    Device,
+    Build,
+}
+
 private val languageOptions = listOf(
     LanguageOption(R.string.language_system, ""),
     LanguageOption(R.string.language_korean, "ko"),
@@ -179,15 +205,96 @@ private fun RootApp(
     installViewModel: InstallViewModel,
     accentColor: AccentColor,
     themeMode: AppThemeMode,
+    advancedMode: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
-    openInstaller: () -> Unit,
+    onAdvancedModeChanged: (Boolean) -> Unit,
+    openInstaller: (String?) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
     val history by installViewModel.history.collectAsStateWithLifecycle()
+    val targetCatalog by installViewModel.targetCatalog.collectAsStateWithLifecycle()
     var selectedPage by remember { mutableStateOf(AppPage.Overview) }
     var showInstallConfirmation by remember { mutableStateOf(false) }
+    var showTargetPicker by remember { mutableStateOf(false) }
+    var selectedProfile by remember { mutableStateOf<TargetProfile?>(null) }
+    var compatibilityWarning by remember { mutableStateOf<CompatibilityWarning?>(null) }
     val device = remember { DeviceSnapshot.current() }
+
+    if (showTargetPicker) {
+        TargetSelectionSheet(
+            device = device,
+            catalog = targetCatalog,
+            onDismiss = { showTargetPicker = false },
+            onRetry = installViewModel::loadTargetCatalog,
+            onNext = { profile ->
+                selectedProfile = profile
+                showTargetPicker = false
+                compatibilityWarning = when {
+                    !profile.matchesModel(device) -> CompatibilityWarning.Device
+                    !profile.matches(device) -> CompatibilityWarning.Build
+                    else -> null
+                }
+                if (compatibilityWarning == null) showInstallConfirmation = true
+            },
+        )
+    }
+
+    compatibilityWarning?.let { warning ->
+        val profile = selectedProfile ?: return@let
+        AlertDialog(
+            onDismissRequest = {
+                compatibilityWarning = null
+                showTargetPicker = true
+            },
+            icon = { Icon(Icons.Rounded.Warning, contentDescription = null) },
+            title = {
+                DialogDimAmount(0.24f)
+                Text(
+                    stringResource(
+                        if (warning == CompatibilityWarning.Device) {
+                            R.string.device_mismatch_title
+                        } else {
+                            R.string.build_mismatch_title
+                        },
+                    ),
+                )
+            },
+            text = {
+                Text(
+                    if (warning == CompatibilityWarning.Device) {
+                        stringResource(R.string.device_mismatch_body, device.model, profile.model)
+                    } else {
+                        stringResource(R.string.build_mismatch_body, device.buildId, profile.buildDisplay)
+                    },
+                )
+            },
+            confirmButton = {
+                FilledTonalButton(
+                    onClick = {
+                        if (warning == CompatibilityWarning.Device && !profile.matches(device)) {
+                            compatibilityWarning = CompatibilityWarning.Build
+                        } else {
+                            compatibilityWarning = null
+                            showInstallConfirmation = true
+                        }
+                    },
+                ) {
+                    Text(stringResource(R.string.action_continue))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        compatibilityWarning = null
+                        showTargetPicker = true
+                    },
+                ) {
+                    Text(stringResource(R.string.action_back))
+                }
+            },
+        )
+    }
 
     if (showInstallConfirmation) {
         AlertDialog(
@@ -201,7 +308,8 @@ private fun RootApp(
             confirmButton = {
                 FilledTonalButton(onClick = {
                     showInstallConfirmation = false
-                    openInstaller()
+                    openInstaller(selectedProfile?.profileId)
+                    selectedProfile = null
                 }) {
                     Text(stringResource(R.string.action_confirm))
                 }
@@ -239,15 +347,25 @@ private fun RootApp(
                     padding = padding,
                     device = device,
                     installState = installState,
-                    onInstall = { showInstallConfirmation = true },
+                    onInstall = {
+                        selectedProfile = null
+                        if (advancedMode) {
+                            showTargetPicker = true
+                            installViewModel.loadTargetCatalog()
+                        } else {
+                            showInstallConfirmation = true
+                        }
+                    },
                 )
                 AppPage.History -> HistoryPage(padding, history)
                 AppPage.Settings -> SettingsPage(
                     padding = padding,
                     accentColor = accentColor,
                     themeMode = themeMode,
+                    advancedMode = advancedMode,
                     onAccentColorChanged = onAccentColorChanged,
                     onThemeModeChanged = onThemeModeChanged,
+                    onAdvancedModeChanged = onAdvancedModeChanged,
                 )
             }
         }
@@ -656,8 +774,10 @@ private fun SettingsPage(
     padding: PaddingValues,
     accentColor: AccentColor,
     themeMode: AppThemeMode,
+    advancedMode: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
+    onAdvancedModeChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -741,6 +861,171 @@ private fun SettingsPage(
                 onClick = { showColorDialog = true },
             )
         }
+        item { SectionLabel(stringResource(R.string.advanced)) }
+        item {
+            SettingsSwitchCard(
+                icon = Icons.Rounded.Memory,
+                title = stringResource(R.string.advanced_mode),
+                description = stringResource(R.string.advanced_mode_description),
+                checked = advancedMode,
+                onCheckedChange = onAdvancedModeChanged,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TargetSelectionSheet(
+    device: DeviceSnapshot,
+    catalog: TargetCatalogUiState,
+    onDismiss: () -> Unit,
+    onRetry: () -> Unit,
+    onNext: (TargetProfile) -> Unit,
+) {
+    var showOnlyMyModel by remember { mutableStateOf(true) }
+    var selectedProfileId by remember { mutableStateOf<String?>(null) }
+    val visibleProfiles = remember(catalog.profiles, showOnlyMyModel, device) {
+        if (showOnlyMyModel) {
+            catalog.profiles.filter { it.matchesModel(device) }
+        } else {
+            catalog.profiles
+        }
+    }
+    val selectedProfile = catalog.profiles.firstOrNull { it.profileId == selectedProfileId }
+
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    stringResource(R.string.select_device_title),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+                Text(
+                    stringResource(R.string.select_device_description),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .toggleable(
+                        value = showOnlyMyModel,
+                        role = Role.Checkbox,
+                        onValueChange = { enabled ->
+                            showOnlyMyModel = enabled
+                            if (enabled && selectedProfile?.matchesModel(device) == false) {
+                                selectedProfileId = null
+                            }
+                        },
+                    )
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Checkbox(checked = showOnlyMyModel, onCheckedChange = null)
+                Text(stringResource(R.string.show_my_model_only), style = MaterialTheme.typography.titleMedium)
+            }
+
+            when {
+                catalog.loading -> Box(
+                    modifier = Modifier.fillMaxWidth().height(220.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    LoadingIndicator()
+                }
+                catalog.error != null -> Column(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(catalog.error, color = MaterialTheme.colorScheme.error)
+                    FilledTonalButton(onClick = onRetry) {
+                        Text(stringResource(R.string.action_retry))
+                    }
+                }
+                visibleProfiles.isEmpty() -> Text(
+                    stringResource(R.string.no_matching_devices),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                else -> LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 480.dp)
+                        .selectableGroup(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(visibleProfiles, key = TargetProfile::profileId) { profile ->
+                        val selected = selectedProfileId == profile.profileId
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.large,
+                            color = if (selected) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.surfaceContainerHighest
+                            },
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .selectable(
+                                        selected = selected,
+                                        role = Role.RadioButton,
+                                        onClick = { selectedProfileId = profile.profileId },
+                                    )
+                                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            ) {
+                                RadioButton(selected = selected, onClick = null)
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        "${profile.manufacturer} ${profile.model}",
+                                        style = MaterialTheme.typography.titleMedium,
+                                    )
+                                    Text(
+                                        profile.buildDisplay,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                    Text(
+                                        profile.profileId,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            HorizontalDivider()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                TextButton(onClick = onDismiss, modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+                Button(
+                    onClick = { selectedProfile?.let(onNext) },
+                    enabled = selectedProfile != null,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(stringResource(R.string.action_next))
+                }
+            }
+        }
     }
 }
 
@@ -795,6 +1080,43 @@ private fun SettingsCard(
                 color = MaterialTheme.colorScheme.primary,
                 maxLines = 1,
             )
+        }
+    }
+}
+
+@Composable
+private fun SettingsSwitchCard(
+    icon: ImageVector,
+    title: String,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Card(
+        onClick = { onCheckedChange(!checked) },
+        modifier = Modifier.fillMaxWidth(),
+        shape = expressiveClickableCardShape(interactionSource),
+        interactionSource = interactionSource,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Switch(checked = checked, onCheckedChange = null)
         }
     }
 }

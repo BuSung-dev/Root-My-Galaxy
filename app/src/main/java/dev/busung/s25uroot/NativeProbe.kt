@@ -6,5 +6,6 @@ object NativeProbe {
     }
 
     external fun run(): String
-}
 
+    external fun isKernelSuActive(): Boolean
+}

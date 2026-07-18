@@ -2,7 +2,6 @@ package dev.busung.s25uroot
 
 import android.app.Application
 import android.os.SystemClock
-import android.provider.Settings
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +40,12 @@ data class InstallUiState(
 
 }
 
+data class TargetCatalogUiState(
+    val loading: Boolean = false,
+    val profiles: List<TargetProfile> = emptyList(),
+    val error: String? = null,
+)
+
 private data class CommandResult(val code: Int, val output: String)
 
 class InstallViewModel(application: Application) : AndroidViewModel(application) {
@@ -49,11 +54,13 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     private val historyStore = InstallHistoryStore(application)
     private val mutableState = MutableStateFlow(InstallUiState())
     private val mutableHistory = MutableStateFlow(historyStore.closeInterruptedRuns())
+    private val mutableTargetCatalog = MutableStateFlow(TargetCatalogUiState())
     private var discoveryJob: Job? = null
     private var installJob: Job? = null
     private var activeHistoryEntry: InstallHistoryEntry? = null
     val state: StateFlow<InstallUiState> = mutableState.asStateFlow()
     val history: StateFlow<List<InstallHistoryEntry>> = mutableHistory.asStateFlow()
+    val targetCatalog: StateFlow<TargetCatalogUiState> = mutableTargetCatalog.asStateFlow()
 
     init {
         refresh()
@@ -93,7 +100,23 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun install() {
+    fun loadTargetCatalog() {
+        if (mutableTargetCatalog.value.loading) return
+        viewModelScope.launch(Dispatchers.IO) {
+            mutableTargetCatalog.value = TargetCatalogUiState(loading = true)
+            mutableTargetCatalog.value = try {
+                TargetCatalogUiState(
+                    profiles = repository.loadTargets().sortedWith(
+                        compareBy(TargetProfile::manufacturer, TargetProfile::model, TargetProfile::buildDisplay),
+                    ),
+                )
+            } catch (error: Throwable) {
+                TargetCatalogUiState(error = error.message ?: error.javaClass.simpleName)
+            }
+        }
+    }
+
+    fun install(profileId: String? = null) {
         if (installJob?.isActive == true || mutableState.value.phase == InstallPhase.Installed) return
         discoveryJob?.cancel()
         installJob = viewModelScope.launch(Dispatchers.IO) {
@@ -104,7 +127,11 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             startHistory()
             try {
                 setPhase(InstallPhase.Checking, app.getString(R.string.status_checking_github))
-                val profile = repository.resolveTarget(DeviceSnapshot.current())
+                val profile = if (profileId == null) {
+                    repository.resolveTarget(DeviceSnapshot.current())
+                } else {
+                    repository.resolveTarget(profileId)
+                }
                 appendLog(app.getString(R.string.log_profile, profile.profileId))
 
                 setPhase(InstallPhase.Downloading, app.getString(R.string.status_downloading_payload))
@@ -221,6 +248,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun detectInstalled(): Boolean {
+        if (NativeProbe.isKernelSuActive()) return true
         val bootToken = currentBootToken() ?: return false
         val receipt = app.getSharedPreferences(INSTALL_RECEIPT, Application.MODE_PRIVATE)
         return receipt.getString(RECEIPT_BOOT_TOKEN, null) == bootToken &&
@@ -237,11 +265,12 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         require(stored) { app.getString(R.string.error_receipt) }
     }
 
-    private fun currentBootToken(): String? = Settings.Global.getInt(
-        app.contentResolver,
-        Settings.Global.BOOT_COUNT,
-        -1,
-    ).takeIf { it >= 0 }?.toString()
+    private fun currentBootToken(): String? = runCatching {
+        File("/proc/sys/kernel/random/boot_id")
+            .readText(Charsets.US_ASCII)
+            .trim()
+            .takeIf(String::isNotBlank)
+    }.getOrNull()
 
     private fun cachedP0Offset(bootToken: String?): String? {
         if (bootToken == null) return null
@@ -329,10 +358,10 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         private const val EXPLOIT_STALL_MILLIS = 90_000L
         private const val EXPLOIT_TOTAL_MILLIS = 900_000L
         private const val INSTALL_RECEIPT = "install_receipt"
-        private const val RECEIPT_BOOT_TOKEN = "boot_count"
+        private const val RECEIPT_BOOT_TOKEN = "kernel_boot_id"
         private const val RECEIPT_VERIFIED = "verified"
         private const val P0_CACHE = "p0_cache"
-        private const val P0_CACHE_BOOT_TOKEN = "boot_count"
+        private const val P0_CACHE_BOOT_TOKEN = "kernel_boot_id"
         private const val P0_CACHE_OFFSET = "offset"
         private const val P0_OFFSET_ENV = "SLIDE_P0_OFFSET"
         private const val P0_OFFSET_MAX = 0x1f0000L

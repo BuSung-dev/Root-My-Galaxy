@@ -111,4 +111,18 @@
     <string name="open_github">Open GitHub</string>
     <string name="github_card_title">Explore Root My Galaxy</string>
     <string name="github_card_description">View the source code and usage instructions.</string>
+    <string name="action_continue">Continue anyway</string>
+    <string name="action_next">Next</string>
+    <string name="advanced">Advanced</string>
+    <string name="advanced_mode">Advanced mode</string>
+    <string name="advanced_mode_description">Manually choose a device and firmware profile during installation</string>
+    <string name="repo_profile_missing">Support profile %1$s is no longer available</string>
+    <string name="select_device_title">Choose a support profile</string>
+    <string name="select_device_description">Select the device and firmware profile to use for this installation.</string>
+    <string name="show_my_model_only">Show only my model</string>
+    <string name="no_matching_devices">No profiles match this model.</string>
+    <string name="device_mismatch_title">Device mismatch</string>
+    <string name="device_mismatch_body">This phone is %1$s, but the selected profile is for %2$s. Running it may crash or damage the device.</string>
+    <string name="build_mismatch_title">Firmware mismatch</string>
+    <string name="build_mismatch_body">This phone uses build %1$s, but the selected profile targets %2$s. Offsets may be incompatible.</string>
 </resources>

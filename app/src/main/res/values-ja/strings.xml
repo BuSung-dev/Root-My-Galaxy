@@ -19,4 +19,10 @@
     <string name="open_github">GitHubを開く</string>
     <string name="github_card_title">Root My Galaxyについて</string>
     <string name="github_card_description">ソースコードと使用方法を確認します。</string>
+    <string name="action_continue">無視して続行</string><string name="action_next">次へ</string>
+    <string name="advanced">詳細設定</string><string name="advanced_mode">詳細モード</string><string name="advanced_mode_description">インストールするデバイスとファームウェアを手動で選択</string>
+    <string name="repo_profile_missing">対応プロファイル%1$sは利用できなくなりました</string>
+    <string name="select_device_title">対応プロファイルを選択</string><string name="select_device_description">今回のインストールに使用するデバイスとファームウェアを選択します。</string><string name="show_my_model_only">自分のモデルのみ表示</string><string name="no_matching_devices">このモデルに一致するプロファイルはありません。</string>
+    <string name="device_mismatch_title">デバイスが一致しません</string><string name="device_mismatch_body">現在の端末は%1$sですが、選択したプロファイルは%2$s用です。実行すると端末が停止または破損する可能性があります。</string>
+    <string name="build_mismatch_title">ファームウェアが一致しません</string><string name="build_mismatch_body">現在のビルドは%1$sですが、選択したプロファイルは%2$s用です。オフセットに互換性がない可能性があります。</string>
 </resources>

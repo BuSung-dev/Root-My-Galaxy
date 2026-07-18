@@ -1,10 +1,9 @@
 package dev.busung.s25uroot
 
 import android.content.Context
+import android.util.AtomicFile
 import org.json.JSONObject
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import java.util.UUID
 
 enum class InstallRunResult {
@@ -27,7 +26,7 @@ class InstallHistoryStore(context: Context) {
     fun load(): List<InstallHistoryEntry> = directory
         .listFiles { file -> file.extension == "json" }
         .orEmpty()
-        .map(::decode)
+        .mapNotNull(::decodeOrQuarantine)
         .sortedByDescending(InstallHistoryEntry::startedAtMillis)
 
     fun closeInterruptedRuns(): List<InstallHistoryEntry> = load().map { entry ->
@@ -51,14 +50,17 @@ class InstallHistoryStore(context: Context) {
 
     fun save(entry: InstallHistoryEntry) {
         val target = File(directory, "${entry.id}.json")
-        val temporary = File(directory, "${entry.id}.tmp")
-        temporary.writeText(encode(entry).toString(), Charsets.UTF_8)
-        Files.move(
-            temporary.toPath(),
-            target.toPath(),
-            StandardCopyOption.REPLACE_EXISTING,
-            StandardCopyOption.ATOMIC_MOVE,
-        )
+        val atomicFile = AtomicFile(target)
+        val output = atomicFile.startWrite()
+        try {
+            output.write(encode(entry).toString().toByteArray(Charsets.UTF_8))
+            output.flush()
+            output.fd.sync()
+            atomicFile.finishWrite(output)
+        } catch (error: Throwable) {
+            atomicFile.failWrite(output)
+            throw error
+        }
     }
 
     private fun encode(entry: InstallHistoryEntry) = JSONObject()
@@ -68,8 +70,17 @@ class InstallHistoryStore(context: Context) {
         .put("result", entry.result.name)
         .put("log", entry.log)
 
-    private fun decode(file: File): InstallHistoryEntry {
-        val value = JSONObject(file.readText(Charsets.UTF_8))
+    private fun decodeOrQuarantine(file: File): InstallHistoryEntry? = try {
+        decode(AtomicFile(file).openRead().use { it.readBytes() })
+    } catch (_: Throwable) {
+        val quarantined = File(directory, "${file.name}.corrupt")
+        quarantined.delete()
+        file.renameTo(quarantined)
+        null
+    }
+
+    private fun decode(bytes: ByteArray): InstallHistoryEntry {
+        val value = JSONObject(bytes.toString(Charsets.UTF_8))
         return InstallHistoryEntry(
             id = value.getString("id"),
             startedAtMillis = value.getLong("startedAtMillis"),

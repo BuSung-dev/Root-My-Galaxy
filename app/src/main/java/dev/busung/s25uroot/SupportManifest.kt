@@ -26,10 +26,13 @@ data class TargetProfile(
     val exploit: RemoteArtifact,
     val kernelSu: KernelSuArtifact,
 ) {
-    fun matches(snapshot: DeviceSnapshot): Boolean =
+    fun matchesModel(snapshot: DeviceSnapshot): Boolean =
         manufacturer.equals(snapshot.manufacturer, ignoreCase = true) &&
             model == snapshot.model &&
-            device == snapshot.device &&
+            device == snapshot.device
+
+    fun matches(snapshot: DeviceSnapshot): Boolean =
+        matchesModel(snapshot) &&
             buildDisplay == snapshot.buildId &&
             buildFingerprint == snapshot.fingerprint &&
             sdk == snapshot.sdk &&

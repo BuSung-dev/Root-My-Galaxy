@@ -19,4 +19,10 @@
     <string name="open_github">打开 GitHub</string>
     <string name="github_card_title">了解 Root My Galaxy</string>
     <string name="github_card_description">查看源代码和使用方法。</string>
+    <string name="action_continue">忽略并继续</string><string name="action_next">下一步</string>
+    <string name="advanced">高级</string><string name="advanced_mode">高级模式</string><string name="advanced_mode_description">安装时手动选择设备和固件配置</string>
+    <string name="repo_profile_missing">支持配置 %1$s 已不可用</string>
+    <string name="select_device_title">选择支持配置</string><string name="select_device_description">选择本次安装要使用的设备和固件配置。</string><string name="show_my_model_only">仅显示我的型号</string><string name="no_matching_devices">没有与此型号匹配的配置。</string>
+    <string name="device_mismatch_title">设备不匹配</string><string name="device_mismatch_body">当前设备是 %1$s，但所选配置适用于 %2$s。运行可能导致设备停止响应或损坏。</string>
+    <string name="build_mismatch_title">固件不匹配</string><string name="build_mismatch_body">当前版本是 %1$s，但所选配置适用于 %2$s。偏移量可能不兼容。</string>
 </resources>

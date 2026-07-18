@@ -20,7 +20,7 @@ data class VerifiedPayloads(
 )
 
 class PayloadRepository(private val context: Context) {
-    fun resolveTarget(snapshot: DeviceSnapshot): TargetProfile {
+    fun loadTargets(): List<TargetProfile> {
         val commit = resolveMainCommit()
         val manifestBytes = downloadBytes(rawUrl(commit, "support/targets-v2.json"), MAX_MANIFEST_BYTES)
         val signatureBytes = Base64.decode(
@@ -30,18 +30,23 @@ class PayloadRepository(private val context: Context) {
             Base64.DEFAULT,
         )
         verifyManifest(manifestBytes, signatureBytes)
-        val profile = SupportManifest.parse(manifestBytes).targets
-            .firstOrNull { it.matches(snapshot) }
-            ?: error(context.getString(R.string.repo_no_profile))
-        return profile.copy(
+        return SupportManifest.parse(manifestBytes).targets.map { profile -> profile.copy(
             exploit = profile.exploit.copy(url = pinArtifactUrl(profile.exploit.url, commit)),
             kernelSu = profile.kernelSu.copy(
                 artifact = profile.kernelSu.artifact.copy(
                     url = pinArtifactUrl(profile.kernelSu.artifact.url, commit),
                 ),
             ),
-        )
+        ) }
     }
+
+    fun resolveTarget(snapshot: DeviceSnapshot): TargetProfile = loadTargets()
+        .firstOrNull { it.matches(snapshot) }
+        ?: error(context.getString(R.string.repo_no_profile))
+
+    fun resolveTarget(profileId: String): TargetProfile = loadTargets()
+        .firstOrNull { it.profileId == profileId }
+        ?: error(context.getString(R.string.repo_profile_missing, profileId))
 
     fun download(profile: TargetProfile, onProgress: (String) -> Unit): VerifiedPayloads {
         val directory = File(context.filesDir, "payloads/${profile.profileId}").apply { mkdirs() }

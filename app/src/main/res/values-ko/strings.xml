@@ -20,4 +20,10 @@
     <string name="open_github">GitHub 열기</string>
     <string name="github_card_title">Root My Galaxy 알아보기</string>
     <string name="github_card_description">소스코드 및 사용 방법을 확인합니다.</string>
+    <string name="action_continue">무시하고 계속</string><string name="action_next">다음</string>
+    <string name="advanced">고급</string><string name="advanced_mode">고급 모드</string><string name="advanced_mode_description">설치할 기기와 펌웨어 프로필을 직접 선택합니다</string>
+    <string name="repo_profile_missing">지원 프로필 %1$s을(를) 더 이상 사용할 수 없습니다</string>
+    <string name="select_device_title">지원 프로필 선택</string><string name="select_device_description">이번 설치에 사용할 기기와 펌웨어 프로필을 선택합니다.</string><string name="show_my_model_only">내 모델만 보기</string><string name="no_matching_devices">이 모델에 맞는 프로필이 없습니다.</string>
+    <string name="device_mismatch_title">기기가 일치하지 않습니다</string><string name="device_mismatch_body">현재 기기는 %1$s이지만 선택한 프로필은 %2$s용입니다. 실행하면 기기가 멈추거나 손상될 수 있습니다.</string>
+    <string name="build_mismatch_title">빌드가 일치하지 않습니다</string><string name="build_mismatch_body">현재 빌드는 %1$s이지만 선택한 프로필은 %2$s용입니다. 오프셋이 호환되지 않을 수 있습니다.</string>
 </resources>
