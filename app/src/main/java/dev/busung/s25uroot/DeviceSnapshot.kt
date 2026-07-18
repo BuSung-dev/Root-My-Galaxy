@@ -3,12 +3,14 @@ package dev.busung.s25uroot
 import android.os.Build
 import android.system.Os
 import android.system.OsConstants
+import java.io.File
 
 data class DeviceSnapshot(
     val manufacturer: String,
     val model: String,
     val device: String,
     val kernelRelease: String,
+    val kernelVersion: String,
     val buildId: String,
     val fingerprint: String,
     val androidRelease: String,
@@ -25,6 +27,7 @@ data class DeviceSnapshot(
             model = Build.MODEL,
             device = Build.DEVICE,
             kernelRelease = Os.uname().release,
+            kernelVersion = File("/proc/version").readText(Charsets.US_ASCII).trim(),
             buildId = Build.DISPLAY,
             fingerprint = Build.FINGERPRINT,
             androidRelease = Build.VERSION.RELEASE,
