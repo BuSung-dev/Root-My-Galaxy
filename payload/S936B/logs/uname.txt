@@ -1,0 +1,3 @@
+PLACEHOLDER: replace this file with the actual output of `adb shell uname -a`.
+
+When ready, upload the real uname.txt to replace this placeholder.

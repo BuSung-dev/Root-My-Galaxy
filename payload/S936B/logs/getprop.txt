@@ -1,0 +1,3 @@
+PLACEHOLDER: replace this file with the actual output of `adb shell getprop`.
+
+When ready, upload the real getprop.txt to replace this placeholder.

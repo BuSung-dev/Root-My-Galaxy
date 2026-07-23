@@ -1,0 +1,15 @@
+{
+  "device": "Samsung Galaxy S25+",
+  "codename": "S936B",
+  "models": [
+    "SM-S936B"
+  ],
+  "firmware_examples": [
+    "BP4A.251205.006.S936BXXUACZF1"
+  ],
+  "android_version": "16",
+  "oneui_version": "8.5",
+  "bootloader_unlocked": false,
+  "root_status": false,
+  "notes": "Metadata created from user-provided getprop and uname outputs"
+}
