@@ -68,7 +68,7 @@
     <string name="phase_downloading">Downloading commit-pinned payloads from GitHub</string>
     <string name="phase_exploiting">This may take 10 minutes or longer. Your device may become hot or stop responding.</string>
     <string name="phase_loading_ksu">Loading KernelSU with the acquired bootstrap root</string>
-    <string name="phase_installed">KernelSU module and control channel verified</string>
+    <string name="phase_installed">KernelSU is active. This is post-boot root: among the providers tested, Zygisk Next is the only one that works unmodified. The open-source option is NeoZygisk PostBoot; upstream NeoZygisk and ReZygisk did not work unchanged. Install exactly one provider, then use KernelSU Manager Soft Reboot once. After a provider update, fully reboot, rerun this exploit, and only then Soft Reboot. Never restart zygote directly.</string>
     <string name="phase_failed">Review the failure point in the log below</string>
 
     <string name="status_ksu_active">KernelSU active</string>
