@@ -24,6 +24,17 @@ The app automatically selects an exact match for the kernel release,
 full build display ID, SDK, ABI, and page size. Advanced mode can select a
 profile manually and presents separate kernel-release and build warnings.
 
+## Zygisk after the exploit
+
+Root My Galaxy stops after KernelSU is active. To use Zygisk, install or enable
+one provider and its dependent modules, then use **Soft Reboot** from KernelSU
+Manager once. Do not restart zygote directly and do not activate two providers
+at the same time.
+
+Provider updates require a full device reboot before the next exploit and Soft
+Reboot. The tested lifecycle, failure cases and hardware validation record are
+available in [Post-exploit Zygisk lifecycle](docs/POST_EXPLOIT_ZYGISK.md).
+
 ## Build
 
 Requirements:
