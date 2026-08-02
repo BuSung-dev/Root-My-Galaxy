@@ -82,8 +82,8 @@
     <string name="log_ksu_staged">[+] KernelSU hazırlama tamamlandı</string>
     <string name="log_ksu_control_verified">[+] KernelSU kontrol kanalı doğrulandı</string>
     <string name="error_helper_unavailable">Bootstrap yardımcısı çalıştırılamıyor</string>
-    <string name="error_exploit_stalled">Exploit günlüğü 90 saniye boyunca güncellenmedi</string>
-    <string name="error_exploit_timeout">Exploit 15 dakikalık süre sınırını aştı</string>
+    <string name="error_exploit_stalled">Exploit günlüğü 3 dakika boyunca güncellenmedi</string>
+    <string name="error_exploit_timeout">Exploit 45 dakikalık süre sınırını aştı</string>
     <string name="error_payload_exit">Payload çalıştırma hatası: %1$d%2$s</string>
     <string name="error_success_marker">Exploit başarıya dair bir şey bulamadı</string>
     <string name="error_ksu_stage">KernelSU hazırlığı başarısız oldu: %1$s</string>
