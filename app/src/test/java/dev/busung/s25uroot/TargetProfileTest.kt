@@ -26,6 +26,18 @@ class TargetProfileTest {
         assertFalse(profile.matches(snapshot("SM-S938N", "6.6.102-android15-8-build")))
     }
 
+    @Test
+    fun freshP0PolicyDefaultsToDisabled() {
+        assertFalse(profile.requiresFreshP0Session)
+    }
+
+    @Test
+    fun freshP0PolicyCanBeEnabledForExactProfile() {
+        val freshProfile = profile.copy(requiresFreshP0Session = true)
+
+        assertTrue(freshProfile.requiresFreshP0Session)
+    }
+
     private fun snapshot(
         model: String,
         kernelRelease: String,

@@ -25,6 +25,11 @@ the phone. For example, `6.6.98-android15-8-...` matches `6.6.98`. Advanced
 mode filters the catalog by both values and allows manual selection with model
 and kernel-version warnings.
 
+Payload profiles may request a fresh same-process P0 session. For those exact
+targets, the app disables its per-boot P0 cache and gives one combined
+slide-discovery/exploit attempt the extended timeout declared by the app
+policy; existing profiles retain the cached multi-attempt behavior.
+
 ## Build
 
 Requirements:

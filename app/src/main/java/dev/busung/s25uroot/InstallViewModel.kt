@@ -142,7 +142,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 appendLog(app.getString(R.string.log_download_verified))
 
                 setPhase(InstallPhase.Exploiting, app.getString(R.string.status_exploit_running))
-                executeExploit(payloads.exploit)
+                executeExploit(payloads.exploit, profile.requiresFreshP0Session)
 
                 setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
                 installKernelSu(payloads)
@@ -158,7 +158,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    private suspend fun executeExploit(payload: File) {
+    private suspend fun executeExploit(payload: File, requiresFreshP0Session: Boolean) {
         val logFile = File(app.filesDir, "exploit.log")
         logFile.delete()
         val helper = helperFile()
@@ -173,10 +173,16 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             logFile.absolutePath,
         ).redirectErrorStream(true)
         processBuilder.environment().apply {
-            put("EXPLOIT_ATTEMPTS", "24")
-            put("P0_ATTEMPT_TIMEOUT_SEC", "45")
-            put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", "120")
-            cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
+            if (requiresFreshP0Session) {
+                put("EXPLOIT_ATTEMPTS", "1")
+                put("P0_ATTEMPT_TIMEOUT_SEC", "840")
+                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", "840")
+            } else {
+                put("EXPLOIT_ATTEMPTS", "24")
+                put("P0_ATTEMPT_TIMEOUT_SEC", "45")
+                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", "120")
+                cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
+            }
         }
         val process = processBuilder.start()
 
@@ -187,7 +193,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             while (process.isAlive) {
                 val rawLog = logFile.readTextIfPresent()
                 if (rawLog != lastRawLog) {
-                    cacheP0Offset(bootToken, rawLog)
+                    if (!requiresFreshP0Session) cacheP0Offset(bootToken, rawLog)
                     publishExploitLog(logPrefix, rawLog)
                     lastRawLog = rawLog
                     lastProgressAt = SystemClock.elapsedRealtime()
@@ -204,7 +210,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
 
             val exitCode = process.waitFor()
             val rawLog = logFile.readTextIfPresent()
-            cacheP0Offset(bootToken, rawLog)
+            if (!requiresFreshP0Session) cacheP0Offset(bootToken, rawLog)
             publishExploitLog(logPrefix, rawLog)
             val earlyOutput = process.inputStream.bufferedReader().use { it.readText() }.trim()
             require(exitCode == 0) {
