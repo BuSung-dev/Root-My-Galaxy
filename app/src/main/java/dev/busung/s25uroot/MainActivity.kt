@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -64,6 +66,7 @@ import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material.icons.rounded.UploadFile
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
@@ -80,6 +83,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -134,6 +138,7 @@ class MainActivity : ComponentActivity() {
     private var accentColor by mutableStateOf(AccentColor.Dynamic)
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
+    private var verifyExploitSize by mutableStateOf(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,6 +146,7 @@ class MainActivity : ComponentActivity() {
         accentColor = AppPreferences.accentColor(this)
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
+        verifyExploitSize = AppPreferences.verifyExploitSize(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
@@ -148,6 +154,7 @@ class MainActivity : ComponentActivity() {
                     accentColor = accentColor,
                     themeMode = themeMode,
                     advancedMode = advancedMode,
+                    verifyExploitSize = verifyExploitSize,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -159,6 +166,10 @@ class MainActivity : ComponentActivity() {
                     onAdvancedModeChanged = { enabled ->
                         AppPreferences.setAdvancedMode(this, enabled)
                         advancedMode = enabled
+                    },
+                    onVerifyExploitSizeChanged = { enabled ->
+                        AppPreferences.setVerifyExploitSize(this, enabled)
+                        verifyExploitSize = enabled
                     },
                     openInstaller = { profileId ->
                         val installer = Intent(this, InstallActivity::class.java)
@@ -212,9 +223,11 @@ private fun RootApp(
     accentColor: AccentColor,
     themeMode: AppThemeMode,
     advancedMode: Boolean,
+    verifyExploitSize: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
+    onVerifyExploitSizeChanged: (Boolean) -> Unit,
     openInstaller: (String?) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
@@ -379,9 +392,11 @@ private fun RootApp(
                     accentColor = accentColor,
                     themeMode = themeMode,
                     advancedMode = advancedMode,
+                    verifyExploitSize = verifyExploitSize,
                     onAccentColorChanged = onAccentColorChanged,
                     onThemeModeChanged = onThemeModeChanged,
                     onAdvancedModeChanged = onAdvancedModeChanged,
+                    onVerifyExploitSizeChanged = onVerifyExploitSizeChanged,
                 )
             }
         }
@@ -796,9 +811,11 @@ private fun SettingsPage(
     accentColor: AccentColor,
     themeMode: AppThemeMode,
     advancedMode: Boolean,
+    verifyExploitSize: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
+    onVerifyExploitSizeChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -807,6 +824,19 @@ private fun SettingsPage(
     var colorMenuTop by remember { mutableStateOf(32.dp) }
     val density = LocalDensity.current
     val currentLanguageTag = AppPreferences.languageTag(context)
+    var payloadRepository by remember { mutableStateOf(AppPreferences.payloadRepository(context)) }
+    var customPayloadName by remember { mutableStateOf(CustomPayloadStore.displayName(context)) }
+    var customPayloadError by remember { mutableStateOf<String?>(null) }
+    val customPayloadPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            runCatching { CustomPayloadStore.import(context, uri) }
+                .onSuccess { name ->
+                    customPayloadName = name
+                    customPayloadError = null
+                }
+                .onFailure { error -> customPayloadError = error.message }
+        }
+    }
 
     if (showLanguageDialog) {
         SideChoiceMenu(
@@ -891,9 +921,50 @@ private fun SettingsPage(
                     title = stringResource(R.string.advanced_mode),
                     description = stringResource(R.string.advanced_mode_description),
                     checked = advancedMode,
-                    position = SettingsCardPosition.GroupedSingle,
+                    position = SettingsCardPosition.Top,
                     onCheckedChange = onAdvancedModeChanged,
                 )
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Security,
+                    title = stringResource(R.string.verify_exploit_size),
+                    description = stringResource(R.string.verify_exploit_size_description),
+                    checked = verifyExploitSize,
+                    position = SettingsCardPosition.Bottom,
+                    onCheckedChange = onVerifyExploitSizeChanged,
+                )
+            }
+        }
+        item {
+            OutlinedTextField(
+                value = payloadRepository,
+                onValueChange = { value ->
+                    payloadRepository = value
+                    AppPreferences.setPayloadRepository(context, value)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                label = { Text(stringResource(R.string.payload_repository)) },
+                placeholder = { Text("BuSung-dev/Root-My-Galaxy-Payloads") },
+                supportingText = { Text(stringResource(R.string.payload_repository_description)) },
+            )
+        }
+        item {
+            SettingsCard(
+                icon = Icons.Rounded.UploadFile,
+                title = stringResource(R.string.custom_exploit_payload),
+                description = customPayloadError
+                    ?: stringResource(R.string.custom_exploit_payload_description),
+                value = customPayloadName ?: stringResource(R.string.custom_payload_not_selected),
+                onClick = { customPayloadPicker.launch(arrayOf("application/octet-stream", "application/x-sharedlib", "*/*")) },
+            )
+            if (customPayloadName != null) {
+                TextButton(onClick = {
+                    CustomPayloadStore.clear(context)
+                    customPayloadName = null
+                    customPayloadError = null
+                }) {
+                    Text(stringResource(R.string.custom_payload_remove))
+                }
             }
         }
     }
