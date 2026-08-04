@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Root My Galaxy</string>
+    <string name="nav_overview">Accueil</string>
+    <string name="nav_history">Historique</string>
+    <string name="nav_settings">Paramètres</string>
+    <string name="install_confirm_title">Installer KernelSU ?</string>
+    <string name="install_confirm_body">L\'application vérifiera le profil de compatibilité, puis téléchargera et exécutera l\'exploit et la charge utile KernelSU depuis GitHub.</string>
+    <string name="action_confirm">Confirmer</string>
+    <string name="action_cancel">Annuler</string>
+    <string name="action_close">Fermer</string>
+    <string name="action_retry">Réessayer</string>
+    <string name="action_done">Terminé</string>
+    <string name="action_back">Retour</string>
+    <string name="install_tap_manager">Appuyez pour installer KernelSU Manager</string>
+    <string name="install_tap_retry">Appuyez pour réessayer</string>
+    <string name="install_tap_start">Appuyez pour installer KernelSU</string>
+    <string name="device">Appareil</string>
+    <string name="firmware">Firmware</string>
+    <string name="system">Système</string>
+    <string name="system_abi">ABI système</string>
+    <string name="settings">Paramètres</string>
+    <string name="version_format">%1$s (%2$d)</string>
+    <string name="language">Langue</string>
+    <string name="language_description">Choisir la langue de l\'application</string>
+    <string name="appearance">Apparence</string>
+    <string name="theme_system">Système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="material_color">Couleur Material</string>
+    <string name="material_color_description">Choisir la palette d\'accentuation de l\'interface</string>
+    <string name="language_system">Suivre le système</string>
+    <string name="language_korean" translatable="false">한국어</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_japanese" translatable="false">日本語</string>
+    <string name="language_chinese" translatable="false">简体中文</string>
+    <string name="language_chinese_traditional" translatable="false">繁體中文</string>
+    <string name="language_turkish" translatable="false">Türkçe</string>
+    <string name="color_dynamic">Dynamique (système)</string>
+    <string name="color_blue">Bleu</string>
+    <string name="color_violet">Violet</string>
+    <string name="color_green">Vert</string>
+    <string name="color_orange">Orange</string>
+    <string name="history_title">Historique des exécutions</string>
+    <string name="history_empty_title">Aucune exécution</string>
+    <string name="history_empty_description">Les résultats d\'installation et les journaux apparaîtront ici.</string>
+    <string name="history_running">En cours</string>
+    <string name="history_succeeded">Réussi</string>
+    <string name="history_failed">Échoué</string>
+    <string name="history_detail_title">Détails de l\'exécution</string>
+    <string name="history_started">Début : %1$s</string>
+    <string name="history_completed">Fin : %1$s</string>
+    <string name="history_log">Journal d\'exécution</string>
+    <string name="history_log_empty">Aucune sortie de journal pour l\'instant.</string>
+
+    <string name="install_title">Installation</string>
+    <string name="install_keep_open">Gardez cet écran ouvert jusqu\'à la fin de l\'installation</string>
+    <string name="install_live_progress">Journal</string>
+    <string name="install_preparing">Préparation…</string>
+    <string name="step_support_title">Vérification de compatibilité</string>
+    <string name="step_support_detail">Vérifier l\'appareil et le profil du firmware</string>
+    <string name="step_download_title">Téléchargement</string>
+    <string name="step_download_detail">Charger le manifeste de compatibilité</string>
+    <string name="step_exploit_title">Exploit du noyau</string>
+    <string name="step_exploit_detail">Acquérir les droits root de base</string>
+    <string name="step_ksu_title">Charger KernelSU</string>
+    <string name="step_ksu_detail">Charger le module tardivement et vérifier le canal de contrôle</string>
+    <string name="phase_checking">Vérification de l\'appareil et du firmware pris en charge</string>
+    <string name="phase_ready">Prêt à installer</string>
+    <string name="phase_downloading">Téléchargement des charges utiles depuis GitHub</string>
+    <string name="phase_exploiting">Cela peut prendre 10 minutes ou plus. Votre appareil peut chauffer ou ne plus répondre.</string>
+    <string name="phase_loading_ksu">Chargement de KernelSU avec les droits root de base acquis</string>
+    <string name="phase_installed">Module KernelSU et canal de contrôle vérifiés</string>
+    <string name="phase_failed">Vérifiez le point d\'échec dans le journal ci-dessous</string>
+
+    <string name="status_ksu_active">KernelSU actif</string>
+    <string name="status_not_installed">Non installé</string>
+    <string name="status_support_failed">Vérification de compatibilité échouée</string>
+    <string name="status_checking_github">Vérification du manifeste GitHub</string>
+    <string name="status_downloading_payload">Téléchargement des charges utiles</string>
+    <string name="status_exploit_running">Exécution de l\'exploit du noyau</string>
+    <string name="status_ksu_loading">Chargement tardif de KernelSU</string>
+    <string name="status_install_failed">L\'installation a échoué</string>
+    <string name="log_profile">[+] Profil de compatibilité : %1$s</string>
+    <string name="log_download_verified">[+] Téléchargement des charges utiles terminé</string>
+    <string name="log_install_complete">[+] Installation terminée</string>
+    <string name="log_bootstrap_root">[+] Droits root de base acquis</string>
+    <string name="log_ksu_staged">[+] Préparation de KernelSU terminée</string>
+    <string name="log_ksu_control_verified">[+] Canal de contrôle KernelSU vérifié</string>
+    <string name="error_helper_unavailable">L\'assistant de démarrage n\'est pas exécutable</string>
+    <string name="error_exploit_stalled">Le journal de l\'exploit n\'a pas avancé depuis 90 secondes</string>
+    <string name="error_exploit_timeout">L\'exploit a dépassé la limite de 15 minutes</string>
+    <string name="error_payload_exit">L\'exécution de la charge utile a échoué : %1$d%2$s</string>
+    <string name="error_success_marker">Les marqueurs de succès de l\'exploit n\'ont pas été trouvés</string>
+    <string name="error_ksu_stage">La préparation de KernelSU a échoué : %1$s</string>
+    <string name="error_ksu_verify">Le chargement tardif ou la vérification du contrôle de KernelSU a échoué (rc=%1$d) : %2$s</string>
+    <string name="error_boot_id">Impossible de lire le boot_id actuel</string>
+    <string name="error_receipt">Impossible de sauvegarder le reçu de vérification de l\'installation</string>
+
+    <string name="artifact_exploit">exploit</string>
+    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="repo_no_profile">Aucune charge utile compatible ne prend en charge ce modèle et cette version de noyau</string>
+    <string name="repo_downloading">Téléchargement de %1$s</string>
+    <string name="repo_size_mismatch">La taille de %1$s ne correspond pas au manifeste de compatibilité</string>
+    <string name="repo_size_exceeded">%1$s a dépassé la taille déclarée</string>
+    <string name="repo_incomplete">Le téléchargement de %1$s est incomplet</string>
+    <string name="repo_finalize_failed">Impossible de finaliser le fichier %1$s</string>
+    <string name="repo_verified">%1$s vérifié</string>
+    <string name="repo_commit_invalid">GitHub a renvoyé un SHA de commit invalide</string>
+    <string name="repo_url_invalid">Le dépôt d\'artefacts n\'est pas autorisé</string>
+    <string name="repo_response_too_large">La réponse a dépassé sa limite de taille</string>
+    <string name="open_github">Ouvrir GitHub</string>
+    <string name="github_card_title">Explorer Root My Galaxy</string>
+    <string name="github_card_description">Voir le code source et les instructions d\'utilisation.</string>
+    <string name="action_continue">Continuer quand même</string>
+    <string name="action_next">Suivant</string>
+    <string name="advanced">Avancé</string>
+    <string name="advanced_mode">Mode avancé</string>
+    <string name="advanced_mode_description">Choisir manuellement une charge utile compatible avec l\'appareil lors de l\'installation</string>
+    <string name="repo_profile_missing">Le profil de compatibilité %1$s n\'est plus disponible</string>
+    <string name="select_device_title">Choisir une charge utile</string>
+    <string name="select_device_description">Sélectionner une charge utile par modèle d\'appareil et version de noyau.</string>
+    <string name="show_my_device_only">Afficher uniquement mon appareil</string>
+    <string name="no_matching_devices">Aucune charge utile ne correspond à ce modèle et à cette version de noyau.</string>
+    <string name="device_mismatch_title">Incompatibilité d\'appareil</string>
+    <string name="device_mismatch_body">Ce téléphone est un %1$s, mais la charge utile sélectionnée prend en charge %2$s. L\'exécuter pourrait planter ou endommager l\'appareil.</string>
+    <string name="kernel_version_mismatch_title">Incompatibilité de version de noyau</string>
+    <string name="kernel_version_mismatch_body">Ce téléphone utilise le noyau %1$s, mais la charge utile sélectionnée prend en charge %2$s. Les décalages peuvent être incompatibles.</string>
+</resources>

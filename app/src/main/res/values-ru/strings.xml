@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Root My Galaxy</string>
+    <string name="nav_overview">Главная</string>
+    <string name="nav_history">История</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="install_confirm_title">Установить KernelSU?</string>
+    <string name="install_confirm_body">Приложение проверит профиль поддержки, а затем загрузит с GitHub и запустит эксплойт и payload KernelSU.</string>
+    <string name="action_confirm">Подтвердить</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_close">Закрыть</string>
+    <string name="action_retry">Повторить</string>
+    <string name="action_done">Готово</string>
+    <string name="action_back">Назад</string>
+    <string name="install_tap_manager">Нажмите, чтобы установить KernelSU Manager</string>
+    <string name="install_tap_retry">Нажмите, чтобы повторить попытку</string>
+    <string name="install_tap_start">Нажмите, чтобы установить KernelSU</string>
+    <string name="device">Устройство</string>
+    <string name="firmware">Прошивка</string>
+    <string name="system">Система</string>
+    <string name="system_abi">ABI системы</string>
+    <string name="settings">Настройки</string>
+    <string name="version_format">%1$s (%2$d)</string>
+    <string name="language">Язык</string>
+    <string name="language_description">Выберите язык приложения</string>
+    <string name="appearance">Оформление</string>
+    <string name="theme_system">Системная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="material_color">Тема Material Color</string>
+    <string name="material_color_description">Выберите палитру цветов интерфейса</string>
+    <string name="language_system">Как в системе</string>
+    <string name="language_korean" translatable="false">한국어</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_japanese" translatable="false">日本語</string>
+    <string name="language_chinese" translatable="false">简体中文</string>
+    <string name="language_chinese_traditional" translatable="false">繁體中文</string>
+    <string name="language_turkish" translatable="false">Türkçe</string>
+    <string name="language_russian" translatable="false">Русский</string>
+    <string name="color_dynamic">Динамические цвета</string>
+    <string name="color_blue">Синий</string>
+    <string name="color_violet">Фиолетовый</string>
+    <string name="color_green">Зелёный</string>
+    <string name="color_orange">Оранжевый</string>
+    <string name="history_title">История запусков</string>
+    <string name="history_empty_title">Запусков пока нет</string>
+    <string name="history_empty_description">Здесь будут отображаться результаты установки и журналы.</string>
+    <string name="history_running">Выполняется</string>
+    <string name="history_succeeded">Успешно</string>
+    <string name="history_failed">Ошибка</string>
+    <string name="history_detail_title">Сведения о запуске</string>
+    <string name="history_started">Начало: %1$s</string>
+    <string name="history_completed">Завершено: %1$s</string>
+    <string name="history_log">Журнал выполнения</string>
+    <string name="history_log_empty">Записей в журнале пока нет.</string>
+
+
+    <string name="install_title">Установка</string>
+    <string name="install_keep_open">Не закрывайте этот экран до завершения установки</string>
+    <string name="install_live_progress">Журнал</string>
+    <string name="install_preparing">Подготовка…</string>
+    <string name="step_support_title">Проверка поддержки</string>
+    <string name="step_support_detail">Проверка профиля устройства и прошивки</string>
+    <string name="step_download_title">Загрузка</string>
+    <string name="step_download_detail">Загрузка манифеста поддержки</string>
+    <string name="step_exploit_title">Эксплойт ядра</string>
+    <string name="step_exploit_detail">Получение временного root-доступа</string>
+    <string name="step_ksu_title">Загрузка KernelSU</string>
+    <string name="step_ksu_detail">Поздняя загрузка модуля и проверка канала управления</string>
+    <string name="phase_checking">Проверка поддержки устройства и прошивки</string>
+    <string name="phase_ready">Готово к установке</string>
+    <string name="phase_downloading">Загрузка привязанных к commit payload-файлов с GitHub</string>
+    <string name="phase_exploiting">Это может занять 10 минут или больше. Устройство может нагреться или перестать отвечать.</string>
+    <string name="phase_loading_ksu">Загрузка KernelSU с использованием полученного временного root-доступа</string>
+    <string name="phase_installed">Модуль KernelSU и канал управления успешно проверены</string>
+    <string name="phase_failed">Проверьте место возникновения ошибки в журнале ниже</string>
+
+    <string name="status_ksu_active">KernelSU активен</string>
+    <string name="status_not_installed">Не установлен</string>
+    <string name="status_support_failed">Не удалось проверить поддержку</string>
+    <string name="status_checking_github">Проверка манифеста поддержки на GitHub</string>
+    <string name="status_downloading_payload">Загрузка payload-файлов</string>
+    <string name="status_exploit_running">Запуск эксплойта ядра</string>
+    <string name="status_ksu_loading">Поздняя загрузка KernelSU</string>
+    <string name="status_install_failed">Ошибка установки</string>
+    <string name="log_profile">[+] Профиль поддержки: %1$s</string>
+    <string name="log_download_verified">[+] Загрузка payload-файлов завершена</string>
+    <string name="log_install_complete">[+] Установка завершена</string>
+    <string name="log_bootstrap_root">[+] Временный root-доступ получен</string>
+    <string name="log_ksu_staged">[+] Подготовка KernelSU завершена</string>
+    <string name="log_ksu_control_verified">[+] Канал управления KernelSU проверен</string>
+    <string name="error_helper_unavailable">Вспомогательный bootstrap-файл не является исполняемым</string>
+    <string name="error_exploit_stalled">Журнал эксплойта не обновлялся в течение 90 секунд</string>
+    <string name="error_exploit_timeout">Эксплойт превысил лимит времени в 15 минут</string>
+    <string name="error_payload_exit">Ошибка выполнения payload: %1$d%2$s</string>
+    <string name="error_success_marker">Маркеры успешного выполнения эксплойта не найдены</string>
+    <string name="error_ksu_stage">Не удалось подготовить KernelSU: %1$s</string>
+    <string name="error_ksu_verify">Не удалось выполнить позднюю загрузку KernelSU или проверить канал управления (rc=%1$d): %2$s</string>
+    <string name="error_boot_id">Не удалось прочитать текущий boot_id</string>
+    <string name="error_receipt">Не удалось сохранить запись о проверке установки</string>
+
+    <string name="artifact_exploit">эксплойт</string>
+    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="repo_no_profile">Для этой модели и версии ядра нет совместимого payload</string>
+    <string name="repo_downloading">Загрузка %1$s</string>
+    <string name="repo_size_mismatch">Размер %1$s не соответствует манифесту поддержки</string>
+    <string name="repo_size_exceeded">%1$s превысил заявленный размер</string>
+    <string name="repo_incomplete">Загрузка %1$s не завершена</string>
+    <string name="repo_finalize_failed">Не удалось завершить сохранение файла %1$s</string>
+    <string name="repo_verified">%1$s проверен</string>
+    <string name="repo_commit_invalid">GitHub вернул некорректный SHA commit</string>
+    <string name="repo_url_invalid">Этот репозиторий артефактов не разрешён</string>
+    <string name="repo_response_too_large">Ответ превысил допустимый размер</string>
+    <string name="open_github">Открыть GitHub</string>
+    <string name="github_card_title">О проекте Root My Galaxy</string>
+    <string name="github_card_description">Просмотреть исходный код и инструкции по использованию.</string>
+    <string name="action_continue">Всё равно продолжить</string>
+    <string name="action_next">Далее</string>
+    <string name="advanced">Дополнительно</string>
+    <string name="advanced_mode">Расширенный режим</string>
+    <string name="advanced_mode_description">Выбрать совместимый с устройством payload вручную во время установки</string>
+    <string name="repo_profile_missing">Профиль поддержки %1$s больше недоступен</string>
+    <string name="select_device_title">Выберите payload</string>
+    <string name="select_device_description">Выберите payload по модели устройства и версии ядра.</string>
+    <string name="show_my_device_only">Показывать только моё устройство</string>
+    <string name="no_matching_devices">Для этой модели и версии ядра не найдено подходящих payload-файлов.</string>
+    <string name="device_mismatch_title">Несовместимое устройство</string>
+    <string name="device_mismatch_body">Модель этого телефона — %1$s, однако выбранный payload предназначен для %2$s. Его запуск может привести к сбою или повреждению устройства.</string>
+    <string name="kernel_version_mismatch_title">Несовместимая версия ядра</string>
+    <string name="kernel_version_mismatch_body">На этом телефоне используется ядро %1$s, однако выбранный payload поддерживает %2$s. offsets могут быть несовместимы.</string>
+</resources>
