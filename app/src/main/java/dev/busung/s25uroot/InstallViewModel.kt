@@ -142,7 +142,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 appendLog(app.getString(R.string.log_download_verified))
 
                 setPhase(InstallPhase.Exploiting, app.getString(R.string.status_exploit_running))
-                executeExploit(payloads.exploit)
+                executeExploit(payloads.exploit, payloads.profile.requiresFreshP0Session)
 
                 setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
                 installKernelSu(payloads)
@@ -158,7 +158,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    private suspend fun executeExploit(payload: File) {
+    private suspend fun executeExploit(payload: File, requiresFreshP0Session: Boolean) {
         val logFile = File(app.filesDir, "exploit.log")
         logFile.delete()
         val helper = helperFile()
@@ -176,9 +176,30 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             put("EXPLOIT_ATTEMPTS", "24")
             put("P0_ATTEMPT_TIMEOUT_SEC", "45")
             put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", "120")
-            cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
+            // Fresh-P0 payloads refuse a forced/retained cross-process slide, so
+            // a cached offset only guarantees a failed run. Don't feed it.
+            if (!requiresFreshP0Session) {
+                cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
+            }
         }
         val process = processBuilder.start()
+
+        // Drain stdout continuously: the helper relays the full exploit log to
+        // its stdout pipe, which would otherwise fill (~64KB) and block the
+        // helper from exiting even after a successful exploit.
+        val earlyOutputBuf = StringBuilder()
+        val drainThread = Thread {
+            try {
+                process.inputStream.bufferedReader().forEachLine { line ->
+                    if (earlyOutputBuf.length < MAX_EARLY_OUTPUT_BYTES) {
+                        earlyOutputBuf.append(line).append('\n')
+                    }
+                }
+            } catch (_: Exception) {
+            }
+        }
+        drainThread.isDaemon = true
+        drainThread.start()
 
         try {
             val startedAt = SystemClock.elapsedRealtime()
@@ -187,7 +208,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             while (process.isAlive) {
                 val rawLog = logFile.readTextIfPresent()
                 if (rawLog != lastRawLog) {
-                    cacheP0Offset(bootToken, rawLog)
+                    if (!requiresFreshP0Session) cacheP0Offset(bootToken, rawLog)
                     publishExploitLog(logPrefix, rawLog)
                     lastRawLog = rawLog
                     lastProgressAt = SystemClock.elapsedRealtime()
@@ -203,10 +224,11 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             }
 
             val exitCode = process.waitFor()
+            drainThread.join(2_000)
             val rawLog = logFile.readTextIfPresent()
-            cacheP0Offset(bootToken, rawLog)
+            if (!requiresFreshP0Session) cacheP0Offset(bootToken, rawLog)
             publishExploitLog(logPrefix, rawLog)
-            val earlyOutput = process.inputStream.bufferedReader().use { it.readText() }.trim()
+            val earlyOutput = earlyOutputBuf.toString().trim()
             require(exitCode == 0) {
                 app.getString(
                     R.string.error_payload_exit,
@@ -237,6 +259,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun installKernelSu(payloads: VerifiedPayloads) {
+        startKernelLogCapture()
         val source = shellQuote(payloads.kernelSu.absolutePath)
         val stageCommand =
             "/system/bin/cp $source /data/local/tmp/ksud-s25u-kdp && " +
@@ -253,6 +276,18 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         if (lateLoad.output.isNotBlank()) appendLog(lateLoad.output)
         storeInstallReceipt()
         appendLog(app.getString(R.string.log_ksu_control_verified))
+    }
+
+    private fun startKernelLogCapture() {
+        val command =
+            "rm -f /data/local/tmp/dmesg-capture.log /data/local/tmp/dmesg-capture.meta; " +
+                "(dmesg -w > /data/local/tmp/dmesg-capture.log 2>&1 &); " +
+                "{ date; id; cat /proc/self/attr/current; } > /data/local/tmp/dmesg-capture.meta 2>&1"
+        val result = runHelper("-c", command)
+        appendLog(
+            if (result.code == 0) "kernel log capture started"
+            else "kernel log capture failed code=${result.code} ${result.output.takeLast(120)}",
+        )
     }
 
     private fun detectInstalled(): Boolean {
@@ -365,6 +400,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     companion object {
         private const val EXPLOIT_STALL_MILLIS = 90_000L
         private const val EXPLOIT_TOTAL_MILLIS = 900_000L
+        private const val MAX_EARLY_OUTPUT_BYTES = 64 * 1024
         private const val INSTALL_RECEIPT = "install_receipt"
         private const val RECEIPT_BOOT_TOKEN = "kernel_boot_id"
         private const val RECEIPT_VERIFIED = "verified"
