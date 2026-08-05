@@ -35,6 +35,7 @@ object AppPreferences {
     private const val ADVANCED_MODE = "advanced_mode"
     private const val VERIFY_EXPLOIT_SIZE = "verify_exploit_size"
     private const val PAYLOAD_REPOSITORY = "payload_repository"
+    private const val SHIZUKU_MODE = "shizuku_mode"
     private const val CONSUMED_INSTALL_REQUEST = "consumed_install_request"
 
     fun accentColor(context: Context): AccentColor = AccentColor.fromStoredValue(
@@ -92,6 +93,14 @@ object AppPreferences {
         context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
             .edit()
             .putString(PAYLOAD_REPOSITORY, repository.trim())
+    fun shizukuMode(context: Context): Boolean =
+        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+            .getBoolean(SHIZUKU_MODE, false)
+
+    fun setShizukuMode(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(SHIZUKU_MODE, enabled)
             .apply()
     }
 

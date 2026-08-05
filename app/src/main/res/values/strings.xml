@@ -37,6 +37,7 @@
     <string name="language_chinese_traditional" translatable="false">繁體中文</string>
     <string name="language_turkish" translatable="false">Türkçe</string>
     <string name="language_russian" translatable="false">Русский</string>
+    <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
     <string name="color_dynamic">System dynamic</string>
     <string name="color_blue">Blue</string>
     <string name="color_violet">Violet</string>
@@ -132,6 +133,16 @@
     <string name="custom_payload_too_large">The selected file exceeds 16 MiB</string>
     <string name="custom_payload_read_failed">Could not read the selected file</string>
     <string name="repo_using_custom_payload">Using local exploit payload: %1$s</string>
+    <string name="shizuku_mode">Use Shizuku</string>
+    <string name="shizuku_mode_description">Use Shizuku to run the payload. This can improve reliability.</string>
+    <string name="shizuku_not_running_title">Shizuku is not running</string>
+    <string name="shizuku_not_running_body">Start the Shizuku service with adb or root and grant this app permission, then enable this option.</string>
+    <string name="action_download_shizuku">Download Shizuku</string>
+    <string name="error_shizuku_unavailable">Shizuku is not running. Start Shizuku with adb or root first.</string>
+    <string name="error_shizuku_permission">Shizuku permission was not granted</string>
+    <string name="error_shizuku_stage">Unable to stage %1$s through Shizuku: %2$s</string>
+    <string name="log_shizuku_prepare">[*] Preparing Shizuku execution</string>
+    <string name="log_shizuku_permission">[+] Shizuku permission granted</string>
     <string name="repo_profile_missing">Support profile %1$s is no longer available</string>
     <string name="select_device_title">Choose a payload</string>
     <string name="select_device_description">Select a payload by device model and kernel version.</string>

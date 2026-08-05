@@ -111,6 +111,16 @@
     <string name="advanced">Gelişmiş</string>
     <string name="advanced_mode">Gelişmiş mod</string>
     <string name="advanced_mode_description">Yükleme sırasında cihazla uyumlu payload\'ı manuel olarak seçin</string>
+    <string name="shizuku_mode">Shizuku kullan</string>
+    <string name="shizuku_mode_description">Payload\'ı çalıştırmak için Shizuku kullanın. Bu, güvenilirliği artırabilir.</string>
+    <string name="shizuku_not_running_title">Shizuku çalışmıyor</string>
+    <string name="shizuku_not_running_body">Shizuku hizmetini adb veya root ile başlatın ve bu uygulamaya izin verin, ardından bu seçeneği etkinleştirin.</string>
+    <string name="action_download_shizuku">Shizuku\'yu indir</string>
+    <string name="error_shizuku_unavailable">Shizuku çalışmıyor. Önce Shizuku\'yu adb veya root ile başlatın.</string>
+    <string name="error_shizuku_permission">Shizuku izni verilmedi</string>
+    <string name="error_shizuku_stage">%1$s Shizuku üzerinden hazırlanamadı: %2$s</string>
+    <string name="log_shizuku_prepare">[*] Shizuku çalıştırması hazırlanıyor</string>
+    <string name="log_shizuku_permission">[+] Shizuku izni verildi</string>
     <string name="repo_profile_missing">Destek profili %1$s artık mevcut değil</string>
     <string name="select_device_title">Payload seçin</string>
     <string name="select_device_description">Cihaz modeli ve kernel sürümüne göre bir payload seçin.</string>

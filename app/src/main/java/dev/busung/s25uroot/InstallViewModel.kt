@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.InputStream
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 enum class InstallPhase {
     Checking,
@@ -129,6 +131,16 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             )
             startHistory()
             try {
+                if (shizukuEnabled()) {
+                    appendLog(app.getString(R.string.log_shizuku_prepare))
+                    if (!ShizukuController.isRunning() && !ShizukuController.pingUntilRunning()) {
+                        error(app.getString(R.string.error_shizuku_unavailable))
+                    }
+                    if (!ShizukuController.isGranted() && !ShizukuController.requestPermission()) {
+                        error(app.getString(R.string.error_shizuku_permission))
+                    }
+                    appendLog(app.getString(R.string.log_shizuku_permission))
+                }
                 setPhase(InstallPhase.Checking, app.getString(R.string.status_checking_github))
                 val profile = if (profileId == null) {
                     repository.resolveTarget(DeviceSnapshot.current())
@@ -159,33 +171,54 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private suspend fun executeExploit(payload: File) {
-        val logFile = File(app.filesDir, "exploit.log")
-        logFile.delete()
+        val shizuku = shizukuEnabled()
+        val logFile = if (shizuku) File(SHIZUKU_LOG_PATH) else File(app.filesDir, "exploit.log")
+        if (shizuku) {
+            ShizukuController.exec(arrayOf("rm", "-f", SHIZUKU_LOG_PATH)).waitFor()
+        } else {
+            logFile.delete()
+        }
         val helper = helperFile()
-        require(helper.canExecute()) { app.getString(R.string.error_helper_unavailable) }
+        if (!shizuku) {
+            require(helper.canExecute()) { app.getString(R.string.error_helper_unavailable) }
+        }
         val logPrefix = mutableState.value.log
         val bootToken = currentBootToken()
-        val processBuilder = ProcessBuilder(
-            helper.absolutePath,
-            "--run-payload",
-            payload.absolutePath,
-            helper.absolutePath,
-            logFile.absolutePath,
-        ).redirectErrorStream(true)
-        processBuilder.environment().apply {
-            put("EXPLOIT_ATTEMPTS", "24")
-            put("P0_ATTEMPT_TIMEOUT_SEC", "45")
-            put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", "120")
-            cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
+        val process = if (shizuku) {
+            val stagedPayload = shizukuStage(payload, SHIZUKU_PAYLOAD_PATH, "755")
+            ShizukuController.exec(
+                arrayOf("/system/bin/sh", "-c", "true"),
+                shizukuEnvironment(bootToken, stagedPayload.absolutePath, helper.absolutePath),
+            )
+        } else {
+            val processBuilder = ProcessBuilder(
+                helper.absolutePath,
+                "--run-payload",
+                payload.absolutePath,
+                helper.absolutePath,
+                logFile.absolutePath,
+            ).redirectErrorStream(true)
+            processBuilder.environment().apply {
+                put("EXPLOIT_ATTEMPTS", EXPLOIT_ATTEMPTS)
+                put("P0_ATTEMPT_TIMEOUT_SEC", "45")
+                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", "120")
+                cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
+            }
+            processBuilder.start()
         }
-        val process = processBuilder.start()
+        val captured = StringBuilder()
+        val readLog: () -> String = if (shizuku) {
+            { drainProcessOutput(process, captured) }
+        } else {
+            { logFile.readTextIfPresent() }
+        }
 
         try {
             val startedAt = SystemClock.elapsedRealtime()
             var lastProgressAt = startedAt
             var lastRawLog = ""
             while (process.isAlive) {
-                val rawLog = logFile.readTextIfPresent()
+                val rawLog = readLog()
                 if (rawLog != lastRawLog) {
                     cacheP0Offset(bootToken, rawLog)
                     publishExploitLog(logPrefix, rawLog)
@@ -199,14 +232,14 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 require(now - startedAt < EXPLOIT_TOTAL_MILLIS) {
                     app.getString(R.string.error_exploit_timeout)
                 }
-                delay(LOG_POLL_INTERVAL)
+                delay(if (shizuku) SHIZUKU_LOG_POLL_INTERVAL else LOG_POLL_INTERVAL)
             }
 
             val exitCode = process.waitFor()
-            val rawLog = logFile.readTextIfPresent()
+            val rawLog = readLog()
             cacheP0Offset(bootToken, rawLog)
             publishExploitLog(logPrefix, rawLog)
-            val earlyOutput = process.inputStream.bufferedReader().use { it.readText() }.trim()
+            val earlyOutput = readProcessOutput(process, shizuku).trim()
             require(exitCode == 0) {
                 app.getString(
                     R.string.error_payload_exit,
@@ -227,6 +260,25 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         appendLog(app.getString(R.string.log_bootstrap_root))
     }
 
+    private fun drainProcessOutput(process: Process, buffer: StringBuilder): String {
+        return try {
+            drainStream(process.inputStream, buffer)
+            drainStream(process.errorStream, buffer)
+            buffer.toString()
+        } catch (_: Throwable) {
+            buffer.toString()
+        }
+    }
+
+    private fun drainStream(stream: InputStream, buffer: StringBuilder) {
+        val data = ByteArray(4096)
+        while (stream.available() > 0) {
+            val count = stream.read(data)
+            if (count <= 0) break
+            buffer.append(String(data, 0, count, Charsets.UTF_8))
+        }
+    }
+
     private fun publishExploitLog(prefix: String, rawLog: String) {
         mutableState.value = mutableState.value.copy(
             log = listOf(prefix, stripAnsi(rawLog))
@@ -237,14 +289,20 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun installKernelSu(payloads: VerifiedPayloads) {
-        val source = shellQuote(payloads.kernelSu.absolutePath)
-        val stageCommand =
-            "/system/bin/cp $source /data/local/tmp/ksud-s25u-kdp && " +
-                "/system/bin/cp $source /data/local/tmp/.ksud-stage && " +
-                "/system/bin/chmod 755 /data/local/tmp/ksud-s25u-kdp /data/local/tmp/.ksud-stage"
-        val stage = runHelper("-c", stageCommand)
-        require(stage.code == 0) { app.getString(R.string.error_ksu_stage, stage.output) }
-        appendLog(app.getString(R.string.log_ksu_staged))
+        if (shizukuEnabled()) {
+            shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_PATH, "755")
+            shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_STAGE_PATH, "755")
+            appendLog(app.getString(R.string.log_ksu_staged))
+        } else {
+            val source = shellQuote(payloads.kernelSu.absolutePath)
+            val stageCommand =
+                "/system/bin/cp $source /data/local/tmp/ksud-s25u-kdp && " +
+                    "/system/bin/cp $source /data/local/tmp/.ksud-stage && " +
+                    "/system/bin/chmod 755 /data/local/tmp/ksud-s25u-kdp /data/local/tmp/.ksud-stage"
+            val stage = runHelper("-c", stageCommand)
+            require(stage.code == 0) { app.getString(R.string.error_ksu_stage, stage.output) }
+            appendLog(app.getString(R.string.log_ksu_staged))
+        }
 
         val lateLoad = runHelper("--late-load")
         require(lateLoad.code == 0) {
@@ -303,13 +361,60 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             .apply()
     }
 
-    private fun helperFile() = File(app.applicationInfo.nativeLibraryDir, "libcve43499root.so")
+    private fun helperFile(): File =
+        if (shizukuEnabled()) {
+            shizukuStage(nativeHelperFile(), SHIZUKU_HELPER_PATH, "755")
+        } else {
+            nativeHelperFile()
+        }
+
+    private fun nativeHelperFile() = File(app.applicationInfo.nativeLibraryDir, "libcve43499root.so")
+
+    private fun shizukuEnabled(): Boolean = AppPreferences.shizukuMode(app)
+
+    private fun shizukuStage(source: File, target: String, mode: String): File {
+        val staged = File(target)
+        if (staged.exists() && staged.length() == source.length()) return staged
+        try {
+            ShizukuController.writeFile(target, mode, source.inputStream())
+        } catch (error: Throwable) {
+            throw IllegalStateException(
+                app.getString(R.string.error_shizuku_stage, target, error.message.orEmpty()),
+                error,
+            )
+        }
+        return staged
+    }
+
+    private fun shizukuEnvironment(
+        bootToken: String?,
+        payloadPath: String,
+        helperPath: String,
+    ): Array<String> = buildList {
+        add("EXPLOIT_ATTEMPTS=$EXPLOIT_ATTEMPTS")
+        add("P0_ATTEMPT_TIMEOUT_SEC=45")
+        add("EXPLOIT_ATTEMPT_TIMEOUT_SEC=120")
+        add("CVE43499_ROOT_HELPER=$helperPath")
+        add("LD_PRELOAD=$payloadPath")
+        cachedP0Offset(bootToken)?.let { add("$P0_OFFSET_ENV=$it") }
+    }.toTypedArray()
+
+    private fun readProcessOutput(process: Process, shizuku: Boolean): String {
+        val stdout = process.inputStream.bufferedReader().use { it.readText() }
+        val stderr = if (shizuku) process.errorStream.bufferedReader().use { it.readText() } else ""
+        return stdout + stderr
+    }
 
     private fun runHelper(vararg arguments: String): CommandResult {
-        val process = ProcessBuilder(listOf(helperFile().absolutePath) + arguments)
-            .redirectErrorStream(true)
-            .start()
-        val output = process.inputStream.bufferedReader().use { it.readText() }
+        val helper = helperFile()
+        val process = if (shizukuEnabled()) {
+            ShizukuController.exec(arrayOf(helper.absolutePath) + arguments)
+        } else {
+            ProcessBuilder(listOf(helper.absolutePath) + arguments)
+                .redirectErrorStream(true)
+                .start()
+        }
+        val output = readProcessOutput(process, shizukuEnabled())
         return CommandResult(process.waitFor(), stripAnsi(output.trim()))
     }
 
@@ -363,6 +468,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     private fun File.readTextIfPresent(): String = if (exists()) readText() else ""
 
     companion object {
+        private const val EXPLOIT_ATTEMPTS = "24"
         private const val EXPLOIT_STALL_MILLIS = 90_000L
         private const val EXPLOIT_TOTAL_MILLIS = 900_000L
         private const val INSTALL_RECEIPT = "install_receipt"
@@ -374,7 +480,13 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         private const val P0_OFFSET_ENV = "SLIDE_P0_OFFSET"
         private const val P0_OFFSET_MAX = 0x1f0000L
         private const val P0_OFFSET_MASK = 0xffffL
+        private const val SHIZUKU_LOG_PATH = "/data/local/tmp/ksu-exploit.log"
+        private const val SHIZUKU_HELPER_PATH = "/data/local/tmp/ksu-helper"
+        private const val SHIZUKU_PAYLOAD_PATH = "/data/local/tmp/ksu-payload"
+        private const val SHIZUKU_KSUD_PATH = "/data/local/tmp/ksud-s25u-kdp"
+        private const val SHIZUKU_KSUD_STAGE_PATH = "/data/local/tmp/.ksud-stage"
         private val LOG_POLL_INTERVAL = 250.milliseconds
+        private val SHIZUKU_LOG_POLL_INTERVAL = 1.seconds
         private val ANSI_ESCAPE = Regex("\u001B\\[[0-?]*[ -/]*[@-~]")
         private val P0_OFFSET_PATTERN = Regex(
             "slide-kaslr-ok[^\\n]*slide=([0-9a-fA-F]{16})",
