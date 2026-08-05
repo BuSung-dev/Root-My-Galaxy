@@ -143,6 +143,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
 
                 setPhase(InstallPhase.Exploiting, app.getString(R.string.status_exploit_running))
                 executeExploit(payloads.exploit)
+                hardenKeeper()
 
                 setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
                 installKernelSu(payloads)
@@ -226,6 +227,42 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
         appendLog(app.getString(R.string.log_bootstrap_root))
     }
+
+    // The payload leaves two keeper forks retaining exploited pages:
+    // cve43499-hold retains the reclaimed kernel pages, cve43499-p0ref the
+    // p0 pipe page. Both inherit the app cgroup: if the app dies (force-stop,
+    // lmkd, Samsung background kill) they are killed with it and the kernel
+    // panics on the freed pages. Move them to a private cgroup so they
+    // outlive the app.
+    private fun hardenKeeper() {
+        val keepers = keeperPids()
+        if (keepers.isEmpty()) {
+            appendLog("[*] no stability keeper found")
+            return
+        }
+        keepers.forEach { pid ->
+            val command = "mkdir -p $KEEPER_CGROUP && echo $pid > $KEEPER_CGROUP/cgroup.procs"
+            val result = runHelper("-c", command)
+            val membership = runHelper("-c", "cat /proc/$pid/cgroup").output
+            appendLog(
+                if (result.code == 0 && membership.contains(KEEPER_CGROUP_NAME)) {
+                    "[*] keeper pid=$pid hardened ($KEEPER_CGROUP)"
+                } else {
+                    "[-] keeper pid=$pid hardening failed " +
+                        "code=${result.code} ${result.output.takeLast(120)}"
+                },
+            )
+        }
+    }
+
+    private fun keeperPids(): List<Int> = runCatching {
+        File("/proc").listFiles { file -> file.name.all(Char::isDigit) }.orEmpty()
+            .mapNotNull { dir ->
+                val pid = dir.name.toIntOrNull() ?: return@mapNotNull null
+                val comm = runCatching { File(dir, "comm").readText().trim() }.getOrNull()
+                if (comm in KEEPER_COMMS) pid else null
+            }
+    }.getOrDefault(emptyList())
 
     private fun publishExploitLog(prefix: String, rawLog: String) {
         mutableState.value = mutableState.value.copy(
@@ -365,6 +402,9 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     companion object {
         private const val EXPLOIT_STALL_MILLIS = 90_000L
         private const val EXPLOIT_TOTAL_MILLIS = 900_000L
+        private val KEEPER_COMMS = setOf("cve43499-hold", "cve43499-p0ref")
+        private const val KEEPER_CGROUP = "/sys/fs/cgroup/rmg-hold"
+        private const val KEEPER_CGROUP_NAME = "rmg-hold"
         private const val INSTALL_RECEIPT = "install_receipt"
         private const val RECEIPT_BOOT_TOKEN = "kernel_boot_id"
         private const val RECEIPT_VERIFIED = "verified"
