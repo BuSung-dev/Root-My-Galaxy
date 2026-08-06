@@ -117,6 +117,16 @@
     <string name="advanced">Avancé</string>
     <string name="advanced_mode">Mode avancé</string>
     <string name="advanced_mode_description">Choisir manuellement une charge utile compatible avec l\'appareil lors de l\'installation</string>
+    <string name="shizuku_mode">Utiliser Shizuku</string>
+    <string name="shizuku_mode_description">Utiliser Shizuku pour exécuter la charge utile. Cela peut améliorer la fiabilité.</string>
+    <string name="shizuku_not_running_title">Shizuku n\'est pas en cours d\'exécution</string>
+    <string name="shizuku_not_running_body">Démarrez le service Shizuku avec adb ou root et accordez la permission à cette application, puis activez cette option.</string>
+    <string name="action_download_shizuku">Télécharger Shizuku</string>
+    <string name="error_shizuku_unavailable">Shizuku n\'est pas en cours d\'exécution. Démarrez d\'abord Shizuku avec adb ou root.</string>
+    <string name="error_shizuku_permission">La permission Shizuku n\'a pas été accordée</string>
+    <string name="error_shizuku_stage">Impossible de préparer %1$s via Shizuku : %2$s</string>
+    <string name="log_shizuku_prepare">[*] Préparation de l\'exécution Shizuku</string>
+    <string name="log_shizuku_permission">[+] Permission Shizuku accordée</string>
     <string name="repo_profile_missing">Le profil de compatibilité %1$s n\'est plus disponible</string>
     <string name="select_device_title">Choisir une charge utile</string>
     <string name="select_device_description">Sélectionner une charge utile par modèle d\'appareil et version de noyau.</string>

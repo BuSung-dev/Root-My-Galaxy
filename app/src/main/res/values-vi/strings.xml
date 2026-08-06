@@ -111,6 +111,16 @@
     <string name="advanced">Nâng cao</string>
     <string name="advanced_mode">Chế độ nâng cao</string>
     <string name="advanced_mode_description">Tự chọn payload tương thích với thiết bị khi cài đặt</string>
+    <string name="shizuku_mode">Sử dụng Shizuku</string>
+    <string name="shizuku_mode_description">Dùng Shizuku để chạy payload. Điều này có thể cải thiện độ tin cậy.</string>
+    <string name="shizuku_not_running_title">Shizuku không chạy</string>
+    <string name="shizuku_not_running_body">Khởi động dịch vụ Shizuku bằng adb hoặc root và cấp quyền cho ứng dụng này, rồi bật tùy chọn này.</string>
+    <string name="action_download_shizuku">Tải Shizuku</string>
+    <string name="error_shizuku_unavailable">Shizuku không chạy. Trước tiên hãy khởi động Shizuku bằng adb hoặc root.</string>
+    <string name="error_shizuku_permission">Quyền Shizuku chưa được cấp</string>
+    <string name="error_shizuku_stage">Không thể chuẩn bị %1$s qua Shizuku: %2$s</string>
+    <string name="log_shizuku_prepare">[*] Đang chuẩn bị thực thi Shizuku</string>
+    <string name="log_shizuku_permission">[+] Đã cấp quyền Shizuku</string>
     <string name="repo_profile_missing">Hồ sơ hỗ trợ %1$s không còn khả dụng</string>
     <string name="select_device_title">Chọn payload</string>
     <string name="select_device_description">Chọn payload theo mẫu thiết bị và phiên bản kernel.</string>

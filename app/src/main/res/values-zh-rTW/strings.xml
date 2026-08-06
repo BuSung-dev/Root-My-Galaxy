@@ -127,6 +127,16 @@
     <string name="advanced">進階</string>
     <string name="advanced_mode">進階模式</string>
     <string name="advanced_mode_description">安裝時手動選擇裝置相容的 payload</string>
+    <string name="shizuku_mode">使用 Shizuku</string>
+    <string name="shizuku_mode_description">使用 Shizuku 執行 payload，可能提高可靠性。</string>
+    <string name="shizuku_not_running_title">Shizuku 未在執行</string>
+    <string name="shizuku_not_running_body">請先透過 adb 或 root 啟動 Shizuku 服務並授予此應用程式權限，然後啟用此選項。</string>
+    <string name="action_download_shizuku">下載 Shizuku</string>
+    <string name="error_shizuku_unavailable">Shizuku 未在執行，請先透過 adb 或 root 啟動 Shizuku。</string>
+    <string name="error_shizuku_permission">未授予 Shizuku 權限</string>
+    <string name="error_shizuku_stage">無法透過 Shizuku 部署 %1$s：%2$s</string>
+    <string name="log_shizuku_prepare">[*] 正在準備 Shizuku 執行</string>
+    <string name="log_shizuku_permission">[+] 已授予 Shizuku 權限</string>
 
     <string name="repo_profile_missing">支援設定檔 %1$s 已無法使用</string>
 

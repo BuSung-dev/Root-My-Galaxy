@@ -120,6 +120,16 @@
     <string name="advanced">Дополнительно</string>
     <string name="advanced_mode">Расширенный режим</string>
     <string name="advanced_mode_description">Выбрать совместимый с устройством payload вручную во время установки</string>
+    <string name="shizuku_mode">Использовать Shizuku</string>
+    <string name="shizuku_mode_description">Использовать Shizuku для запуска payload. Это может повысить надёжность.</string>
+    <string name="shizuku_not_running_title">Shizuku не запущен</string>
+    <string name="shizuku_not_running_body">Запустите службу Shizuku с помощью adb или root и предоставьте этому приложению разрешение, затем включите эту опцию.</string>
+    <string name="action_download_shizuku">Скачать Shizuku</string>
+    <string name="error_shizuku_unavailable">Shizuku не запущен. Сначала запустите Shizuku с помощью adb или root.</string>
+    <string name="error_shizuku_permission">Разрешение Shizuku не было предоставлено</string>
+    <string name="error_shizuku_stage">Не удалось подготовить %1$s через Shizuku: %2$s</string>
+    <string name="log_shizuku_prepare">[*] Подготовка к запуску Shizuku</string>
+    <string name="log_shizuku_permission">[+] Разрешение Shizuku предоставлено</string>
     <string name="repo_profile_missing">Профиль поддержки %1$s больше недоступен</string>
     <string name="select_device_title">Выберите payload</string>
     <string name="select_device_description">Выберите payload по модели устройства и версии ядра.</string>

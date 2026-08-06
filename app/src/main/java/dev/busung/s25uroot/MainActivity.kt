@@ -1,6 +1,8 @@
 package dev.busung.s25uroot
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -63,6 +65,7 @@ import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -134,6 +137,7 @@ class MainActivity : ComponentActivity() {
     private var accentColor by mutableStateOf(AccentColor.Dynamic)
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
+    private var shizukuMode by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,6 +145,7 @@ class MainActivity : ComponentActivity() {
         accentColor = AppPreferences.accentColor(this)
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
+        shizukuMode = AppPreferences.shizukuMode(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
@@ -148,6 +153,7 @@ class MainActivity : ComponentActivity() {
                     accentColor = accentColor,
                     themeMode = themeMode,
                     advancedMode = advancedMode,
+                    shizukuMode = shizukuMode,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -159,6 +165,10 @@ class MainActivity : ComponentActivity() {
                     onAdvancedModeChanged = { enabled ->
                         AppPreferences.setAdvancedMode(this, enabled)
                         advancedMode = enabled
+                    },
+                    onShizukuModeChanged = { enabled ->
+                        AppPreferences.setShizukuMode(this, enabled)
+                        shizukuMode = enabled
                     },
                     openInstaller = { profileId ->
                         val installer = Intent(this, InstallActivity::class.java)
@@ -206,6 +216,17 @@ private val languageOptions = listOf(
 
 private const val KERNEL_SU_MANAGER_URL =
     "https://github.com/tiann/KernelSU/releases/download/v3.2.5/KernelSU_v3.2.5_32525-release.apk"
+private const val SHIZUKU_MANAGER_PACKAGE = "moe.shizuku.manager"
+private const val SHIZUKU_MANAGER_URL = "https://github.com/thedjchi/Shizuku/releases/"
+
+private fun openShizukuManager(context: Context) {
+    val launch = context.packageManager.getLaunchIntentForPackage(SHIZUKU_MANAGER_PACKAGE)
+    if (launch != null) {
+        context.startActivity(launch)
+    } else {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SHIZUKU_MANAGER_URL)))
+    }
+}
 
 @Composable
 private fun RootApp(
@@ -213,9 +234,11 @@ private fun RootApp(
     accentColor: AccentColor,
     themeMode: AppThemeMode,
     advancedMode: Boolean,
+    shizukuMode: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
+    onShizukuModeChanged: (Boolean) -> Unit,
     openInstaller: (String?) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
@@ -380,9 +403,11 @@ private fun RootApp(
                     accentColor = accentColor,
                     themeMode = themeMode,
                     advancedMode = advancedMode,
+                    shizukuMode = shizukuMode,
                     onAccentColorChanged = onAccentColorChanged,
                     onThemeModeChanged = onThemeModeChanged,
                     onAdvancedModeChanged = onAdvancedModeChanged,
+                    onShizukuModeChanged = onShizukuModeChanged,
                 )
             }
         }
@@ -797,17 +822,46 @@ private fun SettingsPage(
     accentColor: AccentColor,
     themeMode: AppThemeMode,
     advancedMode: Boolean,
+    shizukuMode: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
+    onShizukuModeChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
+    var showShizukuMissingDialog by remember { mutableStateOf(false) }
     var languageMenuTop by remember { mutableStateOf(32.dp) }
     var colorMenuTop by remember { mutableStateOf(32.dp) }
     val density = LocalDensity.current
     val currentLanguageTag = AppPreferences.languageTag(context)
+
+    if (showShizukuMissingDialog) {
+        AlertDialog(
+            onDismissRequest = { showShizukuMissingDialog = false },
+            icon = { Icon(Icons.Rounded.Info, contentDescription = null) },
+            title = {
+                DialogDimAmount(0.24f)
+                Text(stringResource(R.string.shizuku_not_running_title))
+            },
+            text = { Text(stringResource(R.string.shizuku_not_running_body)) },
+            confirmButton = {
+                FilledTonalButton(onClick = {
+                    showShizukuMissingDialog = false
+                    openShizukuManager(context)
+                }) {
+                    Text(stringResource(R.string.action_download_shizuku))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showShizukuMissingDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+        )
+    }
 
     if (showLanguageDialog) {
         SideChoiceMenu(
@@ -892,8 +946,32 @@ private fun SettingsPage(
                     title = stringResource(R.string.advanced_mode),
                     description = stringResource(R.string.advanced_mode_description),
                     checked = advancedMode,
-                    position = SettingsCardPosition.GroupedSingle,
+                    position = SettingsCardPosition.Top,
                     onCheckedChange = onAdvancedModeChanged,
+                )
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.VerifiedUser,
+                    title = stringResource(R.string.shizuku_mode),
+                    description = stringResource(R.string.shizuku_mode_description),
+                    checked = shizukuMode,
+                    position = SettingsCardPosition.Bottom,
+                    onCheckedChange = { enabled ->
+                        if (!enabled) {
+                            onShizukuModeChanged(false)
+                        } else {
+                            scope.launch {
+                                ShizukuController.pingUntilRunning()
+                                if (ShizukuController.isRunning()) {
+                                    onShizukuModeChanged(true)
+                                    if (!ShizukuController.isGranted()) {
+                                        ShizukuController.requestPermission()
+                                    }
+                                } else {
+                                    showShizukuMissingDialog = true
+                                }
+                            }
+                        }
+                    },
                 )
             }
         }
