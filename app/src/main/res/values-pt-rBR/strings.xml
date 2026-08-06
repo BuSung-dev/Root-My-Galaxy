@@ -5,7 +5,7 @@
     <string name="nav_history">Histórico</string>
     <string name="nav_settings">Configurações</string>
     <string name="install_confirm_title">Instalar o KernelSU?</string>
-    <string name="install_confirm_body">O app vai verificar o perfil suportado, e depois baixar e rodar o exploit e o payload do KernelSU do GitHub.</string>
+    <string name="install_confirm_body">O app vai verificar o perfil suportado, e depois baixar e rodar o exploit e o payload do KernelSU do GitHub.\n\nO acesso root é perdido após a reinicialização e seu sucesso depende do estado atual da RAM. Se o processo falhar, reinicie o dispositivo e tente novamente. Você também pode usar o Shizuku para aumentar sua taxa de sucesso.</string>
     <string name="action_confirm">Confirmar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_close">Fechar</string>

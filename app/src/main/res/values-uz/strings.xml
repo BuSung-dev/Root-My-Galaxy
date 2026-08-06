@@ -5,7 +5,7 @@
     <string name="nav_history">Tarix</string>
     <string name="nav_settings">Sozlamalar</string>
     <string name="install_confirm_title">KernelSU o\'rnatilsinmi?</string>
-    <string name="install_confirm_body">Ilova profil mosligini tekshiradi, so\'ngra GitHub\'dan eksployt va KernelSU paketlarini yuklab olib, ishga tushiradi.</string>
+    <string name="install_confirm_body">Ilova profil mosligini tekshiradi, so\'ngra GitHub\'dan eksployt va KernelSU paketlarini yuklab olib, ishga tushiradi.\n\nRoot ruxsati qayta ishga tushirilgandan keyin yo\'qoladi va muvaffaqiyat joriy RAM holatiga bog\'liq. Agar jarayon muvaffaqiyatsiz bo\'lsa, qurilmani qayta ishga tushirib, qaytadan urinib ko\'ring. Muvaffaqiyat darajasini oshirish uchun Shizuku\'dan foydalanishingiz mumkin.</string>
     <string name="action_confirm">Tasdiqlash</string>
     <string name="action_cancel">Bekor qilish</string>
     <string name="action_close">Yopish</string>

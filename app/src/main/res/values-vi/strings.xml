@@ -5,7 +5,7 @@
     <string name="nav_history">Lịch sử</string>
     <string name="nav_settings">Cài đặt</string>
     <string name="install_confirm_title">Cài đặt KernelSU?</string>
-    <string name="install_confirm_body">Ứng dụng sẽ xác minh hồ sơ hỗ trợ, sau đó tải xuống và chạy exploit cùng payload KernelSU từ GitHub.</string>
+    <string name="install_confirm_body">Ứng dụng sẽ xác minh hồ sơ hỗ trợ, sau đó tải xuống và chạy exploit cùng payload KernelSU từ GitHub.\n\nQuyền root sẽ mất sau khi khởi động lại và kết quả phụ thuộc vào trạng thái RAM hiện tại. Nếu quá trình thất bại, hãy khởi động lại thiết bị và thử lại. Bạn cũng có thể sử dụng Shizuku để tăng tỷ lệ thành công.</string>
     <string name="action_confirm">Xác nhận</string>
     <string name="action_cancel">Hủy</string>
     <string name="action_close">Đóng</string>
