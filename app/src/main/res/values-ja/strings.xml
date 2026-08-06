@@ -5,10 +5,10 @@
     <string name="action_confirm">確認</string><string name="action_cancel">キャンセル</string><string name="action_close">閉じる</string><string name="action_retry">再試行</string><string name="action_done">完了</string><string name="action_back">戻る</string>
     <string name="install_tap_manager">タップしてKernelSU Managerをインストール</string><string name="install_tap_retry">タップして再試行</string><string name="install_tap_start">タップしてKernelSUをインストール</string>
     <string name="device">デバイス</string><string name="firmware">ファームウェア</string><string name="system">システム</string><string name="system_abi">システムABI</string>
-    <string name="settings">設定</string><string name="version_format">%1$s (%2$d)</string><string name="language">言語</string><string name="language_description">アプリの表示言語を選択</string><string name="appearance">外観</string><string name="theme_system">システム</string><string name="theme_light">ライト</string><string name="theme_dark">ダーク</string><string name="material_color">Materialカラー</string><string name="material_color_description">インターフェースのアクセントカラーを選択</string>
+    <string name="settings">設定</string><string name="version_format">%1$s (%2$d)</string><string name="language">言語</string><string name="language_description">アプリの表示言語を選択</string><string name="appearance">外観</string><string name="theme_system">システム</string><string name="theme_light">ライト</string><string name="theme_dark">ダーク</string><string name="material_color">テーマ</string><string name="material_color_description">見た目を変更</string>
     <string name="language_system">システム設定に従う</string>
     <string name="color_dynamic">システム動的カラー</string><string name="color_blue">ブルー</string><string name="color_violet">バイオレット</string><string name="color_green">グリーン</string><string name="color_orange">オレンジ</string>
-    <string name="history_title">実行履歴</string><string name="history_empty_title">実行履歴はありません</string><string name="history_empty_description">インストールを実行すると、結果とログがここに表示されます。</string><string name="history_running">実行中</string><string name="history_succeeded">成功</string><string name="history_failed">失敗</string><string name="history_detail_title">実行詳細</string><string name="history_started">開始: %1$s</string><string name="history_completed">完了: %1$s</string><string name="history_log">実行ログ</string><string name="history_log_empty">ログはまだありません。</string>
+    <string name="history_title">実行履歴</string><string name="history_empty_title">実行履歴はありません</string><string name="history_empty_description">インストールを実行すると、結果とログがここに表示されます。</string><string name="history_running">実行中</string><string name="history_succeeded">成功</string><string name="history_failed">失敗</string><string name="history_detail_title">実行詳細</string><string name="history_started">開始: %1$s</string><string name="history_completed">完了: %1$s</string><string name="history_log_empty">ログはまだありません。</string>
     <string name="install_title">インストール</string><string name="install_keep_open">完了するまでこの画面を開いたままにしてください</string><string name="install_live_progress">ログ</string><string name="install_preparing">準備中…</string>
     <string name="step_support_title">対応確認</string><string name="step_support_detail">デバイスとファームウェアを検証</string><string name="step_download_title">ダウンロード</string><string name="step_download_detail">対応一覧を読み込む</string><string name="step_exploit_title">カーネルexploit</string><string name="step_exploit_detail">bootstrap rootを取得</string><string name="step_ksu_title">KernelSUをロード</string><string name="step_ksu_detail">モジュールと制御チャネルを検証</string>
     <string name="phase_checking">対応デバイスとファームウェアを確認中</string><string name="phase_ready">インストール可能です</string><string name="phase_downloading">GitHubからコミット固定のpayloadを取得中</string><string name="phase_exploiting">10分以上かかる場合があり、端末が熱くなったり応答しなくなったりすることがあります。</string><string name="phase_loading_ksu">bootstrap rootでKernelSUをロード中</string><string name="phase_installed">KernelSUモジュールと制御チャネルを検証済み</string><string name="phase_failed">下のログで失敗箇所を確認してください</string>
@@ -26,4 +26,17 @@
     <string name="select_device_title">対応payloadを選択</string><string name="select_device_description">デバイスモデルとカーネルバージョンを基準にpayloadを選択します。</string><string name="show_my_device_only">自分のデバイスのみ表示</string><string name="no_matching_devices">このモデルとカーネルバージョンに一致するpayloadはありません。</string>
     <string name="device_mismatch_title">デバイスが一致しません</string><string name="device_mismatch_body">現在のデバイスは%1$sですが、選択したpayloadは%2$sに対応しています。実行すると端末が停止または破損する可能性があります。</string>
     <string name="kernel_version_mismatch_title">カーネルバージョンが一致しません</string><string name="kernel_version_mismatch_body">現在のカーネルは%1$sですが、選択したpayloadは%2$sに対応しています。オフセットに互換性がない可能性があります。</string>
+    <string name="about">アプリ情報</string>
+    <string name="about_title">Root My Galaxy について</string>
+    <string name="about_description">Root My Galaxyについて</string>
+    <string name="about_body">対応Samsung Galaxy端末をカーネル脆弱性を利用してワンクリックでroot化するインストーラーです。</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="export_log">ログをエクスポート</string>
+    <string name="export_log_saved">ログを保存しました</string>
+    <string name="export_log_failed">ログを保存できませんでした</string>
+    <string name="install_tap_open_manager">タップしてKernelSU Managerを開く</string>
+    <string name="how_it_works">仕組み</string>
+    <string name="kernelsu_card_description">Android向けカーネルベースのrootソリューション</string>
+    <string name="history_shizuku_used">Shizukuを使用</string>
+    <string name="history_shizuku_not_used">Shizuku未使用</string>
 </resources>

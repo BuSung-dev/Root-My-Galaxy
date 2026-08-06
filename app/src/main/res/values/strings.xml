@@ -30,6 +30,39 @@
     <string name="material_color">Materil الوان</string>
     <string name="material_color_description">اختيار مظهر البلاطة</string>
     <string name="language_system">اتباع النظام</string>
+    <string name="nav_overview">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+    <string name="install_confirm_title">Install KernelSU?</string>
+    <string name="install_confirm_body">The app will verify the support profile, then download and run the exploit and KernelSU payload from GitHub.</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_close">Close</string>
+    <string name="action_retry">Try again</string>
+    <string name="action_done">Done</string>
+    <string name="action_back">Back</string>
+    <string name="install_tap_manager">Tap to install KernelSU Manager</string>
+    <string name="install_tap_open_manager">Tap to open KernelSU Manager</string>
+    <string name="install_tap_retry">Tap to try again</string>
+    <string name="install_tap_start">Tap to install KernelSU</string>
+    <string name="device">Device</string>
+    <string name="how_it_works">How it works</string>
+    <string name="kernelsu_card_title">KernelSU</string>
+    <string name="kernelsu_card_description">A kernel-based root solution for Android</string>
+    <string name="firmware">Firmware</string>
+    <string name="system">System</string>
+    <string name="system_abi">System ABI</string>
+    <string name="settings">Settings</string>
+    <string name="version_format">%1$s (%2$d)</string>
+    <string name="language">Language</string>
+    <string name="language_description">Choose the app language</string>
+    <string name="appearance">Appearance</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="material_color">Theme</string>
+    <string name="material_color_description">Change the look</string>
+    <string name="language_system">Follow system</string>
     <string name="language_korean" translatable="false">한국어</string>
     <string name="language_english" translatable="false">English</string>
     <string name="language_japanese" translatable="false">日本語</string>
@@ -53,6 +86,34 @@
     <string name="history_completed">تمت بنجاح: %1$s</string>
     <string name="history_log">استخراج السجلات</string>
     <string name="history_log_empty">لا يوجد سجلات حاليا.</string>
+    <string name="language_brazillian_portuguese" translatable="false">Português Brasileiro</string>
+    <string name="language_russian" translatable="false">Русский</string>
+    <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
+    <string name="color_dynamic">System dynamic</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_violet">Violet</string>
+    <string name="color_green">Green</string>
+    <string name="color_orange">Orange</string>
+    <string name="history_title">Run history</string>
+    <string name="history_empty_title">No runs yet</string>
+    <string name="history_empty_description">Installation results and logs will appear here.</string>
+    <string name="history_running">Running</string>
+    <string name="history_succeeded">Succeeded</string>
+    <string name="history_failed">Failed</string>
+    <string name="history_detail_title">Run details</string>
+    <string name="history_started">Started: %1$s</string>
+    <string name="history_completed">Completed: %1$s</string>
+    <string name="history_log_empty">No log output yet.</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="history_shizuku_used">Shizuku: used</string>
+    <string name="history_shizuku_not_used">Shizuku: not used</string>
+    <string name="export_log">Export log</string>
+    <string name="export_log_saved">Log saved</string>
+    <string name="export_log_failed">Unable to save the log</string>
+    <string name="about">About</string>
+    <string name="about_title">About Root My Galaxy</string>
+    <string name="about_description">About Root My Galaxy</string>
+    <string name="about_body">One-click installer that uses a kernel exploit to root supported Samsung Galaxy devices.</string>
 
     <string name="install_title">تثبيت</string>
     <string name="install_keep_open">حافظ على تشغيل الشاشة حتى يتم الانتهاء</string>

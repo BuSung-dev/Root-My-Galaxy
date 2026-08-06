@@ -4,10 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
@@ -44,6 +47,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -64,6 +68,7 @@ import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material.icons.rounded.Warning
@@ -128,7 +133,9 @@ import dev.busung.s25uroot.ui.theme.RootMyGalaxyTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
@@ -210,14 +217,29 @@ private val languageOptions = listOf(
     LanguageOption(R.string.language_chinese, "zh-CN"),
     LanguageOption(R.string.language_chinese_traditional, "zh-TW"),
     LanguageOption(R.string.language_turkish, "tr"),
+    LanguageOption(R.string.language_brazillian_portuguese, "pt-BR"),
     LanguageOption(R.string.language_russian, "ru"),
     LanguageOption(R.string.language_vietnamese, "vi"),
 )
 
 private const val KERNEL_SU_MANAGER_URL =
     "https://github.com/tiann/KernelSU/releases/download/v3.2.5/KernelSU_v3.2.5_32525-release.apk"
+private const val KERNEL_SU_MANAGER_PACKAGE = "me.weishu.kernelsu"
+private const val KERNEL_SU_HOME_URL = "https://kernelsu.org/"
 private const val SHIZUKU_MANAGER_PACKAGE = "moe.shizuku.manager"
 private const val SHIZUKU_MANAGER_URL = "https://github.com/thedjchi/Shizuku/releases/"
+
+private fun isKernelSuManagerInstalled(context: Context): Boolean =
+    context.packageManager.getLaunchIntentForPackage(KERNEL_SU_MANAGER_PACKAGE) != null
+
+private fun openKernelSuManager(context: Context) {
+    val launch = context.packageManager.getLaunchIntentForPackage(KERNEL_SU_MANAGER_PACKAGE)
+    if (launch != null) {
+        context.startActivity(launch)
+    } else {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(KERNEL_SU_MANAGER_URL)))
+    }
+}
 
 private fun openShizukuManager(context: Context) {
     val launch = context.packageManager.getLaunchIntentForPackage(SHIZUKU_MANAGER_PACKAGE)
@@ -364,7 +386,6 @@ private fun RootApp(
     Scaffold(
         bottomBar = {
             NavigationBar(
-                modifier = Modifier.height(72.dp),
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 tonalElevation = 0.dp,
             ) {
@@ -433,27 +454,100 @@ private fun OverviewPage(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(top = 54.dp, bottom = 14.dp),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 54.dp, bottom = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_app_logo),
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp),
+                )
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.headlineLarge,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = stringResource(
+                        R.string.version_format,
+                        BuildConfig.VERSION_NAME,
+                        BuildConfig.VERSION_CODE,
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f),
+                )
+            }
         }
         item { InstallStatusCard(installState, onInstall) }
         item { DeviceCard(device) }
-        item { GitHubCard() }
+        item { HowItWorksCard() }
+    }
+}
+
+@Composable
+private fun HowItWorksCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Text(stringResource(R.string.how_it_works), style = MaterialTheme.typography.titleMedium)
+            installerSteps.forEach { step ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Surface(
+                        modifier = Modifier.size(36.dp),
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(step.icon, contentDescription = null, modifier = Modifier.size(20.dp))
+                        }
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(stringResource(step.title), style = MaterialTheme.typography.titleSmall)
+                        Text(
+                            stringResource(step.detail),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
 @Composable
 private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Unit) {
+    val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
     val uriHandler = LocalUriHandler.current
+    val managerInstalled = remember(installState) { isKernelSuManagerInstalled(context) }
     Card(
         onClick = {
             when {
                 installState.busy -> Unit
-                installState.phase == InstallPhase.Installed -> uriHandler.openUri(KERNEL_SU_MANAGER_URL)
+                installState.phase == InstallPhase.Installed -> {
+                    if (managerInstalled) {
+                        openKernelSuManager(context)
+                    } else {
+                        uriHandler.openUri(KERNEL_SU_MANAGER_URL)
+                    }
+                }
                 else -> onInstall()
             }
         },
@@ -462,6 +556,7 @@ private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Uni
         interactionSource = interactionSource,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
         ),
     ) {
         Row(
@@ -470,7 +565,10 @@ private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Uni
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             when {
-                installState.busy -> LoadingIndicator(modifier = Modifier.size(44.dp))
+                installState.busy -> LoadingIndicator(
+                    modifier = Modifier.size(44.dp),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
                 installState.phase == InstallPhase.Installed -> Icon(
                     Icons.Rounded.CheckCircle, contentDescription = null, modifier = Modifier.size(44.dp),
                 )
@@ -482,17 +580,40 @@ private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Uni
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
+                if (installState.phase == InstallPhase.Installed) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_kernelsu),
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                        Text(
+                            text = stringResource(R.string.status_ksu_active),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+                } else {
+                    Text(
+                        text = when (installState.phase) {
+                            InstallPhase.Ready -> stringResource(R.string.status_not_installed)
+                            else -> installState.message
+                        },
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
                 Text(
                     text = when (installState.phase) {
-                        InstallPhase.Ready -> stringResource(R.string.status_not_installed)
-                        InstallPhase.Installed -> stringResource(R.string.status_ksu_active)
-                        else -> installState.message
-                    },
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = when (installState.phase) {
-                        InstallPhase.Installed -> stringResource(R.string.install_tap_manager)
+                        InstallPhase.Installed -> stringResource(
+                            if (managerInstalled) {
+                                R.string.install_tap_open_manager
+                            } else {
+                                R.string.install_tap_manager
+                            },
+                        )
                         InstallPhase.Failed -> stringResource(R.string.install_tap_retry)
                         else -> stringResource(R.string.install_tap_start)
                     },
@@ -533,47 +654,6 @@ private fun InfoRow(icon: ImageVector, label: String, value: String) {
         Column {
             Text(label, style = MaterialTheme.typography.titleSmall)
             Text(value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-    }
-}
-
-@Composable
-private fun GitHubCard() {
-    val interactionSource = remember { MutableInteractionSource() }
-    val uriHandler = LocalUriHandler.current
-    Card(
-        onClick = { uriHandler.openUri(ROOT_MY_GALAXY_URL) },
-        modifier = Modifier.fillMaxWidth(),
-        shape = expressiveClickableCardShape(interactionSource),
-        interactionSource = interactionSource,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-        ),
-    ) {
-        Row(
-            modifier = Modifier.padding(18.dp),
-            horizontalArrangement = Arrangement.spacedBy(13.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_github),
-                contentDescription = null,
-            )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    stringResource(R.string.github_card_title),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-                Text(
-                    stringResource(R.string.github_card_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Icon(
-                Icons.Rounded.Link,
-                contentDescription = stringResource(R.string.open_github),
-            )
         }
     }
 }
@@ -711,6 +791,12 @@ private fun HistoryDetail(
     entry: InstallHistoryEntry,
     onBack: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val exportLogLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        result.data?.data?.let { uri -> saveRunLog(context, uri, entry) }
+    }
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(padding),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
@@ -725,11 +811,25 @@ private fun HistoryDetail(
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.action_back))
                 }
-                Text(stringResource(R.string.history_detail_title), style = MaterialTheme.typography.headlineLarge)
+                Text(
+                    stringResource(R.string.history_detail_title),
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(onClick = {
+                    exportLogLauncher.launch(
+                        Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TITLE, runLogFileName(entry))
+                        },
+                    )
+                }) {
+                    Icon(Icons.Rounded.Save, contentDescription = stringResource(R.string.export_log))
+                }
             }
         }
         item { HistoryResultCard(entry) }
-        item { SectionLabel(stringResource(R.string.history_log)) }
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -787,6 +887,24 @@ private fun HistoryResultCard(entry: InstallHistoryEntry) {
                         color = contentColor.copy(alpha = 0.78f),
                     )
                 }
+                entry.profileId?.let { profileId ->
+                    Text(
+                        stringResource(R.string.history_payload, profileId),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = contentColor.copy(alpha = 0.78f),
+                    )
+                }
+                Text(
+                    stringResource(
+                        if (entry.usedShizuku) {
+                            R.string.history_shizuku_used
+                        } else {
+                            R.string.history_shizuku_not_used
+                        },
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = contentColor.copy(alpha = 0.78f),
+                )
             }
         }
     }
@@ -816,6 +934,30 @@ private fun formatHistoryTime(timestamp: Long): String {
     }
 }
 
+private fun runLogFileName(entry: InstallHistoryEntry): String =
+    "RootMyGalaxy-" +
+        SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date(entry.startedAtMillis)) +
+        "-${entry.result.name.lowercase(Locale.US)}.log"
+
+private fun saveRunLog(context: Context, uri: Uri, entry: InstallHistoryEntry) {
+    val content = entry.log.ifBlank { context.getString(R.string.history_log_empty) }
+    val saved = runCatching {
+        context.contentResolver.openOutputStream(uri)?.use { output ->
+            output.write(content.toByteArray(Charsets.UTF_8))
+        } ?: error("open failed")
+        true
+    }.getOrDefault(false)
+    Toast.makeText(
+        context,
+        if (saved) {
+            context.getString(R.string.export_log_saved)
+        } else {
+            context.getString(R.string.export_log_failed)
+        },
+        Toast.LENGTH_LONG,
+    ).show()
+}
+
 @Composable
 private fun SettingsPage(
     padding: PaddingValues,
@@ -832,6 +974,7 @@ private fun SettingsPage(
     val scope = rememberCoroutineScope()
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
+    var showAboutDialog by remember { mutableStateOf(false) }
     var showShizukuMissingDialog by remember { mutableStateOf(false) }
     var languageMenuTop by remember { mutableStateOf(32.dp) }
     var colorMenuTop by remember { mutableStateOf(32.dp) }
@@ -893,6 +1036,10 @@ private fun SettingsPage(
         )
     }
 
+    if (showAboutDialog) {
+        AboutDialog(onDismiss = { showAboutDialog = false })
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(padding),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
@@ -933,21 +1080,8 @@ private fun SettingsPage(
                     title = stringResource(R.string.language),
                     description = stringResource(R.string.language_description),
                     value = languageLabel(currentLanguageTag),
-                    position = SettingsCardPosition.Bottom,
+                    position = SettingsCardPosition.Middle,
                     onClick = { showLanguageDialog = true },
-                )
-            }
-        }
-        item { SectionLabel(stringResource(R.string.advanced)) }
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                SettingsSwitchCard(
-                    icon = Icons.Rounded.Memory,
-                    title = stringResource(R.string.advanced_mode),
-                    description = stringResource(R.string.advanced_mode_description),
-                    checked = advancedMode,
-                    position = SettingsCardPosition.Top,
-                    onCheckedChange = onAdvancedModeChanged,
                 )
                 SettingsSwitchCard(
                     icon = Icons.Rounded.VerifiedUser,
@@ -974,6 +1108,26 @@ private fun SettingsPage(
                     },
                 )
             }
+        }
+        item { SectionLabel(stringResource(R.string.advanced)) }
+        item {
+            SettingsSwitchCard(
+                icon = Icons.Rounded.Memory,
+                title = stringResource(R.string.advanced_mode),
+                description = stringResource(R.string.advanced_mode_description),
+                checked = advancedMode,
+                onCheckedChange = onAdvancedModeChanged,
+            )
+        }
+        item { SectionLabel(stringResource(R.string.about)) }
+        item {
+            SettingsCard(
+                icon = Icons.Rounded.Info,
+                title = stringResource(R.string.about),
+                description = stringResource(R.string.about_description),
+                value = "",
+                onClick = { showAboutDialog = true },
+            )
         }
     }
 }
@@ -1043,7 +1197,7 @@ private fun TargetSelectionSheet(
                     modifier = Modifier.fillMaxWidth().height(220.dp),
                     contentAlignment = Alignment.Center,
                 ) {
-                    LoadingIndicator()
+                    LoadingIndicator(color = MaterialTheme.colorScheme.onSurface)
                 }
                 catalog.error != null -> Column(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
@@ -1277,6 +1431,84 @@ private fun ThemeModeSelector(
 }
 
 @Composable
+private fun AboutDialog(onDismiss: () -> Unit) {
+    val uriHandler = LocalUriHandler.current
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            DialogDimAmount(0.24f)
+            Text(stringResource(R.string.about_title))
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                Text(stringResource(R.string.about_body))
+                Text(
+                    stringResource(R.string.version_format, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                HorizontalDivider()
+                Surface(
+                    onClick = { uriHandler.openUri(KERNEL_SU_HOME_URL) },
+                    color = Color.Transparent,
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Row(
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Icon(painterResource(R.drawable.ic_kernelsu), contentDescription = null)
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.kernelsu_card_title),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(
+                                stringResource(R.string.kernelsu_card_description),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Icon(Icons.Rounded.Link, contentDescription = stringResource(R.string.open_github))
+                    }
+                }
+                Surface(
+                    onClick = { uriHandler.openUri(ROOT_MY_GALAXY_URL) },
+                    color = Color.Transparent,
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Row(
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        Icon(painterResource(R.drawable.ic_github), contentDescription = null)
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.github_card_title),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(
+                                stringResource(R.string.github_card_description),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Icon(Icons.Rounded.Link, contentDescription = stringResource(R.string.open_github))
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_close))
+            }
+        },
+    )
+}
+
+@Composable
 private fun expressiveClickableCardShape(
     interactionSource: MutableInteractionSource,
     position: SettingsCardPosition = SettingsCardPosition.Single,
@@ -1472,6 +1704,7 @@ private fun languageLabel(tag: String): String = when {
     tag.startsWith("zh-TW") -> stringResource(R.string.language_chinese_traditional)
     tag.startsWith("zh") -> stringResource(R.string.language_chinese)
     tag.startsWith("tr") -> stringResource(R.string.language_turkish)
+    tag.startsWith("pt-BR") -> stringResource(R.string.language_brazillian_portuguese)
     tag.startsWith("ru") -> stringResource(R.string.language_russian)
     tag.startsWith("vi") -> stringResource(R.string.language_vietnamese)
     else -> stringResource(R.string.language_system)

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Root my Galaxy</string>
+    <string name="nav_overview">Início</string>
+    <string name="nav_history">Histórico</string>
+    <string name="nav_settings">Configurações</string>
+    <string name="install_confirm_title">Instalar o KernelSU?</string>
+    <string name="install_confirm_body">O app vai verificar o perfil suportado, e depois baixar e rodar o exploit e o payload do KernelSU do GitHub.</string>
+    <string name="action_confirm">Confirmar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_close">Fechar</string>
+    <string name="action_retry">Tentar novamente</string>
+    <string name="action_done">Pronto</string>
+    <string name="action_back">Voltar</string>
+    <string name="install_tap_manager">Toque para instalar o Gerenciador do KernelSU</string>
+    <string name="install_tap_retry">Toque para tentar novamente</string>
+    <string name="install_tap_start">Toque para instalar o KernelSU</string>
+    <string name="device">Dispositivo</string>
+    <string name="firmware">Firmware</string>
+    <string name="system">Sistema</string>
+    <string name="system_abi">ABI do Sistema</string>
+    <string name="settings">Configurações</string>
+    <string name="version_format">%1$s (%2$d)</string>
+    <string name="language">Linguagem</string>
+    <string name="language_description">Escolha a linguagem do aplicativo</string>
+    <string name="appearance">Aparência</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="material_color">Cor dos materiais</string>
+    <string name="material_color_description">Escolha a cor de destaque da interface</string>
+    <string name="language_system">Escolha do sistema</string>
+    <string name="language_korean" translatable="false">한국어</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_japanese" translatable="false">日本語</string>
+    <string name="language_chinese" translatable="false">简体中文</string>
+    <string name="language_chinese_traditional" translatable="false">繁體中文</string>
+    <string name="language_turkish" translatable="false">Türkçe</string>
+    <string name="language_brazillian_portuguese" translatable="false">Português Brasileiro</string>
+    <string name="color_dynamic">Dinâmico do sistema</string>
+    <string name="color_blue">Azul</string>
+    <string name="color_violet">Violeta</string>
+    <string name="color_green">Verde</string>
+    <string name="color_orange">Laranja</string>
+    <string name="history_title">Rodar histórico</string>
+    <string name="history_empty_title">Nunca rodou por enquanto</string>
+    <string name="history_empty_description">Resultados da instalação e logs vão aparecer aqui.</string>
+    <string name="history_running">Rodando</string>
+    <string name="history_succeeded">Sucedido</string>
+    <string name="history_failed">Falhou</string>
+    <string name="history_detail_title">Detalhes da execução</string>
+    <string name="history_started">Começou: %1$s</string>
+    <string name="history_completed">Completou: %1$s</string>
+    <string name="history_log">Logs de execução</string>
+    <string name="history_log_empty">Nenhum output de log por enquanto.</string>
+
+    <string name="install_title">Instalar</string>
+    <string name="install_keep_open">Fique nessa tela até a instalação acabar</string>
+    <string name="install_live_progress">Log</string>
+    <string name="install_preparing">Preparando…</string>
+    <string name="step_support_title">Checar suporte</string>
+    <string name="step_support_detail">Verifificar dispositivo e perfil de firmware</string>
+    <string name="step_download_title">Baixar</string>
+    <string name="step_download_detail">Carregar o perfil de suporte</string>
+    <string name="step_exploit_title">Exploit de kernel</string>
+    <string name="step_exploit_detail">Adquirir root bootstrap</string>
+    <string name="step_ksu_title">Carregar o KernelSU</string>
+    <string name="step_ksu_detail">Módulo de carregamento tardio e canal de controle de verificação</string>
+    <string name="phase_checking">Verificando o dispositivo e firmware suportados</string>
+    <string name="phase_ready">Pronto para instalar</string>
+    <string name="phase_downloading">Baixando payloads fixados por commit do GitHub</string>
+    <string name="phase_exploiting">Isso pode levar 10 minutos ou mais. Seu dispositivo pode esquentar ou parar de responder.</string>
+    <string name="phase_loading_ksu">Carregando o KernelSU com o root bootstrap adquirido</string>
+    <string name="phase_installed">Módulo do KernelSU e canal de controle verificados</string>
+    <string name="phase_failed">Revise o ponto de falha no log abaixo</string>
+
+    <string name="status_ksu_active">KernelSU ativo</string>
+    <string name="status_not_installed">Não instalado</string>
+    <string name="status_support_failed">Verificação de suporte falhou</string>
+    <string name="status_checking_github">Verificando manifesto de suporte no GitHub</string>
+    <string name="status_downloading_payload">Baixando payloads</string>
+    <string name="status_exploit_running">Rodando exploit de kernel</string>
+    <string name="status_ksu_loading">Carregando o KernelSU tardiamente</string>
+    <string name="status_install_failed">Instalação falhou</string>
+    <string name="log_profile">[+] Perfil de suporte: %1$s</string>
+    <string name="log_download_verified">[+] Download do payload completo</string>
+    <string name="log_install_complete">[+] Instalação completa</string>
+    <string name="log_bootstrap_root">[+] Root bootstrap adquirido</string>
+    <string name="log_ksu_staged">[+] Preparação do KernelSU completa</string>
+    <string name="log_ksu_control_verified">[+] Canal de controle do KernelSU verificado</string>
+    <string name="error_helper_unavailable">O helper de bootstrap não é executável</string>
+    <string name="error_exploit_stalled">O log do exploit não avançou por 90 segundos</string>
+    <string name="error_exploit_timeout">O exploit excedeu o limite de 15 minutos</string>
+    <string name="error_payload_exit">Execução do payload falhou: %1$d%2$s</string>
+    <string name="error_success_marker">Marcadores de sucesso do exploit não foram encontrados</string>
+    <string name="error_ksu_stage">Preparação do KernelSU falhou: %1$s</string>
+    <string name="error_ksu_verify">Carregamento tardio ou verificação de controle do KernelSU falhou (rc=%1$d): %2$s</string>
+    <string name="error_boot_id">Não foi possível ler o boot_id atual</string>
+    <string name="error_receipt">Não foi possível salvar o recibo de verificação da instalação</string>
+
+    <string name="artifact_exploit">exploit</string>
+    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="repo_no_profile">Nenhum payload compatível suporta esse modelo e versão de kernel</string>
+    <string name="repo_downloading">Baixando %1$s</string>
+    <string name="repo_size_mismatch">O tamanho de %1$s não corresponde ao manifesto de suporte</string>
+    <string name="repo_size_exceeded">%1$s excedeu o tamanho declarado</string>
+    <string name="repo_incomplete">O download de %1$s está incompleto</string>
+    <string name="repo_finalize_failed">Não foi possível finalizar o arquivo %1$s</string>
+    <string name="repo_verified">%1$s verificado</string>
+    <string name="repo_commit_invalid">O GitHub retornou um SHA de commit inválido</string>
+    <string name="repo_url_invalid">O repositório de artefatos não é permitido</string>
+    <string name="repo_response_too_large">A resposta excedeu seu limite de tamanho</string>
+    <string name="open_github">Abrir GitHub</string>
+    <string name="github_card_title">Explorar o Root My Galaxy</string>
+    <string name="github_card_description">Ver o código-fonte e instruções de uso.</string>
+    <string name="action_continue">Continuar mesmo assim</string>
+    <string name="action_next">Próximo</string>
+    <string name="advanced">Avançado</string>
+    <string name="advanced_mode">Modo avançado</string>
+    <string name="advanced_mode_description">Escolha manualmente um payload compatível com o dispositivo durante a instalação</string>
+    <string name="repo_profile_missing">O perfil de suporte %1$s não está mais disponível</string>
+    <string name="select_device_title">Escolha um payload</string>
+    <string name="select_device_description">Selecione um payload por modelo de dispositivo e versão de kernel.</string>
+    <string name="show_my_device_only">Mostrar apenas meu dispositivo</string>
+    <string name="no_matching_devices">Nenhum payload corresponde a esse modelo e versão de kernel.</string>
+    <string name="device_mismatch_title">Dispositivo incompatível</string>
+    <string name="device_mismatch_body">Esse celular é o %1$s, mas o payload que você selecionou suporta o %2$s. Rodar ele pode crashar ou danificar o dispositivo.</string>
+    <string name="kernel_version_mismatch_title">Versão de kernel incompatível</string>
+    <string name="kernel_version_mismatch_body">Esse celular usa o kernel %1$s, mas o payload que você selecionou suporta o %2$s. Os offsets podem ser incompatíveis.</string>
+</resources>

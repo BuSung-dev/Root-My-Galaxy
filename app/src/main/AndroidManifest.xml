@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <queries>
+        <package android:name="me.weishu.kernelsu" />
         <package android:name="moe.shizuku.manager" />
     </queries>
 

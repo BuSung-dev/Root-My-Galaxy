@@ -27,8 +27,8 @@
     <string name="theme_system">Sistem</string>
     <string name="theme_light">Açık</string>
     <string name="theme_dark">Koyu</string>
-    <string name="material_color">Material renk</string>
-    <string name="material_color_description">Arayüz vurgu rengini seçin</string>
+    <string name="material_color">Tema</string>
+    <string name="material_color_description">Görünümü değiştir</string>
     <string name="language_system">Sistemi takip et</string>
     <string name="color_dynamic">Sistem dinamik renk</string>
     <string name="color_blue">Mavi</string>
@@ -44,7 +44,6 @@
     <string name="history_detail_title">İşlem Detayları</string>
     <string name="history_started">Başlangıç: %1$s</string>
     <string name="history_completed">Tamamlandı: %1$s</string>
-    <string name="history_log">İşlem Günlüğü</string>
     <string name="history_log_empty">Henüz bir günlük kayıtı yok.</string>
 
     <string name="install_title">Yükleme</string>
@@ -130,4 +129,17 @@
     <string name="device_mismatch_body">Bu telefon %1$s, ancak seçilen payload %2$s için tasarlanmıştır. Çalıştırmak cihazın çökmesine veya hasar görmesine neden olabilir.</string>
     <string name="kernel_version_mismatch_title">Kernel sürümü uyumsuzluğu</string>
     <string name="kernel_version_mismatch_body">Bu telefon %1$s kernel kullanıyor, ancak seçilen payload %2$s destekliyor. Ofsetler uyumsuz olabilir.</string>
+    <string name="about">Hakkında</string>
+    <string name="about_title">Root My Galaxy Hakkında</string>
+    <string name="about_description">Root My Galaxy hakkında</string>
+    <string name="about_body">Desteklenen Samsung Galaxy cihazlarını çekirdek açığı kullanarak tek tıkla root eden yükleyicidir.</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="export_log">Günlüğü dışa aktar</string>
+    <string name="export_log_saved">Günlük kaydedildi</string>
+    <string name="export_log_failed">Günlük kaydedilemedi</string>
+    <string name="install_tap_open_manager">KernelSU Manager\'ı açmak için dokunun</string>
+    <string name="how_it_works">Nasıl çalışır</string>
+    <string name="kernelsu_card_description">Android için çekirdek tabanlı root çözümü</string>
+    <string name="history_shizuku_used">Shizuku kullanıldı</string>
+    <string name="history_shizuku_not_used">Shizuku kullanılmadı</string>
 </resources>

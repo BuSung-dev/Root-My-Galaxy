@@ -28,8 +28,8 @@
     <string name="theme_system">Системная</string>
     <string name="theme_light">Светлая</string>
     <string name="theme_dark">Тёмная</string>
-    <string name="material_color">Тема Material Color</string>
-    <string name="material_color_description">Выберите палитру цветов интерфейса</string>
+    <string name="material_color">Тема</string>
+    <string name="material_color_description">Изменить вид</string>
     <string name="language_system">Как в системе</string>
     <string name="language_korean" translatable="false">한국어</string>
     <string name="language_english" translatable="false">English</string>
@@ -52,7 +52,6 @@
     <string name="history_detail_title">Сведения о запуске</string>
     <string name="history_started">Начало: %1$s</string>
     <string name="history_completed">Завершено: %1$s</string>
-    <string name="history_log">Журнал выполнения</string>
     <string name="history_log_empty">Записей в журнале пока нет.</string>
 
 
@@ -139,4 +138,17 @@
     <string name="device_mismatch_body">Модель этого телефона — %1$s, однако выбранный payload предназначен для %2$s. Его запуск может привести к сбою или повреждению устройства.</string>
     <string name="kernel_version_mismatch_title">Несовместимая версия ядра</string>
     <string name="kernel_version_mismatch_body">На этом телефоне используется ядро %1$s, однако выбранный payload поддерживает %2$s. offsets могут быть несовместимы.</string>
+    <string name="about">О приложении</string>
+    <string name="about_title">О Root My Galaxy</string>
+    <string name="about_description">О Root My Galaxy</string>
+    <string name="about_body">Установщик в один клик, использующий эксплойт ядра для рутирования поддерживаемых устройств Samsung Galaxy.</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="export_log">Экспорт журнала</string>
+    <string name="export_log_saved">Журнал сохранён</string>
+    <string name="export_log_failed">Не удалось сохранить журнал</string>
+    <string name="install_tap_open_manager">Нажмите, чтобы открыть KernelSU Manager</string>
+    <string name="how_it_works">Как это работает</string>
+    <string name="kernelsu_card_description">Ядровое root-решение для Android</string>
+    <string name="history_shizuku_used">Shizuku использовался</string>
+    <string name="history_shizuku_not_used">Shizuku не использовался</string>
 </resources>
