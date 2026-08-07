@@ -32,8 +32,8 @@
     <string name="theme_system">系統</string>
     <string name="theme_light">淺色</string>
     <string name="theme_dark">深色</string>
-    <string name="material_color">Material 顏色</string>
-    <string name="material_color_description">選擇介面強調色</string>
+    <string name="material_color">主題</string>
+    <string name="material_color_description">更改外觀</string>
 
     <string name="language_system">跟隨系統</string>
 
@@ -52,7 +52,6 @@
     <string name="history_detail_title">執行詳情</string>
     <string name="history_started">開始：%1$s</string>
     <string name="history_completed">完成：%1$s</string>
-    <string name="history_log">執行日誌</string>
     <string name="history_log_empty">尚無日誌輸出。</string>
 
     <string name="install_title">安裝</string>
@@ -150,4 +149,17 @@
 
     <string name="kernel_version_mismatch_title">核心版本不相符</string>
     <string name="kernel_version_mismatch_body">目前的核心為 %1$s，但所選的 payload 支援 %2$s。偏移量可能不相容。</string>
+    <string name="about">關於</string>
+    <string name="about_title">關於 Root My Galaxy</string>
+    <string name="about_description">關於 Root My Galaxy</string>
+    <string name="about_body">一鍵安裝器，利用核心漏洞對受支援的三星 Galaxy 裝置進行 root。</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="export_log">匯出日誌</string>
+    <string name="export_log_saved">日誌已儲存</string>
+    <string name="export_log_failed">無法儲存日誌</string>
+    <string name="install_tap_open_manager">點擊開啟 KernelSU Manager</string>
+    <string name="how_it_works">運作原理</string>
+    <string name="kernelsu_card_description">以核心為基礎的 Android Root 解決方案</string>
+    <string name="history_shizuku_used">已使用 Shizuku</string>
+    <string name="history_shizuku_not_used">未使用 Shizuku</string>
 </resources>

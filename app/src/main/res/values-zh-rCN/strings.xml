@@ -5,10 +5,10 @@
     <string name="action_confirm">确认</string><string name="action_cancel">取消</string><string name="action_close">关闭</string><string name="action_retry">重试</string><string name="action_done">完成</string><string name="action_back">返回</string>
     <string name="install_tap_manager">点击安装 KernelSU Manager</string><string name="install_tap_retry">点击重试</string><string name="install_tap_start">点击安装 KernelSU</string>
     <string name="device">设备</string><string name="firmware">固件</string><string name="system">系统</string><string name="system_abi">系统 ABI</string>
-    <string name="settings">设置</string><string name="version_format">%1$s (%2$d)</string><string name="language">语言</string><string name="language_description">选择应用语言</string><string name="appearance">外观</string><string name="theme_system">系统</string><string name="theme_light">浅色</string><string name="theme_dark">深色</string><string name="material_color">Material 颜色</string><string name="material_color_description">选择界面强调色</string>
+    <string name="settings">设置</string><string name="version_format">%1$s (%2$d)</string><string name="language">语言</string><string name="language_description">选择应用语言</string><string name="appearance">外观</string><string name="theme_system">系统</string><string name="theme_light">浅色</string><string name="theme_dark">深色</string><string name="material_color">主题</string><string name="material_color_description">更改外观</string>
     <string name="language_system">跟随系统</string>
     <string name="color_dynamic">系统动态颜色</string><string name="color_blue">蓝色</string><string name="color_violet">紫色</string><string name="color_green">绿色</string><string name="color_orange">橙色</string>
-    <string name="history_title">运行记录</string><string name="history_empty_title">暂无运行记录</string><string name="history_empty_description">执行安装后，结果和日志将显示在这里。</string><string name="history_running">运行中</string><string name="history_succeeded">成功</string><string name="history_failed">失败</string><string name="history_detail_title">运行详情</string><string name="history_started">开始: %1$s</string><string name="history_completed">完成: %1$s</string><string name="history_log">运行日志</string><string name="history_log_empty">暂无日志输出。</string>
+    <string name="history_title">运行记录</string><string name="history_empty_title">暂无运行记录</string><string name="history_empty_description">执行安装后，结果和日志将显示在这里。</string><string name="history_running">运行中</string><string name="history_succeeded">成功</string><string name="history_failed">失败</string><string name="history_detail_title">运行详情</string><string name="history_started">开始: %1$s</string><string name="history_completed">完成: %1$s</string><string name="history_log_empty">暂无日志输出。</string>
     <string name="install_title">安装</string><string name="install_keep_open">安装完成前请保持此界面开启</string><string name="install_live_progress">日志</string><string name="install_preparing">准备中…</string>
     <string name="step_support_title">支持检查</string><string name="step_support_detail">验证设备与固件配置</string><string name="step_download_title">下载</string><string name="step_download_detail">加载支持清单</string><string name="step_exploit_title">内核 exploit</string><string name="step_exploit_detail">获取 bootstrap root</string><string name="step_ksu_title">加载 KernelSU</string><string name="step_ksu_detail">验证模块与控制通道</string>
     <string name="phase_checking">正在检查支持的设备与固件</string><string name="phase_ready">可以开始安装</string><string name="phase_downloading">正在从 GitHub 下载固定提交的 payload</string><string name="phase_exploiting">可能需要 10 分钟或更长时间，设备可能会发热或停止响应。</string><string name="phase_loading_ksu">正在使用 bootstrap root 加载 KernelSU</string><string name="phase_installed">KernelSU 模块与控制通道已验证</string><string name="phase_failed">请在下方日志中查看失败位置</string>
@@ -26,4 +26,17 @@
     <string name="select_device_title">选择支持的 payload</string><string name="select_device_description">按设备型号和内核版本选择 payload。</string><string name="show_my_device_only">仅显示我的设备</string><string name="no_matching_devices">没有与此型号和内核版本匹配的 payload。</string>
     <string name="device_mismatch_title">设备不匹配</string><string name="device_mismatch_body">当前设备为 %1$s，但所选 payload 支持 %2$s。运行可能导致设备停止响应或损坏。</string>
     <string name="kernel_version_mismatch_title">内核版本不匹配</string><string name="kernel_version_mismatch_body">当前内核为 %1$s，但所选 payload 支持 %2$s。偏移量可能不兼容。</string>
+    <string name="about">关于</string>
+    <string name="about_title">关于 Root My Galaxy</string>
+    <string name="about_description">关于 Root My Galaxy</string>
+    <string name="about_body">一键安装器，利用内核漏洞对受支持的三星 Galaxy 设备进行 root。</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="export_log">导出日志</string>
+    <string name="export_log_saved">日志已保存</string>
+    <string name="export_log_failed">无法保存日志</string>
+    <string name="install_tap_open_manager">点击打开 KernelSU Manager</string>
+    <string name="how_it_works">工作原理</string>
+    <string name="kernelsu_card_description">基于内核的 Android Root 方案</string>
+    <string name="history_shizuku_used">已使用 Shizuku</string>
+    <string name="history_shizuku_not_used">未使用 Shizuku</string>
 </resources>

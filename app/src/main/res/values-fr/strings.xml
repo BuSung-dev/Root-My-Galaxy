@@ -27,8 +27,8 @@
     <string name="theme_system">Système</string>
     <string name="theme_light">Clair</string>
     <string name="theme_dark">Sombre</string>
-    <string name="material_color">Couleur Material</string>
-    <string name="material_color_description">Choisir la palette d\'accentuation de l\'interface</string>
+    <string name="material_color">Thème</string>
+    <string name="material_color_description">Modifier l\'apparence</string>
     <string name="language_system">Suivre le système</string>
     <string name="language_korean" translatable="false">한국어</string>
     <string name="language_english" translatable="false">English</string>
@@ -50,7 +50,6 @@
     <string name="history_detail_title">Détails de l\'exécution</string>
     <string name="history_started">Début : %1$s</string>
     <string name="history_completed">Fin : %1$s</string>
-    <string name="history_log">Journal d\'exécution</string>
     <string name="history_log_empty">Aucune sortie de journal pour l\'instant.</string>
 
     <string name="install_title">Installation</string>
@@ -136,4 +135,17 @@
     <string name="device_mismatch_body">Ce téléphone est un %1$s, mais la charge utile sélectionnée prend en charge %2$s. L\'exécuter pourrait planter ou endommager l\'appareil.</string>
     <string name="kernel_version_mismatch_title">Incompatibilité de version de noyau</string>
     <string name="kernel_version_mismatch_body">Ce téléphone utilise le noyau %1$s, mais la charge utile sélectionnée prend en charge %2$s. Les décalages peuvent être incompatibles.</string>
+    <string name="about">À propos</string>
+    <string name="about_title">À propos de Root My Galaxy</string>
+    <string name="about_description">À propos de Root My Galaxy</string>
+    <string name="about_body">Installeur en un clic qui exploite une faille du noyau pour rooter les appareils Samsung Galaxy pris en charge.</string>
+    <string name="history_payload">Payload : %1$s</string>
+    <string name="export_log">Exporter le journal</string>
+    <string name="export_log_saved">Journal enregistré</string>
+    <string name="export_log_failed">Impossible d\'enregistrer le journal</string>
+    <string name="install_tap_open_manager">Toucher pour ouvrir KernelSU Manager</string>
+    <string name="how_it_works">Comment ça marche</string>
+    <string name="kernelsu_card_description">Une solution root basée sur le noyau pour Android</string>
+    <string name="history_shizuku_used">Shizuku utilisé</string>
+    <string name="history_shizuku_not_used">Shizuku non utilisé</string>
 </resources>

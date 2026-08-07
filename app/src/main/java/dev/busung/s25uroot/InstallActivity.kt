@@ -36,6 +36,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -94,13 +95,13 @@ class InstallActivity : ComponentActivity() {
     }
 }
 
-private data class InstallerStep(
+internal data class InstallerStep(
     @StringRes val title: Int,
     @StringRes val detail: Int,
     val icon: ImageVector,
 )
 
-private val installerSteps = listOf(
+internal val installerSteps = listOf(
     InstallerStep(R.string.step_support_title, R.string.step_support_detail, Icons.Rounded.Security),
     InstallerStep(R.string.step_download_title, R.string.step_download_detail, Icons.Rounded.CloudDownload),
     InstallerStep(R.string.step_exploit_title, R.string.step_exploit_detail, Icons.Rounded.Memory),
@@ -199,6 +200,11 @@ private fun InstallerStatusCard(installState: InstallUiState) {
                 InstallPhase.Failed -> MaterialTheme.colorScheme.errorContainer
                 else -> MaterialTheme.colorScheme.primaryContainer
             },
+            contentColor = if (installState.phase == InstallPhase.Failed) {
+                MaterialTheme.colorScheme.onErrorContainer
+            } else {
+                MaterialTheme.colorScheme.onPrimaryContainer
+            },
         ),
     ) {
         Column(
@@ -211,7 +217,10 @@ private fun InstallerStatusCard(installState: InstallUiState) {
             ) {
                 AnimatedContent(targetState = installState.phase, label = "install-status-icon") { phase ->
                     when {
-                        installState.busy -> LoadingIndicator(modifier = Modifier.size(44.dp))
+                        installState.busy -> LoadingIndicator(
+                            modifier = Modifier.size(44.dp),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
                         phase == InstallPhase.Installed -> Icon(
                             Icons.Rounded.Check,
                             contentDescription = null,
@@ -231,13 +240,15 @@ private fun InstallerStatusCard(installState: InstallUiState) {
                     )
                     Text(
                         text = installPhaseDetail(installState.phase),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = LocalContentColor.current.copy(alpha = 0.78f),
                     )
                 }
             }
             LinearProgressIndicator(
                 progress = { installProgress(installState.phase) },
                 modifier = Modifier.fillMaxWidth(),
+                color = LocalContentColor.current,
+                trackColor = LocalContentColor.current.copy(alpha = 0.2f),
                 drawStopIndicator = {},
             )
         }
@@ -274,7 +285,7 @@ private fun InstallerSteps(phase: InstallPhase) {
                         contentColor = if (stepState >= 1) {
                             MaterialTheme.colorScheme.onPrimary
                         } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            MaterialTheme.colorScheme.onSurface
                         },
                     ) {
                         Box(contentAlignment = Alignment.Center) {
@@ -293,11 +304,14 @@ private fun InstallerSteps(phase: InstallPhase) {
                         Text(
                             text = stringResource(step.detail),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.78f),
                         )
                     }
                     if (stepState == 1 && phase !in setOf(InstallPhase.Failed, InstallPhase.Ready)) {
-                        LoadingIndicator(modifier = Modifier.size(24.dp))
+                        LoadingIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
                     }
                 }
             }

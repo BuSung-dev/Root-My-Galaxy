@@ -13,9 +13,13 @@
     <string name="action_done">Done</string>
     <string name="action_back">Back</string>
     <string name="install_tap_manager">Tap to install KernelSU Manager</string>
+    <string name="install_tap_open_manager">Tap to open KernelSU Manager</string>
     <string name="install_tap_retry">Tap to try again</string>
     <string name="install_tap_start">Tap to install KernelSU</string>
     <string name="device">Device</string>
+    <string name="how_it_works">How it works</string>
+    <string name="kernelsu_card_title">KernelSU</string>
+    <string name="kernelsu_card_description">A kernel-based root solution for Android</string>
     <string name="firmware">Firmware</string>
     <string name="system">System</string>
     <string name="system_abi">System ABI</string>
@@ -27,8 +31,8 @@
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
-    <string name="material_color">Material color</string>
-    <string name="material_color_description">Choose the interface accent palette</string>
+    <string name="material_color">Theme</string>
+    <string name="material_color_description">Change the look</string>
     <string name="language_system">Follow system</string>
     <string name="language_korean" translatable="false">한국어</string>
     <string name="language_english" translatable="false">English</string>
@@ -36,8 +40,10 @@
     <string name="language_chinese" translatable="false">简体中文</string>
     <string name="language_chinese_traditional" translatable="false">繁體中文</string>
     <string name="language_turkish" translatable="false">Türkçe</string>
+    <string name="language_brazillian_portuguese" translatable="false">Português Brasileiro</string>
     <string name="language_russian" translatable="false">Русский</string>
     <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
+    <string name="language_uzbek" translatable="false">O\'zbek</string>
     <string name="color_dynamic">System dynamic</string>
     <string name="color_blue">Blue</string>
     <string name="color_violet">Violet</string>
@@ -52,8 +58,17 @@
     <string name="history_detail_title">Run details</string>
     <string name="history_started">Started: %1$s</string>
     <string name="history_completed">Completed: %1$s</string>
-    <string name="history_log">Execution log</string>
     <string name="history_log_empty">No log output yet.</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="history_shizuku_used">Shizuku: used</string>
+    <string name="history_shizuku_not_used">Shizuku: not used</string>
+    <string name="export_log">Export log</string>
+    <string name="export_log_saved">Log saved</string>
+    <string name="export_log_failed">Unable to save the log</string>
+    <string name="about">About</string>
+    <string name="about_title">About Root My Galaxy</string>
+    <string name="about_description">About Root My Galaxy</string>
+    <string name="about_body">One-click installer that uses a kernel exploit to root supported Samsung Galaxy devices.</string>
 
     <string name="install_title">Install</string>
     <string name="install_keep_open">Keep this screen open until installation finishes</string>

@@ -6,10 +6,10 @@
     <string name="action_confirm">확인</string><string name="action_cancel">취소</string><string name="action_close">닫기</string><string name="action_retry">다시 시도</string><string name="action_done">완료</string><string name="action_back">뒤로</string>
     <string name="install_tap_manager">클릭해서 KSU 매니저 설치하기</string><string name="install_tap_retry">눌러서 다시 시도</string><string name="install_tap_start">눌러서 KernelSU 설치</string>
     <string name="device">기기</string><string name="firmware">펌웨어</string><string name="system">시스템</string><string name="system_abi">시스템 ABI</string>
-    <string name="settings">설정</string><string name="version_format">%1$s (%2$d)</string><string name="language">언어</string><string name="language_description">앱에서 사용할 언어를 선택합니다</string><string name="appearance">화면</string><string name="theme_system">시스템</string><string name="theme_light">라이트</string><string name="theme_dark">다크</string><string name="material_color">Material 색상</string><string name="material_color_description">인터페이스 강조 색상을 선택합니다</string>
+    <string name="settings">설정</string><string name="version_format">%1$s (%2$d)</string><string name="language">언어</string><string name="language_description">앱에서 사용할 언어를 선택합니다</string><string name="appearance">화면</string><string name="theme_system">시스템</string><string name="theme_light">라이트</string><string name="theme_dark">다크</string><string name="material_color">테마</string><string name="material_color_description">모양 변경</string>
     <string name="language_system">시스템 설정 따름</string>
     <string name="color_dynamic">시스템 동적 색상</string><string name="color_blue">파랑</string><string name="color_violet">보라</string><string name="color_green">초록</string><string name="color_orange">주황</string>
-    <string name="history_title">실행 기록</string><string name="history_empty_title">실행 기록이 없습니다</string><string name="history_empty_description">설치를 실행하면 결과와 로그가 여기에 표시됩니다.</string><string name="history_running">실행 중</string><string name="history_succeeded">성공</string><string name="history_failed">실패</string><string name="history_detail_title">실행 상세</string><string name="history_started">시작: %1$s</string><string name="history_completed">완료: %1$s</string><string name="history_log">실행 로그</string><string name="history_log_empty">아직 기록된 로그가 없습니다.</string>
+    <string name="history_title">실행 기록</string><string name="history_empty_title">실행 기록이 없습니다</string><string name="history_empty_description">설치를 실행하면 결과와 로그가 여기에 표시됩니다.</string><string name="history_running">실행 중</string><string name="history_succeeded">성공</string><string name="history_failed">실패</string><string name="history_detail_title">실행 상세</string><string name="history_started">시작: %1$s</string><string name="history_completed">완료: %1$s</string><string name="history_log_empty">아직 기록된 로그가 없습니다.</string>
     <string name="install_title">설치</string><string name="install_keep_open">설치가 끝날 때까지 이 화면을 유지해 주세요</string><string name="install_live_progress">로그</string><string name="install_preparing">준비 중…</string>
     <string name="step_support_title">지원 확인</string><string name="step_support_detail">기기·펌웨어 프로필 검증</string><string name="step_download_title">다운로드</string><string name="step_download_detail">지원 목록 불러오기</string><string name="step_exploit_title">커널 exploit</string><string name="step_exploit_detail">bootstrap root 획득</string><string name="step_ksu_title">KernelSU 로드</string><string name="step_ksu_detail">모듈 late-load 및 제어 채널 확인</string>
     <string name="phase_checking">지원되는 기기와 펌웨어인지 확인하고 있습니다</string><string name="phase_ready">설치를 시작할 수 있습니다</string><string name="phase_downloading">GitHub에서 커밋 고정된 payload를 받고 있습니다</string><string name="phase_exploiting">10분에서 그 이상이 소요되며, 단말이 뜨거워지거나 멈출 수 있습니다.</string><string name="phase_loading_ksu">획득한 bootstrap root로 KernelSU를 로드합니다</string><string name="phase_installed">KernelSU 모듈과 제어 채널 검증을 마쳤습니다</string><string name="phase_failed">아래 로그에서 실패 지점을 확인할 수 있습니다</string>
@@ -27,4 +27,17 @@
     <string name="select_device_title">지원 payload 선택</string><string name="select_device_description">기기 모델과 커널 버전을 기준으로 payload를 선택합니다.</string><string name="show_my_device_only">내 기기만 보기</string><string name="no_matching_devices">이 모델과 커널 버전에 맞는 payload가 없습니다.</string>
     <string name="device_mismatch_title">기기가 일치하지 않습니다</string><string name="device_mismatch_body">현재 기기는 %1$s이지만 선택한 payload는 %2$s을(를) 지원합니다. 실행하면 기기가 멈추거나 손상될 수 있습니다.</string>
     <string name="kernel_version_mismatch_title">커널 버전이 일치하지 않습니다</string><string name="kernel_version_mismatch_body">현재 커널은 %1$s이지만 선택한 payload는 %2$s을(를) 지원합니다. 오프셋이 호환되지 않을 수 있습니다.</string>
+    <string name="about">정보</string>
+    <string name="about_title">Root My Galaxy 정보</string>
+    <string name="about_description">Root My Galaxy 정보</string>
+    <string name="about_body">한 번의 클릭으로 지원되는 삼성 Galaxy 기기를 커널 익스플로잇을 이용해 루팅하는 설치기입니다.</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="export_log">로그 내보내기</string>
+    <string name="export_log_saved">로그가 저장되었습니다</string>
+    <string name="export_log_failed">로그를 저장하지 못했습니다</string>
+    <string name="install_tap_open_manager">클릭해서 KSU 매니저 열기</string>
+    <string name="how_it_works">작동 방식</string>
+    <string name="kernelsu_card_description">Android용 커널 기반 루트 솔루션</string>
+    <string name="history_shizuku_used">Shizuku 사용됨</string>
+    <string name="history_shizuku_not_used">Shizuku 사용 안 함</string>
 </resources>

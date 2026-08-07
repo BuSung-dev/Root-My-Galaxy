@@ -18,9 +18,11 @@ data class InstallHistoryEntry(
     val completedAtMillis: Long?,
     val result: InstallRunResult,
     val log: String,
+    val profileId: String? = null,
+    val usedShizuku: Boolean = false,
 )
 
-class InstallHistoryStore(context: Context) {
+class InstallHistoryStore(private val context: Context) {
     private val directory = File(context.filesDir, "install-history").apply { mkdirs() }
 
     fun load(): List<InstallHistoryEntry> = directory
@@ -46,6 +48,7 @@ class InstallHistoryStore(context: Context) {
         completedAtMillis = null,
         result = InstallRunResult.Running,
         log = "",
+        usedShizuku = AppPreferences.shizukuMode(context),
     ).also(::save)
 
     fun save(entry: InstallHistoryEntry) {
@@ -69,6 +72,8 @@ class InstallHistoryStore(context: Context) {
         .put("completedAtMillis", entry.completedAtMillis ?: JSONObject.NULL)
         .put("result", entry.result.name)
         .put("log", entry.log)
+        .put("profileId", entry.profileId ?: JSONObject.NULL)
+        .put("usedShizuku", entry.usedShizuku)
 
     private fun decodeOrQuarantine(file: File): InstallHistoryEntry? = try {
         decode(AtomicFile(file).openRead().use { it.readBytes() })
@@ -91,6 +96,12 @@ class InstallHistoryStore(context: Context) {
             },
             result = InstallRunResult.valueOf(value.getString("result")),
             log = value.getString("log"),
+            profileId = if (value.isNull("profileId")) {
+                null
+            } else {
+                value.getString("profileId").takeIf(String::isNotBlank)
+            },
+            usedShizuku = value.optBoolean("usedShizuku", false),
         )
     }
 }

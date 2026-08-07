@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Root My Galaxy</string>
+    <string name="nav_overview">Asosiy</string>
+    <string name="nav_history">Tarix</string>
+    <string name="nav_settings">Sozlamalar</string>
+    <string name="install_confirm_title">KernelSU o\'rnatilsinmi?</string>
+    <string name="install_confirm_body">Ilova profil mosligini tekshiradi, so\'ngra GitHub\'dan eksployt va KernelSU paketlarini yuklab olib, ishga tushiradi.</string>
+    <string name="action_confirm">Tasdiqlash</string>
+    <string name="action_cancel">Bekor qilish</string>
+    <string name="action_close">Yopish</string>
+    <string name="action_retry">Qayta urinish</string>
+    <string name="action_done">Tayyor</string>
+    <string name="action_back">Orqaga</string>
+    <string name="install_tap_manager">KernelSU menejerini o\'rnatish uchun bosing</string>
+    <string name="install_tap_open_manager">KernelSU menejerini ochish uchun bosing</string>
+    <string name="install_tap_retry">Qayta urinish uchun bosing</string>
+    <string name="install_tap_start">KernelSU\'ni o\'rnatish uchun bosing</string>
+    <string name="device">Qurilma</string>
+    <string name="how_it_works">Bu qanday ishlaydi</string>
+    <string name="kernelsu_card_title">KernelSU</string>
+    <string name="kernelsu_card_description">Android uchun karnel-asoslangan rootlash</string>
+    <string name="firmware">Proshivka</string>
+    <string name="system">Tizim</string>
+    <string name="system_abi">Tizim ABI\'si</string>
+    <string name="settings">Sozlamalar</string>
+    <string name="version_format">%1$s (%2$d)</string>
+    <string name="language">Til</string>
+    <string name="language_description">Ilova tilini tanlang</string>
+    <string name="appearance">Tashqi ko\'rinish</string>
+    <string name="theme_system">Tizim</string>
+    <string name="theme_light">Kungduzgi</string>
+    <string name="theme_dark">Tungi</string>
+    <string name="material_color">Mavzu</string>
+    <string name="material_color_description">Ko\'rinishni o\'zgartirish</string>
+    <string name="language_system">Tizimga moslashish</string>
+    <string name="language_korean" translatable="false">한국어</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_japanese" translatable="false">日本語</string>
+    <string name="language_chinese" translatable="false">简体中文</string>
+    <string name="language_chinese_traditional" translatable="false">繁體中文</string>
+    <string name="language_turkish" translatable="false">Türkçe</string>
+    <string name="language_brazillian_portuguese" translatable="false">Português Brasileiro</string>
+    <string name="language_russian" translatable="false">Русский</string>
+    <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
+    <string name="language_uzbek" translatable="false">O\'zbek</string>
+    <string name="color_dynamic">Tizimning dinamik rangi</string>
+    <string name="color_blue">Ko\'k</string>
+    <string name="color_violet">Binafsha</string>
+    <string name="color_green">Yashil</string>
+    <string name="color_orange">Malla</string>
+    <string name="history_title">Ishlatilish tarixi</string>
+    <string name="history_empty_title">Hali ishlatilinmagan</string>
+    <string name="history_empty_description">O\'rnatish natijalari va jurnallar (loglar) shu yerda ko\'rinadi.</string>
+    <string name="history_running">Bajarilmoqda</string>
+    <string name="history_succeeded">Muvaffaqiyatli yakunlandi</string>
+    <string name="history_failed">Xatolik yuz berdi</string>
+    <string name="history_detail_title">Jarayon tafsilotlari</string>
+    <string name="history_started">Boshlandi: %1$s</string>
+    <string name="history_completed">Yakunlandi: %1$s</string>
+    <string name="history_log_empty">Jurnalda (log) hali hech qanday ma\'lumot yo\'q.</string>
+    <string name="history_payload">Paket (Payload): %1$s</string>
+    <string name="history_shizuku_used">Shizuku: ishlatildi</string>
+    <string name="history_shizuku_not_used">Shizuku: ishlatilmadi</string>
+    <string name="export_log">Jurnalni (logni) eksport qilish</string>
+    <string name="export_log_saved">Jurnal (log) saqlandi</string>
+    <string name="export_log_failed">Jurnalni (logni) saqlab bo\'lmadi</string>
+    <string name="about">Dastur haqida</string>
+    <string name="about_title">Root My Galaxy haqida</string>
+    <string name="about_description">Root My Galaxy haqida</string>
+    <string name="about_body">Qo\'llab-quvvatlanadigan Samsung Galaxy qurilmalarini yadro eksployti yordamida bir bosish orqali root o\'rnatuvchi dastur.</string>
+
+    <string name="install_title">O\'rnatish</string>
+    <string name="install_keep_open">O\'rnatish yakunlangunicha ilovani yopmang</string>
+    <string name="install_live_progress">Jurnal (Log)</string>
+    <string name="install_preparing">Tayyorlanmoqda…</string>
+    <string name="step_support_title">Moslikni tekshirish</string>
+    <string name="step_support_detail">Qurilma va proshivka profilini tasdiqlash</string>
+    <string name="step_download_title">Yuklab olish</string>
+    <string name="step_download_detail">Moslik manifestini yuklash</string>
+    <string name="step_exploit_title">Yadro eksployti</string>
+    <string name="step_exploit_detail">Boshlang\'ich (bootstrap) root huquqini olish</string>
+    <string name="step_ksu_title">KernelSU\'ni yuklash</string>
+    <string name="step_ksu_detail">Modulni kechiktirib yuklash va boshqaruv kanalini tekshirish</string>
+    <string name="phase_checking">Mos keladigan qurilma va proshivka tekshirilmoqda</string>
+    <string name="phase_ready">O\'rnatishga tayyor</string>
+    <string name="phase_downloading">GitHub\'dan maxsus tasdiqlangan (commit-pinned) paketlar yuklab olinmoqda</string>
+    <string name="phase_exploiting">Bu jarayon 10 daqiqa yoki undan ko\'proq vaqt olishi mumkin. Qurilmangiz qizib ketishi yoki qotib qolishi mumkin.</string>
+    <string name="phase_loading_ksu">Olingan boshlang\'ich root orqali KernelSU yuklanmoqda</string>
+    <string name="phase_installed">KernelSU moduli va boshqaruv kanali muvaffaqiyatli tekshirildi</string>
+    <string name="phase_failed">Xatolik sababini quyidagi jurnalda (logda) ko\'rib chiqing</string>
+
+    <string name="status_ksu_active">KernelSU faol</string>
+    <string name="status_not_installed">O\'rnatilmagan</string>
+    <string name="status_support_failed">Moslikni tekshirish muvaffaqiyatsiz yakunlandi</string>
+    <string name="status_checking_github">GitHub moslik manifesti tekshirilmoqda</string>
+    <string name="status_downloading_payload">Paketlar yuklab olinmoqda</string>
+    <string name="status_exploit_running">Yadro eksployti ishga tushirilmoqda</string>
+    <string name="status_ksu_loading">KernelSU kechiktirib yuklanmoqda</string>
+    <string name="status_install_failed">O\'rnatishda xatolik yuz berdi</string>
+    <string name="log_profile">[+] Moslik profili: %1$s</string>
+    <string name="log_download_verified">[+] Paketni yuklab olish yakunlandi</string>
+    <string name="log_install_complete">[+] O\'rnatish yakunlandi</string>
+    <string name="log_bootstrap_root">[+] Boshlang\'ich root olindi</string>
+    <string name="log_ksu_staged">[+] KernelSU tayyorgarligi yakunlandi</string>
+    <string name="log_ksu_control_verified">[+] KernelSU boshqaruv kanali tekshirildi</string>
+    <string name="error_helper_unavailable">Bootstrap yordamchisini ishga tushirib bo\'lmaydi</string>
+    <string name="error_exploit_stalled">Eksployt jurnali 90 soniya davomida yangilanmadi</string>
+    <string name="error_exploit_timeout">Eksployt 15 daqiqalik vaqt chegarasidan oshib ketdi</string>
+    <string name="error_payload_exit">Paketni ishga tushirishda xatolik yuz berdi: %1$d%2$s</string>
+    <string name="error_success_marker">Eksployt muvaffaqiyatli yakunlanganligi haqida belgilar topilmadi</string>
+    <string name="error_ksu_stage">KernelSU tayyorgarligida xatolik yuz berdi: %1$s</string>
+    <string name="error_ksu_verify">KernelSU yuklanishi yoki boshqaruvini tekshirish muvaffaqiyatsiz bo\'ldi (rc=%1$d): %2$s</string>
+    <string name="error_boot_id">Joriy boot_id\'ni o\'qib bo\'lmadi</string>
+    <string name="error_receipt">O\'rnatishni tasdiqlovchi ma\'lumotni saqlab bo\'lmadi</string>
+
+    <string name="artifact_exploit">eksployt</string>
+    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="repo_no_profile">Ushbu model va yadro versiyasini qo\'llab-quvvatlaydigan mos paket topilmadi</string>
+    <string name="repo_downloading">%1$s yuklab olinmoqda</string>
+    <string name="repo_size_mismatch">%1$s hajmi moslik manifestiga to\'g\'ri kelmadi</string>
+    <string name="repo_size_exceeded">%1$s belgilangan hajmdan oshib ketdi</string>
+    <string name="repo_incomplete">%1$s to\'liq yuklab olinmadi</string>
+    <string name="repo_finalize_failed">%1$s faylini yakunlab bo\'lmadi</string>
+    <string name="repo_verified">%1$s tekshirildi</string>
+    <string name="repo_commit_invalid">GitHub yaroqsiz commit SHA qaytardi</string>
+    <string name="repo_url_invalid">Artefakt omboriga (repository) ruxsat berilmagan</string>
+    <string name="repo_response_too_large">Javob hajmi belgilangan chegaradan oshib ketdi</string>
+    <string name="open_github">GitHub\'ni ochish</string>
+    <string name="github_card_title">Root My Galaxy haqida ko\'proq ma\'lumot</string>
+    <string name="github_card_description">Dastur manba kodi va foydalanish bo\'yicha ko\'rsatmalarni ko\'rib chiqing.</string>
+    <string name="action_continue">Baribir davom etish</string>
+    <string name="action_next">Keyingisi</string>
+    <string name="advanced">Kengaytirilgan</string>
+    <string name="advanced_mode">Kengaytirilgan rejim</string>
+    <string name="advanced_mode_description">O\'rnatish vaqtida qurilmaga mos paketni (payload) qo\'lda tanlash</string>
+    <string name="shizuku_mode">Shizuku\'dan foydalanish</string>
+    <string name="shizuku_mode_description">Paketni ishga tushirish uchun Shizuku\'dan foydalaning. Bu o\'rnatishning ishonchliligini oshirishi mumkin.</string>
+    <string name="shizuku_not_running_title">Shizuku ishlamayapti</string>
+    <string name="shizuku_not_running_body">Avval Shizuku xizmatini adb yoki root orqali ishga tushiring va ushbu ilovaga ruxsat bering, so\'ngra bu sozlamani yoqing.</string>
+    <string name="action_download_shizuku">Shizuku\'ni yuklab olish</string>
+    <string name="error_shizuku_unavailable">Shizuku ishlamayapti. Avval Shizuku\'ni adb yoki root yordamida ishga tushiring.</string>
+    <string name="error_shizuku_permission">Shizuku uchun ruxsat berilmadi</string>
+    <string name="error_shizuku_stage">%1$s\'ni Shizuku orqali tayyorlab bo\'lmadi: %2$s</string>
+    <string name="log_shizuku_prepare">[*] Shizuku orqali ishga tushirishga tayyorlanmoqda</string>
+    <string name="log_shizuku_permission">[+] Shizuku uchun ruxsat berildi</string>
+    <string name="repo_profile_missing">%1$s moslik profili endi mavjud emas</string>
+    <string name="select_device_title">Paketni tanlang</string>
+    <string name="select_device_description">Qurilma modeli va yadro versiyasiga qarab kerakli paketni tanlang.</string>
+    <string name="show_my_device_only">Faqat mening qurilmamni ko\'rsatish</string>
+    <string name="no_matching_devices">Ushbu model va yadro versiyasiga mos keladigan paketlar topilmadi.</string>
+    <string name="device_mismatch_title">Qurilma mos kelmadi</string>
+    <string name="device_mismatch_body">Sizning telefoningiz %1$s, biroq tanlangan paket %2$s\'ni qo\'llab-quvvatlaydi. Uni ishga tushirish qurilmaning qotib qolishi yoki zararlanishiga olib kelishi mumkin.</string>
+    <string name="kernel_version_mismatch_title">Yadro versiyasi mos kelmadi</string>
+    <string name="kernel_version_mismatch_body">Sizning telefoningiz %1$s yadrosidan foydalanadi, lekin tanlangan paket %2$s\'ni qo\'llab-quvvatlaydi. Ofsetlar mos kelmasligi ehtimoli bor.</string>
+</resources>

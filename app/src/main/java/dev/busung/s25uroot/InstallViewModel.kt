@@ -148,6 +148,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                     repository.resolveTarget(profileId)
                 }
                 appendLog(app.getString(R.string.log_profile, profile.profileId))
+                updateHistoryProfile(profile.profileId)
 
                 setPhase(InstallPhase.Downloading, app.getString(R.string.status_downloading_payload))
                 val payloads = repository.download(profile) { appendLog("[*] $it") }
@@ -443,6 +444,14 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     private fun updateHistoryLog() {
         val entry = activeHistoryEntry ?: return
         val updated = entry.copy(log = mutableState.value.log)
+        activeHistoryEntry = updated
+        historyStore.save(updated)
+        publishHistory(updated)
+    }
+
+    private fun updateHistoryProfile(profileId: String) {
+        val entry = activeHistoryEntry ?: return
+        val updated = entry.copy(profileId = profileId)
         activeHistoryEntry = updated
         historyStore.save(updated)
         publishHistory(updated)
