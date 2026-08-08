@@ -5,7 +5,7 @@
     <string name="nav_history">Histórico</string>
     <string name="nav_settings">Configurações</string>
     <string name="install_confirm_title">Instalar o KernelSU?</string>
-    <string name="install_confirm_body">O app vai verificar o perfil suportado, e depois baixar e rodar o exploit e o payload do KernelSU do GitHub.</string>
+    <string name="install_confirm_body">O app vai verificar o perfil suportado, e depois baixar e rodar o exploit e o payload do KernelSU do GitHub.\n\nO root será perdido quando você reiniciar seu dispositivo e o sucesso do exploit depende do estado atual da RAM. Se o exploit falhar, reinicie o dispositivo e tente novamente. Você também pode usar o Shizuku (Configurações > Usar Shizuku) para garantir maiores chances do exploit funcionar.</string>
     <string name="action_confirm">Confirmar</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_close">Fechar</string>
