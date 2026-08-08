@@ -17,7 +17,7 @@
     <string name="install_tap_start">Toque para instalar o KernelSU</string>
     <string name="device">Dispositivo</string>
     <string name="firmware">Firmware</string>
-    <string name="system">Sistema</string>
+    <string name="system">Sistema</string><string name="kernel">Kernel</string>
     <string name="system_abi">ABI do Sistema</string>
     <string name="settings">Configurações</string>
     <string name="version_format">%1$s (%2$d)</string>
@@ -127,4 +127,46 @@
     <string name="device_mismatch_body">Esse celular é o %1$s, mas o payload que você selecionou suporta o %2$s. Rodar ele pode crashar ou danificar o dispositivo.</string>
     <string name="kernel_version_mismatch_title">Versão de kernel incompatível</string>
     <string name="kernel_version_mismatch_body">Esse celular usa o kernel %1$s, mas o payload que você selecionou suporta o %2$s. Os offsets podem ser incompatíveis.</string>
+    <string name="shizuku_mode">Usar Shizuku</string>
+    <string name="shizuku_mode_description">Usar o Shizuku para executar o payload. Isso pode melhorar a confiabilidade.</string>
+    <string name="shizuku_not_running_title">Shizuku não está em execução</string>
+    <string name="shizuku_not_running_body">Inicie o Shizuku com adb ou root primeiro.</string>
+    <string name="action_download_shizuku">Baixar o Shizuku</string>
+    <string name="error_shizuku_unavailable">Shizuku não está em execução. Inicie o Shizuku com adb ou root primeiro.</string>
+    <string name="error_shizuku_permission">Permissão do Shizuku não concedida</string>
+    <string name="error_shizuku_stage">Não foi possível preparar %1$s pelo Shizuku: %2$s</string>
+    <string name="log_shizuku_prepare">[*] Preparando a execução do Shizuku</string>
+    <string name="log_shizuku_permission">[+] Permissão do Shizuku concedida</string>
+    <string name="about">Sobre</string>
+    <string name="about_title">Sobre o Root My Galaxy</string>
+    <string name="about_description">Sobre o Root My Galaxy</string>
+    <string name="about_body">Instalador de um toque que usa uma exploração de kernel para enraizar dispositivos Samsung Galaxy compatíveis.</string>
+    <string name="kernelsu_card_description">Solução de root baseada em kernel para Android</string>
+    <string name="history_shizuku_used">Shizuku: usado</string>
+    <string name="history_shizuku_not_used">Shizuku: não usado</string>
+    <string name="export_log">Exportar log</string>
+    <string name="export_log_saved">Log salvo</string>
+    <string name="export_log_failed">Falha ao salvar o log</string>
+    <string name="updater_available_title">Uma atualização está disponível</string>
+    <string name="updater_available_body">A versão %1$s está disponível</string>
+    <string name="updater_available_body_short">%1$s está disponível</string>
+    <string name="updater_button_download">Baixar e instalar</string>
+    <string name="updater_downloading">Baixando…</string>
+    <string name="updater_download_failed">Falha no download</string>
+    <string name="updater_check">Verificar atualizações</string>
+    <string name="updater_checking">Verificando atualizações…</string>
+    <string name="updater_up_to_date">Você está atualizado</string>
+    <string name="updater_failed">Falha ao verificar atualizações</string>
+    <string name="history_select_all">Selecionar tudo</string>
+    <string name="history_clear_selection">Limpar seleção</string>
+    <string name="history_delete_selected">Excluir (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">Excluir esta execução?</item>
+        <item quantity="other">Excluir %1$d execuções?</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">Esta execução e seu log serão removidos permanentemente.</item>
+        <item quantity="other">Estas execuções e seus logs serão removidos permanentemente.</item>
+    </plurals>
+    <string name="history_delete">Excluir</string>
 </resources>

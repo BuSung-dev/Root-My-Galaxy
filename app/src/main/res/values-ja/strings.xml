@@ -4,7 +4,7 @@
     <string name="install_confirm_title">KernelSUをインストールしますか？</string><string name="install_confirm_body">対応プロファイルを確認し、exploitとKernelSU payloadをGitHubから取得して実行します。\n\nRoot権限は再起動後に失われ、成功は現在のRAMの状態に左右されます。失敗した場合はデバイスを再起動してもう一度お試しください。Shizukuを使用すると成功率が上がる場合があります。</string>
     <string name="action_confirm">確認</string><string name="action_cancel">キャンセル</string><string name="action_close">閉じる</string><string name="action_retry">再試行</string><string name="action_done">完了</string><string name="action_back">戻る</string>
     <string name="install_tap_manager">タップしてKernelSU Managerをインストール</string><string name="install_tap_retry">タップして再試行</string><string name="install_tap_start">タップしてKernelSUをインストール</string>
-    <string name="device">デバイス</string><string name="firmware">ファームウェア</string><string name="system">システム</string><string name="system_abi">システムABI</string>
+    <string name="device">デバイス</string><string name="firmware">ファームウェア</string><string name="system">システム</string><string name="kernel">カーネル</string><string name="system_abi">システムABI</string>
     <string name="settings">設定</string><string name="version_format">%1$s (%2$d)</string><string name="language">言語</string><string name="language_description">アプリの表示言語を選択</string><string name="appearance">外観</string><string name="theme_system">システム</string><string name="theme_light">ライト</string><string name="theme_dark">ダーク</string><string name="material_color">テーマ</string><string name="material_color_description">見た目を変更</string>
     <string name="language_system">システム設定に従う</string>
     <string name="color_dynamic">システム動的カラー</string><string name="color_blue">ブルー</string><string name="color_violet">バイオレット</string><string name="color_green">グリーン</string><string name="color_orange">オレンジ</string>
@@ -39,4 +39,26 @@
     <string name="kernelsu_card_description">Android向けカーネルベースのrootソリューション</string>
     <string name="history_shizuku_used">Shizukuを使用</string>
     <string name="history_shizuku_not_used">Shizuku未使用</string>
+    <string name="updater_available_title">アップデートがあります</string>
+    <string name="updater_available_body">バージョン %1$s が利用可能です</string>
+    <string name="updater_button_download">ダウンロードしてインストール</string>
+    <string name="updater_downloading">ダウンロード中…</string>
+    <string name="updater_download_failed">ダウンロードに失敗しました</string>
+    <string name="updater_check">アップデートを確認</string>
+    <string name="updater_checking">アップデートを確認中…</string>
+    <string name="updater_up_to_date">最新バージョンです</string>
+    <string name="updater_failed">アップデートの確認に失敗しました</string>
+    <string name="updater_available_body_short">%1$s が利用可能です</string>
+    <string name="history_select_all">すべて選択</string>
+    <string name="history_clear_selection">選択を解除</string>
+    <string name="history_delete_selected">削除 (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">この実行を削除しますか？</item>
+        <item quantity="other">%1$d件の実行を削除しますか？</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">この実行とログは完全に削除されます。</item>
+        <item quantity="other">これらの実行とログは完全に削除されます。</item>
+    </plurals>
+    <string name="history_delete">削除</string>
 </resources>

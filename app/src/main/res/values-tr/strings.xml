@@ -17,7 +17,7 @@
     <string name="install_tap_start">KernelSU yüklemek için dokunun</string>
     <string name="device">Cihaz</string>
     <string name="firmware">Yazılım Sürümü</string>
-    <string name="system">Sistem</string>
+    <string name="system">Sistem</string><string name="kernel">Çekirdek</string>
     <string name="system_abi">Sistem ABI</string>
     <string name="settings">Ayarlar</string>
     <string name="version_format">%1$s (%2$d)</string>
@@ -142,4 +142,26 @@
     <string name="kernelsu_card_description">Android için çekirdek tabanlı root çözümü</string>
     <string name="history_shizuku_used">Shizuku kullanıldı</string>
     <string name="history_shizuku_not_used">Shizuku kullanılmadı</string>
+    <string name="updater_available_title">Bir güncelleme mevcut</string>
+    <string name="updater_available_body">%1$s sürümü mevcut</string>
+    <string name="updater_button_download">İndir ve Kur</string>
+    <string name="updater_downloading">İndiriliyor…</string>
+    <string name="updater_download_failed">İndirme başarısız</string>
+    <string name="updater_check">Güncellemeleri kontrol et</string>
+    <string name="updater_checking">Güncellemeler kontrol ediliyor…</string>
+    <string name="updater_up_to_date">Güncel sürümdesiniz</string>
+    <string name="updater_failed">Güncelleme kontrol edilemedi</string>
+    <string name="updater_available_body_short">%1$s mevcut</string>
+    <string name="history_select_all">Tümünü seç</string>
+    <string name="history_clear_selection">Seçimi temizle</string>
+    <string name="history_delete_selected">Sil (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">Bu kayıt silinsin mi?</item>
+        <item quantity="other">%1$d kayıt silinsin mi?</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">Bu kayıt ve günlüğü kalıcı olarak silinecek.</item>
+        <item quantity="other">Bu kayıtlar ve günlükleri kalıcı olarak silinecek.</item>
+    </plurals>
+    <string name="history_delete">Sil</string>
 </resources>

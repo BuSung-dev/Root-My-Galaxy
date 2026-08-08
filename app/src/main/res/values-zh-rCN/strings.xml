@@ -4,7 +4,7 @@
     <string name="install_confirm_title">安装 KernelSU？</string><string name="install_confirm_body">应用将验证支持配置，然后从 GitHub 下载并运行 exploit 与 KernelSU payload。\n\nRoot 权限会在重启后失效，能否成功取决于当前内存状态。如果失败，请重启设备后重试。您也可以尝试使用 Shizuku 来提高成功率。</string>
     <string name="action_confirm">确认</string><string name="action_cancel">取消</string><string name="action_close">关闭</string><string name="action_retry">重试</string><string name="action_done">完成</string><string name="action_back">返回</string>
     <string name="install_tap_manager">点击安装 KernelSU Manager</string><string name="install_tap_retry">点击重试</string><string name="install_tap_start">点击安装 KernelSU</string>
-    <string name="device">设备</string><string name="firmware">固件</string><string name="system">系统</string><string name="system_abi">系统 ABI</string>
+    <string name="device">设备</string><string name="firmware">固件</string><string name="system">系统</string><string name="kernel">内核</string><string name="system_abi">系统 ABI</string>
     <string name="settings">设置</string><string name="version_format">%1$s (%2$d)</string><string name="language">语言</string><string name="language_description">选择应用语言</string><string name="appearance">外观</string><string name="theme_system">系统</string><string name="theme_light">浅色</string><string name="theme_dark">深色</string><string name="material_color">主题</string><string name="material_color_description">更改外观</string>
     <string name="language_system">跟随系统</string>
     <string name="color_dynamic">系统动态颜色</string><string name="color_blue">蓝色</string><string name="color_violet">紫色</string><string name="color_green">绿色</string><string name="color_orange">橙色</string>
@@ -39,4 +39,26 @@
     <string name="kernelsu_card_description">基于内核的 Android Root 方案</string>
     <string name="history_shizuku_used">已使用 Shizuku</string>
     <string name="history_shizuku_not_used">未使用 Shizuku</string>
+    <string name="updater_available_title">有可用更新</string>
+    <string name="updater_available_body">新版本 %1$s 可用</string>
+    <string name="updater_button_download">下载并安装</string>
+    <string name="updater_downloading">下载中…</string>
+    <string name="updater_download_failed">下载失败</string>
+    <string name="updater_check">检查更新</string>
+    <string name="updater_checking">正在检查更新…</string>
+    <string name="updater_up_to_date">已是最新版本</string>
+    <string name="updater_failed">检查更新失败</string>
+    <string name="updater_available_body_short">%1$s 可用</string>
+    <string name="history_select_all">全选</string>
+    <string name="history_clear_selection">清除选择</string>
+    <string name="history_delete_selected">删除 (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">删除此运行记录？</item>
+        <item quantity="other">删除 %1$d 次运行？</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">此运行记录及其日志将被永久删除。</item>
+        <item quantity="other">这些运行记录及其日志将被永久删除。</item>
+    </plurals>
+    <string name="history_delete">删除</string>
 </resources>

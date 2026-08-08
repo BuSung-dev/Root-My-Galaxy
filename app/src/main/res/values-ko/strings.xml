@@ -5,7 +5,7 @@
     <string name="install_confirm_title">KernelSU를 설치할까요?</string><string name="install_confirm_body">지원 프로필을 확인한 뒤 exploit과 KernelSU payload를 GitHub에서 받아 실행합니다.\n\nRoot 권한은 재부팅 후 사라지며, 성공 여부는 현재 RAM 상태에 따라 달라집니다. 실패하면 기기를 재부팅한 후 다시 시도하세요. Shizuku를 사용하면 성공률을 높일 수 있습니다.</string>
     <string name="action_confirm">확인</string><string name="action_cancel">취소</string><string name="action_close">닫기</string><string name="action_retry">다시 시도</string><string name="action_done">완료</string><string name="action_back">뒤로</string>
     <string name="install_tap_manager">클릭해서 KSU 매니저 설치하기</string><string name="install_tap_retry">눌러서 다시 시도</string><string name="install_tap_start">눌러서 KernelSU 설치</string>
-    <string name="device">기기</string><string name="firmware">펌웨어</string><string name="system">시스템</string><string name="system_abi">시스템 ABI</string>
+    <string name="device">기기</string><string name="firmware">펌웨어</string><string name="system">시스템</string><string name="kernel">커널</string><string name="system_abi">시스템 ABI</string>
     <string name="settings">설정</string><string name="version_format">%1$s (%2$d)</string><string name="language">언어</string><string name="language_description">앱에서 사용할 언어를 선택합니다</string><string name="appearance">화면</string><string name="theme_system">시스템</string><string name="theme_light">라이트</string><string name="theme_dark">다크</string><string name="material_color">테마</string><string name="material_color_description">모양 변경</string>
     <string name="language_system">시스템 설정 따름</string>
     <string name="color_dynamic">시스템 동적 색상</string><string name="color_blue">파랑</string><string name="color_violet">보라</string><string name="color_green">초록</string><string name="color_orange">주황</string>
@@ -40,4 +40,26 @@
     <string name="kernelsu_card_description">Android용 커널 기반 루트 솔루션</string>
     <string name="history_shizuku_used">Shizuku 사용됨</string>
     <string name="history_shizuku_not_used">Shizuku 사용 안 함</string>
+    <string name="updater_available_title">업데이트가 있습니다</string>
+    <string name="updater_available_body">버전 %1$s를 사용할 수 있습니다</string>
+    <string name="updater_button_download">다운로드 및 설치</string>
+    <string name="updater_downloading">다운로드 중…</string>
+    <string name="updater_download_failed">다운로드 실패</string>
+    <string name="updater_check">업데이트 확인</string>
+    <string name="updater_checking">업데이트 확인 중…</string>
+    <string name="updater_up_to_date">최신 버전입니다</string>
+    <string name="updater_failed">업데이트 확인 실패</string>
+    <string name="updater_available_body_short">%1$s 사용 가능</string>
+    <string name="history_select_all">모두 선택</string>
+    <string name="history_clear_selection">선택 해제</string>
+    <string name="history_delete_selected">삭제 (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">이 실행을 삭제할까요?</item>
+        <item quantity="other">%1$d개 실행을 삭제할까요?</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">이 실행과 로그가 영구적으로 삭제됩니다.</item>
+        <item quantity="other">이 실행들과 로그가 영구적으로 삭제됩니다.</item>
+    </plurals>
+    <string name="history_delete">삭제</string>
 </resources>

@@ -102,6 +102,14 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun deleteHistoryEntries(ids: Collection<String>) {
+        val runningId = activeHistoryEntry?.id
+        val toDelete = ids.filterNot { it == runningId }
+        if (toDelete.isEmpty()) return
+        toDelete.forEach(historyStore::delete)
+        mutableHistory.value = mutableHistory.value.filterNot { it.id in toDelete }
+    }
+
     fun loadTargetCatalog() {
         if (mutableTargetCatalog.value.loading) return
         viewModelScope.launch(Dispatchers.IO) {
@@ -201,8 +209,8 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             ).redirectErrorStream(true)
             processBuilder.environment().apply {
                 put("EXPLOIT_ATTEMPTS", EXPLOIT_ATTEMPTS)
-                put("P0_ATTEMPT_TIMEOUT_SEC", "45")
-                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", "120")
+                put("P0_ATTEMPT_TIMEOUT_SEC", P0_ATTEMPT_TIMEOUT_SEC)
+                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", EXPLOIT_ATTEMPT_TIMEOUT_SEC)
                 cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
             }
             processBuilder.start()
@@ -393,8 +401,8 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         helperPath: String,
     ): Array<String> = buildList {
         add("EXPLOIT_ATTEMPTS=$EXPLOIT_ATTEMPTS")
-        add("P0_ATTEMPT_TIMEOUT_SEC=45")
-        add("EXPLOIT_ATTEMPT_TIMEOUT_SEC=120")
+        add("P0_ATTEMPT_TIMEOUT_SEC=$P0_ATTEMPT_TIMEOUT_SEC")
+        add("EXPLOIT_ATTEMPT_TIMEOUT_SEC=$EXPLOIT_ATTEMPT_TIMEOUT_SEC")
         add("CVE43499_ROOT_HELPER=$helperPath")
         add("LD_PRELOAD=$payloadPath")
         cachedP0Offset(bootToken)?.let { add("$P0_OFFSET_ENV=$it") }
@@ -441,32 +449,29 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         publishHistory(entry)
     }
 
-    private fun updateHistoryLog() {
+    private fun updateHistory(transform: (InstallHistoryEntry) -> InstallHistoryEntry) {
         val entry = activeHistoryEntry ?: return
-        val updated = entry.copy(log = mutableState.value.log)
+        val updated = transform(entry)
         activeHistoryEntry = updated
         historyStore.save(updated)
         publishHistory(updated)
     }
 
-    private fun updateHistoryProfile(profileId: String) {
-        val entry = activeHistoryEntry ?: return
-        val updated = entry.copy(profileId = profileId)
-        activeHistoryEntry = updated
-        historyStore.save(updated)
-        publishHistory(updated)
-    }
+    private fun updateHistoryLog() =
+        updateHistory { it.copy(log = mutableState.value.log) }
+
+    private fun updateHistoryProfile(profileId: String) =
+        updateHistory { it.copy(profileId = profileId) }
 
     private fun finishHistory(result: InstallRunResult) {
-        val entry = activeHistoryEntry ?: return
-        val completed = entry.copy(
-            completedAtMillis = System.currentTimeMillis(),
-            result = result,
-            log = mutableState.value.log,
-        )
+        updateHistory { entry ->
+            entry.copy(
+                completedAtMillis = System.currentTimeMillis(),
+                result = result,
+                log = mutableState.value.log,
+            )
+        }
         activeHistoryEntry = null
-        historyStore.save(completed)
-        publishHistory(completed)
     }
 
     private fun publishHistory(entry: InstallHistoryEntry) {
@@ -478,6 +483,8 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
 
     companion object {
         private const val EXPLOIT_ATTEMPTS = "24"
+        private const val P0_ATTEMPT_TIMEOUT_SEC = "45"
+        private const val EXPLOIT_ATTEMPT_TIMEOUT_SEC = "120"
         private const val EXPLOIT_STALL_MILLIS = 90_000L
         private const val EXPLOIT_TOTAL_MILLIS = 900_000L
         private const val INSTALL_RECEIPT = "install_receipt"

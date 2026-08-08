@@ -66,6 +66,10 @@ class InstallHistoryStore(private val context: Context) {
         }
     }
 
+    fun delete(id: String) {
+        File(directory, "$id.json").delete()
+    }
+
     private fun encode(entry: InstallHistoryEntry) = JSONObject()
         .put("id", entry.id)
         .put("startedAtMillis", entry.startedAtMillis)

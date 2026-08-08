@@ -21,7 +21,7 @@
 
     <string name="device">裝置</string>
     <string name="firmware">韌體</string>
-    <string name="system">系統</string>
+    <string name="system">系統</string><string name="kernel">核心</string>
     <string name="system_abi">系統 ABI</string>
 
     <string name="settings">設定</string>
@@ -162,4 +162,26 @@
     <string name="kernelsu_card_description">以核心為基礎的 Android Root 解決方案</string>
     <string name="history_shizuku_used">已使用 Shizuku</string>
     <string name="history_shizuku_not_used">未使用 Shizuku</string>
+    <string name="updater_available_title">有可用更新</string>
+    <string name="updater_available_body">新版本 %1$s 可用</string>
+    <string name="updater_button_download">下載並安裝</string>
+    <string name="updater_downloading">下載中…</string>
+    <string name="updater_download_failed">下載失敗</string>
+    <string name="updater_check">檢查更新</string>
+    <string name="updater_checking">正在檢查更新…</string>
+    <string name="updater_up_to_date">已是最新版本</string>
+    <string name="updater_failed">檢查更新失敗</string>
+    <string name="updater_available_body_short">%1$s 可用</string>
+    <string name="history_select_all">全選</string>
+    <string name="history_clear_selection">清除選擇</string>
+    <string name="history_delete_selected">刪除 (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">刪除此執行紀錄？</item>
+        <item quantity="other">刪除 %1$d 次執行？</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">此執行紀錄及其日誌將被永久刪除。</item>
+        <item quantity="other">這些執行紀錄及其日誌將被永久刪除。</item>
+    </plurals>
+    <string name="history_delete">刪除</string>
 </resources>

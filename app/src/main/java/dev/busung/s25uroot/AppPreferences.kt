@@ -37,47 +37,39 @@ object AppPreferences {
     private const val CONSUMED_INSTALL_REQUEST = "consumed_install_request"
 
     fun accentColor(context: Context): AccentColor = AccentColor.fromStoredValue(
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .getString(ACCENT_COLOR, null),
+        prefs(context).getString(ACCENT_COLOR, null),
     )
 
     fun setAccentColor(context: Context, color: AccentColor) {
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .edit()
+        prefs(context).edit()
             .putString(ACCENT_COLOR, color.storedValue)
             .apply()
     }
 
     fun themeMode(context: Context): AppThemeMode = AppThemeMode.fromStoredValue(
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .getString(THEME_MODE, null),
+        prefs(context).getString(THEME_MODE, null),
     )
 
     fun setThemeMode(context: Context, themeMode: AppThemeMode) {
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .edit()
+        prefs(context).edit()
             .putString(THEME_MODE, themeMode.storedValue)
             .apply()
     }
 
     fun advancedMode(context: Context): Boolean =
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .getBoolean(ADVANCED_MODE, false)
+        prefs(context).getBoolean(ADVANCED_MODE, false)
 
     fun setAdvancedMode(context: Context, enabled: Boolean) {
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .edit()
+        prefs(context).edit()
             .putBoolean(ADVANCED_MODE, enabled)
             .apply()
     }
 
     fun shizukuMode(context: Context): Boolean =
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .getBoolean(SHIZUKU_MODE, false)
+        prefs(context).getBoolean(SHIZUKU_MODE, false)
 
     fun setShizukuMode(context: Context, enabled: Boolean) {
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-            .edit()
+        prefs(context).edit()
             .putBoolean(SHIZUKU_MODE, enabled)
             .apply()
     }
@@ -85,12 +77,15 @@ object AppPreferences {
     @Synchronized
     fun consumeInstallRequest(context: Context, requestId: String?): Boolean {
         if (requestId.isNullOrBlank()) return false
-        val preferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+        val preferences = prefs(context)
         if (preferences.getString(CONSUMED_INSTALL_REQUEST, null) == requestId) return false
         return preferences.edit()
             .putString(CONSUMED_INSTALL_REQUEST, requestId)
             .commit()
     }
+
+    private fun prefs(context: Context) =
+        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 
     fun languageTag(context: Context): String {
         val locales = context.getSystemService(LocaleManager::class.java).applicationLocales

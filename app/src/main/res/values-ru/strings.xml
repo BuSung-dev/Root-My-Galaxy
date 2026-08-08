@@ -18,7 +18,7 @@
     <string name="install_tap_start">Нажмите, чтобы установить KernelSU</string>
     <string name="device">Устройство</string>
     <string name="firmware">Прошивка</string>
-    <string name="system">Система</string>
+    <string name="system">Система</string><string name="kernel">Ядро</string>
     <string name="system_abi">ABI системы</string>
     <string name="settings">Настройки</string>
     <string name="version_format">%1$s (%2$d)</string>
@@ -151,4 +151,26 @@
     <string name="kernelsu_card_description">Ядровое root-решение для Android</string>
     <string name="history_shizuku_used">Shizuku использовался</string>
     <string name="history_shizuku_not_used">Shizuku не использовался</string>
+    <string name="updater_available_title">Доступно обновление</string>
+    <string name="updater_available_body">Доступна версия %1$s</string>
+    <string name="updater_button_download">Скачать и установить</string>
+    <string name="updater_downloading">Загрузка…</string>
+    <string name="updater_download_failed">Не удалось загрузить</string>
+    <string name="updater_check">Проверить обновления</string>
+    <string name="updater_checking">Проверка обновлений…</string>
+    <string name="updater_up_to_date">У вас последняя версия</string>
+    <string name="updater_failed">Не удалось проверить обновления</string>
+    <string name="updater_available_body_short">%1$s доступна</string>
+    <string name="history_select_all">Выбрать все</string>
+    <string name="history_clear_selection">Снять выделение</string>
+    <string name="history_delete_selected">Удалить (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">Удалить этот запуск?</item>
+        <item quantity="other">Удалить %1$d запусков?</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">Этот запуск и его журнал будут удалены навсегда.</item>
+        <item quantity="other">Эти запуски и их журналы будут удалены навсегда.</item>
+    </plurals>
+    <string name="history_delete">Удалить</string>
 </resources>

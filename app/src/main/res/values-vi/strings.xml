@@ -17,7 +17,7 @@
     <string name="install_tap_start">Chạm để cài đặt KernelSU</string>
     <string name="device">Thiết bị</string>
     <string name="firmware">Firmware</string>
-    <string name="system">Hệ thống</string>
+    <string name="system">Hệ thống</string><string name="kernel">Kernel</string>
     <string name="system_abi">ABI hệ thống</string>
     <string name="settings">Cài đặt</string>
     <string name="version_format">%1$s (%2$d)</string>
@@ -142,4 +142,26 @@
     <string name="kernelsu_card_description">Giải pháp root dựa trên kernel cho Android</string>
     <string name="history_shizuku_used">Đã dùng Shizuku</string>
     <string name="history_shizuku_not_used">Không dùng Shizuku</string>
+    <string name="updater_available_title">Có bản cập nhật mới</string>
+    <string name="updater_available_body">Phiên bản %1$s hiện có sẵn</string>
+    <string name="updater_button_download">Tải xuống và cài đặt</string>
+    <string name="updater_downloading">Đang tải xuống…</string>
+    <string name="updater_download_failed">Tải xuống thất bại</string>
+    <string name="updater_check">Kiểm tra cập nhật</string>
+    <string name="updater_checking">Đang kiểm tra cập nhật…</string>
+    <string name="updater_up_to_date">Bạn đang dùng bản mới nhất</string>
+    <string name="updater_failed">Không thể kiểm tra cập nhật</string>
+    <string name="updater_available_body_short">%1$s có sẵn</string>
+    <string name="history_select_all">Chọn tất cả</string>
+    <string name="history_clear_selection">Bỏ chọn</string>
+    <string name="history_delete_selected">Xóa (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">Xóa lần chạy này?</item>
+        <item quantity="other">Xóa %1$d lần chạy?</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">Lần chạy này và nhật ký của nó sẽ bị xóa vĩnh viễn.</item>
+        <item quantity="other">Các lần chạy này và nhật ký của chúng sẽ bị xóa vĩnh viễn.</item>
+    </plurals>
+    <string name="history_delete">Xóa</string>
 </resources>

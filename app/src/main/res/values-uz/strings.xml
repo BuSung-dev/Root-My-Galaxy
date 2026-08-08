@@ -21,7 +21,7 @@
     <string name="kernelsu_card_title">KernelSU</string>
     <string name="kernelsu_card_description">Android uchun karnel-asoslangan rootlash</string>
     <string name="firmware">Proshivka</string>
-    <string name="system">Tizim</string>
+    <string name="system">Tizim</string><string name="kernel">Yadro</string>
     <string name="system_abi">Tizim ABI\'si</string>
     <string name="settings">Sozlamalar</string>
     <string name="version_format">%1$s (%2$d)</string>
@@ -153,4 +153,26 @@
     <string name="device_mismatch_body">Sizning telefoningiz %1$s, biroq tanlangan paket %2$s\'ni qo\'llab-quvvatlaydi. Uni ishga tushirish qurilmaning qotib qolishi yoki zararlanishiga olib kelishi mumkin.</string>
     <string name="kernel_version_mismatch_title">Yadro versiyasi mos kelmadi</string>
     <string name="kernel_version_mismatch_body">Sizning telefoningiz %1$s yadrosidan foydalanadi, lekin tanlangan paket %2$s\'ni qo\'llab-quvvatlaydi. Ofsetlar mos kelmasligi ehtimoli bor.</string>
+    <string name="updater_available_title">Yangilanish mavjud</string>
+    <string name="updater_available_body">%1$s versiyasi mavjud</string>
+    <string name="updater_available_body_short">%1$s mavjud</string>
+    <string name="updater_button_download">Yuklab olish va o\'rnatish</string>
+    <string name="updater_downloading">Yuklab olinmoqda…</string>
+    <string name="updater_download_failed">Yuklab olish muvaffaqiyatsiz tugadi</string>
+    <string name="updater_check">Yangilanishlarni tekshirish</string>
+    <string name="updater_checking">Yangilanishlar tekshirilmoqda…</string>
+    <string name="updater_up_to_date">Sizda eng so\'nggi versiya</string>
+    <string name="updater_failed">Yangilanishlarni tekshirib bo\'lmadi</string>
+    <string name="history_select_all">Hammasini tanlash</string>
+    <string name="history_clear_selection">Tanlovni bekor qilish</string>
+    <string name="history_delete_selected">O\'chirish (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">Ushbu jarayon o\'chirilsinmi?</item>
+        <item quantity="other">%1$d ta jarayon o\'chirilsinmi?</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">Bu jarayon va uning jurnali butunlay o\'chiriladi.</item>
+        <item quantity="other">Bu jarayonlar va ularning jurnallari butunlay o\'chiriladi.</item>
+    </plurals>
+    <string name="history_delete">O\'chirish</string>
 </resources>

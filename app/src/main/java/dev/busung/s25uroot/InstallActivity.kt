@@ -1,6 +1,9 @@
 package dev.busung.s25uroot
 
+import android.os.Build
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
+import android.view.View
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -47,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
@@ -108,6 +112,16 @@ internal val installerSteps = listOf(
     InstallerStep(R.string.step_ksu_title, R.string.step_ksu_detail, Icons.Rounded.Check),
 )
 
+private fun clickHaptic(view: View) {
+    view.performHapticFeedback(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            HapticFeedbackConstants.CONFIRM
+        } else {
+            HapticFeedbackConstants.LONG_PRESS
+        },
+    )
+}
+
 @Composable
 private fun InstallScreen(
     installState: InstallUiState,
@@ -115,6 +129,7 @@ private fun InstallScreen(
     onClose: () -> Unit,
 ) {
     val logScrollState = rememberScrollState()
+    val view = LocalView.current
     LaunchedEffect(installState.log) {
         delay(40)
         logScrollState.scrollTo(logScrollState.maxValue)
@@ -163,20 +178,29 @@ private fun InstallScreen(
                 ) {
                     if (installState.phase == InstallPhase.Failed) {
                         FilledTonalButton(
-                            onClick = onClose,
+                            onClick = {
+                                clickHaptic(view)
+                                onClose()
+                            },
                             modifier = Modifier.weight(1f),
                         ) {
                             Text(stringResource(R.string.action_close))
                         }
                         Button(
-                            onClick = onRetry,
+                            onClick = {
+                                clickHaptic(view)
+                                onRetry()
+                            },
                             modifier = Modifier.weight(1f),
                         ) {
                             Text(stringResource(R.string.action_retry))
                         }
                     } else if (installState.phase == InstallPhase.Installed) {
                         Button(
-                            onClick = onClose,
+                            onClick = {
+                                clickHaptic(view)
+                                onClose()
+                            },
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(stringResource(R.string.action_done))
