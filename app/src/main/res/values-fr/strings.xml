@@ -5,7 +5,7 @@
     <string name="nav_history">Historique</string>
     <string name="nav_settings">Paramètres</string>
     <string name="install_confirm_title">Installer KernelSU ?</string>
-    <string name="install_confirm_body">L\'application vérifiera le profil de compatibilité, puis téléchargera et exécutera l\'exploit et la charge utile KernelSU depuis GitHub.</string>
+    <string name="install_confirm_body">L\'application vérifiera le profil de compatibilité, puis téléchargera et exécutera l\'exploit et la charge utile KernelSU depuis GitHub.\n\nL\'accès root est perdu après un redémarrage et son succès dépend de l\'état actuel de la RAM. En cas d\'échec, redémarrez votre appareil et réessayez. Vous pouvez également utiliser Shizuku pour améliorer vos chances de réussite.</string>
     <string name="action_confirm">Confirmer</string>
     <string name="action_cancel">Annuler</string>
     <string name="action_close">Fermer</string>

@@ -6,7 +6,7 @@
     <string name="nav_history">История</string>
     <string name="nav_settings">Настройки</string>
     <string name="install_confirm_title">Установить KernelSU?</string>
-    <string name="install_confirm_body">Приложение проверит профиль поддержки, а затем загрузит с GitHub и запустит эксплойт и payload KernelSU.</string>
+    <string name="install_confirm_body">Приложение проверит профиль поддержки, а затем загрузит с GitHub и запустит эксплойт и payload KernelSU.\n\nRoot-доступ теряется после перезагрузки, а его успех зависит от текущего состояния оперативной памяти. Если процесс завершится неудачей, перезагрузите устройство и попробуйте снова. Вы также можете использовать Shizuku для повышения шансов на успех.</string>
     <string name="action_confirm">Подтвердить</string>
     <string name="action_cancel">Отмена</string>
     <string name="action_close">Закрыть</string>

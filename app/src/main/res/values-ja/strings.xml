@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Root My Galaxy</string><string name="nav_overview">ホーム</string><string name="nav_history">実行履歴</string><string name="nav_settings">設定</string>
-    <string name="install_confirm_title">KernelSUをインストールしますか？</string><string name="install_confirm_body">対応プロファイルを確認し、exploitとKernelSU payloadをGitHubから取得して実行します。</string>
+    <string name="install_confirm_title">KernelSUをインストールしますか？</string><string name="install_confirm_body">対応プロファイルを確認し、exploitとKernelSU payloadをGitHubから取得して実行します。\n\nRoot権限は再起動後に失われ、成功は現在のRAMの状態に左右されます。失敗した場合はデバイスを再起動してもう一度お試しください。Shizukuを使用すると成功率が上がる場合があります。</string>
     <string name="action_confirm">確認</string><string name="action_cancel">キャンセル</string><string name="action_close">閉じる</string><string name="action_retry">再試行</string><string name="action_done">完了</string><string name="action_back">戻る</string>
     <string name="install_tap_manager">タップしてKernelSU Managerをインストール</string><string name="install_tap_retry">タップして再試行</string><string name="install_tap_start">タップしてKernelSUをインストール</string>
     <string name="device">デバイス</string><string name="firmware">ファームウェア</string><string name="system">システム</string><string name="kernel">カーネル</string><string name="system_abi">システムABI</string>
