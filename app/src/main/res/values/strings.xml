@@ -126,6 +126,7 @@
     <string name="repo_verified">%1$s verified</string>
     <string name="repo_commit_invalid">GitHub returned an invalid commit SHA</string>
     <string name="repo_url_invalid">The artifact repository is not allowed</string>
+    <string name="repo_name_invalid">The payload repository must use the owner/repository format</string>
     <string name="repo_response_too_large">The response exceeded its size limit</string>
     <string name="open_github">Open GitHub</string>
     <string name="github_card_title">Explore Root My Galaxy</string>
@@ -135,6 +136,19 @@
     <string name="advanced">Advanced</string>
     <string name="advanced_mode">Advanced mode</string>
     <string name="advanced_mode_description">Manually choose a device-compatible payload during installation</string>
+    <string name="verify_exploit_size">Verify exploit size</string>
+    <string name="verify_exploit_size_description">Reject the exploit when its downloaded size differs from the support manifest</string>
+    <string name="payload_repository">Custom payload repository</string>
+    <string name="payload_repository_description">GitHub owner/repository. Leave empty to use the official source.</string>
+    <string name="custom_exploit_payload">Local exploit payload</string>
+    <string name="custom_exploit_payload_description">Choose a custom ELF .so file. It will be used instead of the downloaded exploit.</string>
+    <string name="custom_payload_not_selected">Not selected</string>
+    <string name="custom_payload_remove">Remove local payload</string>
+    <string name="custom_payload_not_so">Select a file with the .so extension</string>
+    <string name="custom_payload_not_elf">The selected file is not an ELF binary</string>
+    <string name="custom_payload_too_large">The selected file exceeds 16 MiB</string>
+    <string name="custom_payload_read_failed">Could not read the selected file</string>
+    <string name="repo_using_custom_payload">Using local exploit payload: %1$s</string>
     <string name="shizuku_mode">Use Shizuku</string>
     <string name="shizuku_mode_description">Use Shizuku to run the payload. This can improve reliability.</string>
     <string name="shizuku_not_running_title">Shizuku is not running</string>
