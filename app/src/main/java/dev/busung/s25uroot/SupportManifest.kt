@@ -15,6 +15,7 @@ data class TargetProfile(
     val kernelVersions: Set<String>,
     val exploit: RemoteArtifact,
     val kernelSu: RemoteArtifact,
+    val requiresFreshP0Session: Boolean,
 ) {
     init {
         require(models.isNotEmpty()) { "Payload must support at least one model" }
@@ -66,6 +67,8 @@ data class SupportManifest(
                                 url = kernelSu.getString("url"),
                                 size = kernelSu.getLong("size"),
                             ),
+                            requiresFreshP0Session =
+                                payload.optBoolean("requiresFreshP0Session", false),
                         ),
                     )
                 }
