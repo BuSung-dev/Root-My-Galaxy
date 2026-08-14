@@ -145,8 +145,16 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
 
                 setPhase(InstallPhase.Exploiting, app.getString(R.string.status_exploit_running))
                 executeExploit(payloads.exploit)
+				
+				setPartitionBlocksToRo()
 
-                setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
+				if (AppPreferences.disableKsuModules(app)) {
+					DisableConflictingKSUModules()
+				} else {
+					appendLog("[*] Disable KSU Modules option is OFF")
+				}
+
+				setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
                 installKernelSu(payloads)
 
                 setPhase(InstallPhase.Installed, app.getString(R.string.status_ksu_active))
@@ -158,6 +166,37 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 finishHistory(InstallRunResult.Failed)
             }
         }
+    }
+
+    private fun DisableConflictingKSUModules() {
+        val script = "/data/adb/modules"
+        val backup = "${script}_bak"
+		
+        val command = """
+        if [ -d '$script' ]; then
+            if [ ! -e '$backup' ]; then
+                /system/bin/mv '$script' '$backup' || exit 1
+                /system/bin/chmod 755 '$backup' || exit 1
+            else
+                timestamp=$(/system/bin/date +%Y%m%d_%H%M%S)
+                new_backup="${script}_bak_${'$'}{timestamp}"
+                counter=1
+
+                while [ -e "${'$'}new_backup" ]; do
+                    new_backup="${script}_bak_${'$'}{timestamp}_${'$'}counter"
+                    counter=${'$'}((counter + 1))
+                done
+
+                /system/bin/mv '$script' "${'$'}new_backup" || exit 1
+                /system/bin/chmod 755 "${'$'}new_backup" || exit 1
+            fi
+        fi
+        """.trimIndent()
+        val result = runHelper("-c", command)
+        require(result.code == 0) {
+            "Failed to disable $script: ${result.output}"
+        }
+        appendLog("[*] Disable conflicting KSU Modules before KernelSU load")
     }
 
     private suspend fun executeExploit(payload: File) {
@@ -222,6 +261,15 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             }
         }
         appendLog(app.getString(R.string.log_bootstrap_root))
+    }
+
+    private fun setPartitionBlocksToRo() {
+        val count = NativeProbe.setBlocksToRo()
+        if (count >= 1) {
+            appendLog(app.getString(R.string.log_ro_blocks_successful, count))
+        } else {
+            appendLog(app.getString(R.string.log_ro_blocks_failed))
+        }
     }
 
     private fun publishExploitLog(prefix: String, rawLog: String) {

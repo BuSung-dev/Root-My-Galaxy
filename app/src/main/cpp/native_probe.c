@@ -1,17 +1,36 @@
 #include <jni.h>
 
+#include <android/log.h>
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <linux/bpf.h>
+#include <linux/fs.h>
 #include <linux/perf_event.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#define TAG "s25u_native"
+
+static const char *partitions_list[] = {
+  // Android kernel images
+  "boot", "dtbo", "init_boot", "vendor_boot",
+  // Dynamic partitions
+  "super",
+  // CSC
+  "optics", "prism",
+  // AVB
+  "vbmeta",
+  NULL,
+};
 
 static void append_probe(char *output, size_t output_size, const char *name,
                          const char *path, int flags) {
@@ -285,4 +304,62 @@ Java_dev_busung_s25uroot_NativeProbe_isKernelSuActive(JNIEnv *env,
     }
   }
   return JNI_FALSE;
+}
+
+JNIEXPORT jint JNICALL
+Java_dev_busung_s25uroot_NativeProbe_setBlocksToRo(JNIEnv *env, jobject thiz) {
+  (void)env;
+  (void)thiz;
+
+  DIR *dir = opendir("/dev/block/by-name");
+  if (!dir) {
+    __android_log_print(ANDROID_LOG_ERROR, TAG, "opendir failed: /dev/block/by-name (%s)",
+                        strerror(errno));
+    return -1;
+  }
+
+  int dev = dirfd(dir);
+
+  int count = 0;
+  struct dirent *entry;
+  while ((entry = readdir(dir)) != NULL) {
+    int matched = 0;
+    for (const char **p = partitions_list; *p != NULL; ++p) {
+      // Include A/B slots
+      if (strncmp(*p, entry->d_name, strlen(*p)) == 0) {
+        matched = 1;
+        break;
+      }
+    }
+    if (!matched)
+      continue;
+
+    int fd = openat(dev, entry->d_name, O_RDONLY | O_CLOEXEC);
+    if (fd < 0) {
+      __android_log_print(ANDROID_LOG_ERROR, TAG, "openat failed: /dev/block/by-name/%s (%s)",
+                          entry->d_name, strerror(errno));
+      continue;
+    }
+
+    struct stat st;
+    if (fstat(fd, &st) < 0 || !S_ISBLK(st.st_mode)) {
+      close(fd);
+      continue;
+    }
+
+    int on = 1;
+    int error = ioctl(fd, BLKROSET, &on);
+    if (error) {
+      __android_log_print(ANDROID_LOG_ERROR, TAG, "Failed to set BLKROSET: /dev/block/by-name/%s (%s)",
+                          entry->d_name, strerror(errno));
+    } else {
+      count++;
+    }
+
+    close(fd);
+  }
+
+  closedir(dir);
+
+  return count;
 }

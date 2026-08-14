@@ -134,6 +134,7 @@ class MainActivity : ComponentActivity() {
     private var accentColor by mutableStateOf(AccentColor.Dynamic)
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
+	private var disableKsuModules by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,6 +142,7 @@ class MainActivity : ComponentActivity() {
         accentColor = AppPreferences.accentColor(this)
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
+		disableKsuModules = AppPreferences.disableKsuModules(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
@@ -148,6 +150,7 @@ class MainActivity : ComponentActivity() {
                     accentColor = accentColor,
                     themeMode = themeMode,
                     advancedMode = advancedMode,
+					disableKsuModules = disableKsuModules,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -160,6 +163,10 @@ class MainActivity : ComponentActivity() {
                         AppPreferences.setAdvancedMode(this, enabled)
                         advancedMode = enabled
                     },
+					onDisableKsuModulesChanged = { enabled ->
+						AppPreferences.setDisableKsuModules(this, enabled)
+						disableKsuModules = enabled
+					},
                     openInstaller = { profileId ->
                         val installer = Intent(this, InstallActivity::class.java)
                             .putExtra(InstallActivity.EXTRA_INSTALL_REQUEST_ID, UUID.randomUUID().toString())
@@ -209,10 +216,12 @@ private fun RootApp(
     accentColor: AccentColor,
     themeMode: AppThemeMode,
     advancedMode: Boolean,
-    onAccentColorChanged: (AccentColor) -> Unit,
-    onThemeModeChanged: (AppThemeMode) -> Unit,
-    onAdvancedModeChanged: (Boolean) -> Unit,
-    openInstaller: (String?) -> Unit,
+	disableKsuModules: Boolean,
+	onAccentColorChanged: (AccentColor) -> Unit,
+	onThemeModeChanged: (AppThemeMode) -> Unit,
+	onAdvancedModeChanged: (Boolean) -> Unit,
+	onDisableKsuModulesChanged: (Boolean) -> Unit,
+	openInstaller: (String?) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
     val history by installViewModel.history.collectAsStateWithLifecycle()
@@ -371,12 +380,14 @@ private fun RootApp(
                 AppPage.History -> HistoryPage(padding, history)
                 AppPage.Settings -> SettingsPage(
                     padding = padding,
-                    accentColor = accentColor,
-                    themeMode = themeMode,
-                    advancedMode = advancedMode,
-                    onAccentColorChanged = onAccentColorChanged,
-                    onThemeModeChanged = onThemeModeChanged,
-                    onAdvancedModeChanged = onAdvancedModeChanged,
+					accentColor = accentColor,
+					themeMode = themeMode,
+					advancedMode = advancedMode,
+					disableKsuModules = disableKsuModules,
+					onAccentColorChanged = onAccentColorChanged,
+					onThemeModeChanged = onThemeModeChanged,
+					onAdvancedModeChanged = onAdvancedModeChanged,
+					onDisableKsuModulesChanged = onDisableKsuModulesChanged,
                 )
             }
         }
@@ -791,9 +802,11 @@ private fun SettingsPage(
     accentColor: AccentColor,
     themeMode: AppThemeMode,
     advancedMode: Boolean,
+    disableKsuModules: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
+    onDisableKsuModulesChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -886,8 +899,17 @@ private fun SettingsPage(
                     title = stringResource(R.string.advanced_mode),
                     description = stringResource(R.string.advanced_mode_description),
                     checked = advancedMode,
-                    position = SettingsCardPosition.GroupedSingle,
+                    position = SettingsCardPosition.Top,
                     onCheckedChange = onAdvancedModeChanged,
+				)
+
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Security,
+                    title = stringResource(R.string.disable_ksu_modules),
+                    description = stringResource(R.string.disable_ksu_modules_description),
+                    checked = disableKsuModules,
+                    position = SettingsCardPosition.Bottom,
+                    onCheckedChange = onDisableKsuModulesChanged,
                 )
             }
         }

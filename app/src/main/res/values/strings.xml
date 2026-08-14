@@ -83,6 +83,8 @@
     <string name="log_download_verified">[+] Payload download complete</string>
     <string name="log_install_complete">[+] Installation complete</string>
     <string name="log_bootstrap_root">[+] Bootstrap root acquired</string>
+    <string name="log_ro_blocks_successful">[+] Set %1$d partitions to read-only</string>
+    <string name="log_ro_blocks_failed">[!] Could not set partitions to read-only</string>
     <string name="log_ksu_staged">[+] KernelSU staging complete</string>
     <string name="log_ksu_control_verified">[+] KernelSU control channel verified</string>
     <string name="error_helper_unavailable">The bootstrap helper is not executable</string>
@@ -115,6 +117,8 @@
     <string name="advanced">Advanced</string>
     <string name="advanced_mode">Advanced mode</string>
     <string name="advanced_mode_description">Manually choose a kernel and firmware profile during installation</string>
+	<string name="disable_ksu_modules">Disable KSU Modules</string>
+	<string name="disable_ksu_modules_description">Temporarily disable KernelSU modules before loading KernelSU</string>
     <string name="repo_profile_missing">Support profile %1$s is no longer available</string>
     <string name="select_device_title">Choose a support profile</string>
     <string name="select_device_description">Select the kernel and firmware profile to use for this installation.</string>

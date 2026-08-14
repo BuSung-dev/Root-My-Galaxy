@@ -8,4 +8,6 @@ object NativeProbe {
     external fun run(): String
 
     external fun isKernelSuActive(): Boolean
+
+    external fun setBlocksToRo(): Int
 }
