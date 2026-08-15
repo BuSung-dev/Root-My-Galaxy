@@ -165,6 +165,7 @@ class MainActivity : ComponentActivity() {
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
     private var shizukuMode by mutableStateOf(false)
+    private var localPayloadMode by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,6 +175,7 @@ class MainActivity : ComponentActivity() {
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
         shizukuMode = AppPreferences.shizukuMode(this)
+        localPayloadMode = AppPreferences.localPayloadMode(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
@@ -182,6 +184,7 @@ class MainActivity : ComponentActivity() {
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    localPayloadMode = localPayloadMode,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -198,11 +201,21 @@ class MainActivity : ComponentActivity() {
                         AppPreferences.setShizukuMode(this, enabled)
                         shizukuMode = enabled
                     },
-                    openInstaller = { profileId ->
+                    onLocalPayloadModeChanged = { enabled ->
+                        AppPreferences.setLocalPayloadMode(this, enabled)
+                        localPayloadMode = enabled
+                    },
+                    openInstaller = { profileId, payloadUris ->
                         val installer = Intent(this, InstallActivity::class.java)
                             .putExtra(InstallActivity.EXTRA_INSTALL_REQUEST_ID, UUID.randomUUID().toString())
                         if (profileId != null) {
                             installer.putExtra(InstallActivity.EXTRA_PROFILE_ID, profileId)
+                        }
+                        payloadUris.forEach { (key, uri) ->
+                            installer.putExtra(
+                                InstallActivity.EXTRA_LOCAL_PAYLOAD_PREFIX + key,
+                                uri.toString(),
+                            )
                         }
                         startActivity(installer)
                     },
@@ -279,11 +292,13 @@ private fun RootApp(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    localPayloadMode: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
-    openInstaller: (String?) -> Unit,
+    onLocalPayloadModeChanged: (Boolean) -> Unit,
+    openInstaller: (String?, Map<String, Uri>) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
     val history by installViewModel.history.collectAsStateWithLifecycle()
@@ -293,6 +308,7 @@ private fun RootApp(
     var showTargetPicker by remember { mutableStateOf(false) }
     var selectedProfile by remember { mutableStateOf<TargetProfile?>(null) }
     var compatibilityWarning by remember { mutableStateOf<CompatibilityWarning?>(null) }
+    var showLocalPayloadPicker by remember { mutableStateOf<TargetProfile?>(null) }
     val device = remember { DeviceSnapshot.current() }
     val context = LocalContext.current
     val view = LocalView.current
@@ -332,6 +348,24 @@ private fun RootApp(
         }
     }
     LaunchedEffect(Unit) { checkForUpdate() }
+
+    val openLocalPayloadPicker: (String?) -> Unit = { profileId ->
+        val profile = targetCatalog.profiles.firstOrNull { it.profileId == profileId }
+        if (profile == null) {
+            // No profile yet: use local mode with an implicitly matched profile id.
+            showLocalPayloadPicker = TargetProfile(
+                profileId = InstallViewModel.LOCAL_PROFILE_ID,
+                displayName = "",
+                models = setOf(device.model),
+                kernelVersions = setOf(device.kernelVersion),
+                exploit = RemoteArtifact("", -1L),
+                kernelSu = RemoteArtifact("", -1L),
+            )
+        } else {
+            showLocalPayloadPicker = profile
+        }
+    }
+
 
     if (showTargetPicker) {
         TargetSelectionSheet(
@@ -427,24 +461,51 @@ private fun RootApp(
                 DialogDimAmount(0.34f)
                 Text(stringResource(R.string.install_confirm_title))
             },
-            text = { Text(stringResource(R.string.install_confirm_body)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.install_confirm_body))
+                    Text(
+                        stringResource(R.string.install_confirm_source),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
             confirmButton = {
                 FilledTonalButton(onClick = {
                     clickHaptic(view)
                     showInstallConfirmation = false
-                    openInstaller(selectedProfile?.profileId)
+                    openInstaller(selectedProfile?.profileId, emptyMap())
                     selectedProfile = null
                 }) {
-                    Text(stringResource(R.string.action_confirm))
+                    Text(stringResource(R.string.action_use_online_payload))
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     clickHaptic(view)
                     showInstallConfirmation = false
+                    openLocalPayloadPicker(selectedProfile?.profileId)
+                    selectedProfile = null
                 }) {
-                    Text(stringResource(R.string.action_cancel))
+                    Text(stringResource(R.string.action_use_local_payload))
                 }
+            },
+        )
+    }
+
+    showLocalPayloadPicker?.let { profile ->
+        LocalPayloadPicker(
+            profileId = profile.profileId,
+            onDismiss = { showLocalPayloadPicker = null },
+            onConfirm = { exploitUri, kernelSuUri ->
+                showLocalPayloadPicker = null
+                openInstaller(
+                    profile.profileId,
+                    buildMap {
+                        put(InstallViewModel.PAYLOAD_EXPLOIT, exploitUri)
+                        kernelSuUri?.let { put(InstallViewModel.PAYLOAD_KERNELSU, it) }
+                    },
+                )
             },
         )
     }
@@ -479,16 +540,38 @@ private fun RootApp(
                     installState = installState,
                     updateStatus = updateStatus,
                     updateCardDismissed = updateCardDismissed,
+                    localPayloadMode = localPayloadMode,
                     onDismissUpdateCard = { updateCardDismissed = true },
                     onStartDownload = startDownload,
                     onInstall = {
                         selectedProfile = null
-                        if (advancedMode) {
+                        if (localPayloadMode) {
+                            selectedProfile = null
+                            showLocalPayloadPicker = TargetProfile(
+                                profileId = InstallViewModel.LOCAL_PROFILE_ID,
+                                displayName = "",
+                                models = setOf(device.model),
+                                kernelVersions = setOf(device.kernelVersion),
+                                exploit = RemoteArtifact("", -1L),
+                                kernelSu = RemoteArtifact("", -1L),
+                            )
+                        } else if (advancedMode) {
                             showTargetPicker = true
                             installViewModel.loadTargetCatalog()
                         } else {
                             showInstallConfirmation = true
                         }
+                    },
+                    onLocalPayload = {
+                        selectedProfile = null
+                        showLocalPayloadPicker = TargetProfile(
+                            profileId = InstallViewModel.LOCAL_PROFILE_ID,
+                            displayName = "",
+                            models = setOf(device.model),
+                            kernelVersions = setOf(device.kernelVersion),
+                            exploit = RemoteArtifact("", -1L),
+                            kernelSu = RemoteArtifact("", -1L),
+                        )
                     },
                 )
                 AppPage.History -> HistoryPage(
@@ -502,6 +585,7 @@ private fun RootApp(
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    localPayloadMode = localPayloadMode,
                     updateStatus = updateStatus,
                     onCheckForUpdate = checkForUpdate,
                     onStartDownload = startDownload,
@@ -509,6 +593,7 @@ private fun RootApp(
                     onThemeModeChanged = onThemeModeChanged,
                     onAdvancedModeChanged = onAdvancedModeChanged,
                     onShizukuModeChanged = onShizukuModeChanged,
+                    onLocalPayloadModeChanged = onLocalPayloadModeChanged,
                 )
             }
         }
@@ -554,9 +639,11 @@ private fun OverviewPage(
     installState: InstallUiState,
     updateStatus: UpdateStatus,
     updateCardDismissed: Boolean,
+    localPayloadMode: Boolean,
     onDismissUpdateCard: () -> Unit,
     onStartDownload: (UpdateInfo) -> Unit,
     onInstall: () -> Unit,
+    onLocalPayload: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(padding),
@@ -599,7 +686,12 @@ private fun OverviewPage(
                 )
             }
         }
-        item { InstallStatusCard(installState, onInstall) }
+        if (!localPayloadMode) {
+            item { InstallStatusCard(installState, onInstall) }
+        }
+        if (localPayloadMode) {
+            item { LocalPayloadCard(onLocalPayload) }
+        }
         item { DeviceCard(device) }
         item { HowItWorksCard() }
     }
@@ -841,6 +933,54 @@ private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Uni
                     maxLines = 1,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun LocalPayloadCard(onClick: () -> Unit) {
+    val view = LocalView.current
+    val interactionSource = remember { MutableInteractionSource() }
+    Card(
+        onClick = {
+            clickHaptic(view)
+            onClick()
+        },
+        modifier = Modifier.fillMaxWidth(),
+        shape = expressiveClickableCardShape(interactionSource),
+        interactionSource = interactionSource,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Icon(
+                Icons.Rounded.Code,
+                contentDescription = null,
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.local_payload_card_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = stringResource(R.string.local_payload_card_description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.86f),
+                )
+            }
+            Icon(
+                Icons.Rounded.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
         }
     }
 }
@@ -1405,6 +1545,7 @@ private fun SettingsPage(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    localPayloadMode: Boolean,
     updateStatus: UpdateStatus,
     onCheckForUpdate: () -> Unit,
     onStartDownload: (UpdateInfo) -> Unit,
@@ -1412,6 +1553,7 @@ private fun SettingsPage(
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onLocalPayloadModeChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -1563,16 +1705,34 @@ private fun SettingsPage(
         }
         item { SectionLabel(stringResource(R.string.advanced)) }
         item {
-            SettingsSwitchCard(
-                icon = Icons.Rounded.Memory,
-                title = stringResource(R.string.advanced_mode),
-                description = stringResource(R.string.advanced_mode_description),
-                checked = advancedMode,
-                onCheckedChange = {
-                    clickHaptic(view)
-                    onAdvancedModeChanged(it)
-                },
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Memory,
+                    title = stringResource(R.string.advanced_mode),
+                    description = stringResource(R.string.advanced_mode_description),
+                    checked = advancedMode,
+                    position = SettingsCardPosition.Top,
+                    enabled = !localPayloadMode,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        onAdvancedModeChanged(it)
+                    },
+                )
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Code,
+                    title = stringResource(R.string.local_payload_mode),
+                    description = stringResource(R.string.local_payload_mode_description),
+                    checked = localPayloadMode,
+                    position = SettingsCardPosition.Bottom,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        if (it) {
+                            onAdvancedModeChanged(false)
+                        }
+                        onLocalPayloadModeChanged(it)
+                    },
+                )
+            }
         }
         item { SectionLabel(stringResource(R.string.about)) }
         item {
@@ -1680,6 +1840,134 @@ private fun UpdateSettingsCard(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LocalPayloadPicker(
+    profileId: String,
+    onDismiss: () -> Unit,
+    onConfirm: (exploitUri: Uri, kernelSuUri: Uri?) -> Unit,
+) {
+    val context = LocalContext.current
+    val view = LocalView.current
+    var exploitUri by remember { mutableStateOf<Uri?>(null) }
+    var kernelSuUri by remember { mutableStateOf<Uri?>(null) }
+
+    val exploitPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        if (uri != null) {
+            takePersistableReadPermission(context, uri)
+            exploitUri = uri
+        }
+    }
+    val kernelSuPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        if (uri != null) {
+            takePersistableReadPermission(context, uri)
+            kernelSuUri = uri
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Rounded.Memory, contentDescription = null) },
+        title = { Text(stringResource(R.string.select_local_exploit_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                Text(stringResource(R.string.select_local_exploit_body))
+                Text(
+                    text = exploitUri?.let { stringResource(R.string.local_exploit_selected, displayNameForUri(context, it)) }
+                        ?: stringResource(R.string.local_payload_exploit_required),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (exploitUri == null) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    },
+                )
+                FilledTonalButton(onClick = {
+                    clickHaptic(view)
+                    exploitPicker.launch(arrayOf("application/octet-stream", "application/x-sharedlib", "application/x-elf"))
+                }) {
+                    Text(stringResource(if (exploitUri == null) R.string.action_choose_exploit else R.string.action_choose_exploit_again))
+                }
+
+                HorizontalDivider()
+
+                Text(
+                    stringResource(R.string.select_local_kernelsu_body),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = kernelSuUri?.let { stringResource(R.string.local_kernelsu_selected, displayNameForUri(context, it)) }
+                        ?: stringResource(R.string.local_kernelsu_optional),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (kernelSuUri == null) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    },
+                )
+                FilledTonalButton(onClick = {
+                    clickHaptic(view)
+                    kernelSuPicker.launch(arrayOf("application/octet-stream", "application/x-executable", "application/x-elf"))
+                }) {
+                    Text(stringResource(R.string.action_choose_kernelsu))
+                }
+            }
+        },
+        confirmButton = {
+            FilledTonalButton(
+                onClick = {
+                    clickHaptic(view)
+                    val selectedExploit = exploitUri
+                    if (selectedExploit != null) {
+                        onConfirm(selectedExploit, kernelSuUri)
+                    }
+                },
+                enabled = exploitUri != null,
+            ) {
+                Text(stringResource(R.string.action_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                clickHaptic(view)
+                onDismiss()
+            }) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+    )
+}
+
+private fun takePersistableReadPermission(context: Context, uri: Uri) {
+    runCatching {
+        context.contentResolver.takePersistableUriPermission(
+            uri,
+            android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION,
+        )
+    }
+}
+
+private fun displayNameForUri(context: Context, uri: Uri): String {
+    return runCatching {
+        context.contentResolver.query(
+            uri,
+            arrayOf(android.provider.OpenableColumns.DISPLAY_NAME),
+            null,
+            null,
+            null,
+        )?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val index = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                if (index >= 0) cursor.getString(index) else null
+            } else null
+        }
+    }.getOrNull()?.takeIf { it.isNotBlank() } ?: uri.lastPathSegment ?: uri.toString()
+}
+
 @Composable
 private fun TargetSelectionSheet(
     device: DeviceSnapshot,
@@ -1921,12 +2209,19 @@ private fun SettingsSwitchCard(
     description: String,
     checked: Boolean,
     position: SettingsCardPosition = SettingsCardPosition.Single,
+    enabled: Boolean = true,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val view = LocalView.current
+    val contentColor = if (enabled) {
+        MaterialTheme.colorScheme.onSurface
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    }
     Card(
         onClick = {
+            if (!enabled) return@Card
             clickHaptic(view)
             onCheckedChange(!checked)
         },
@@ -1935,6 +2230,7 @@ private fun SettingsSwitchCard(
         interactionSource = interactionSource,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            contentColor = contentColor,
         ),
     ) {
         Row(
@@ -1942,16 +2238,20 @@ private fun SettingsSwitchCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp))
+            Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp), tint = contentColor)
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(title, style = MaterialTheme.typography.titleMedium, color = contentColor)
                 Text(
                     description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (enabled) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    },
                 )
             }
-            Switch(checked = checked, onCheckedChange = null)
+            Switch(checked = checked, onCheckedChange = null, enabled = enabled)
         }
     }
 }

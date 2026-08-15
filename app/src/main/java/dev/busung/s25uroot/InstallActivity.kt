@@ -69,6 +69,7 @@ class InstallActivity : ComponentActivity() {
         enableEdgeToEdge()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val profileId = intent.getStringExtra(EXTRA_PROFILE_ID)
+        val localPayloadUris = readLocalPayloadUris(intent)
         val startInstall = savedInstanceState == null && AppPreferences.consumeInstallRequest(
             this,
             intent.getStringExtra(EXTRA_INSTALL_REQUEST_ID),
@@ -81,21 +82,30 @@ class InstallActivity : ComponentActivity() {
             ) {
                 val installState by installViewModel.state.collectAsStateWithLifecycle()
                 BackHandler(enabled = installState.busy) {}
-                LaunchedEffect(startInstall, profileId) {
-                    if (startInstall) installViewModel.install(profileId)
+                LaunchedEffect(startInstall, profileId, localPayloadUris) {
+                    if (startInstall) installViewModel.install(profileId, localPayloadUris)
                 }
                 InstallScreen(
                     installState = installState,
-                    onRetry = { installViewModel.install(profileId) },
+                    onRetry = { installViewModel.install(profileId, localPayloadUris) },
                     onClose = ::finish,
                 )
             }
         }
     }
 
+    private fun readLocalPayloadUris(intent: android.content.Intent): Map<String, android.net.Uri> = buildMap {
+        listOf(InstallViewModel.PAYLOAD_EXPLOIT, InstallViewModel.PAYLOAD_KERNELSU).forEach { key ->
+            intent.getStringExtra(EXTRA_LOCAL_PAYLOAD_PREFIX + key)
+                ?.let { value -> android.net.Uri.parse(value) }
+                ?.let { uri -> put(key, uri) }
+        }
+    }
+
     companion object {
         const val EXTRA_INSTALL_REQUEST_ID = "install_request_id"
         const val EXTRA_PROFILE_ID = "profile_id"
+        const val EXTRA_LOCAL_PAYLOAD_PREFIX = "local_payload_"
     }
 }
 
@@ -367,8 +377,8 @@ private fun InstallerLog(
                     .weight(1f)
                     .verticalScroll(scrollState),
                 fontFamily = FontFamily.Monospace,
-                fontSize = 12.sp,
-                lineHeight = 18.sp,
+                fontSize = 10.sp,
+                lineHeight = 15.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

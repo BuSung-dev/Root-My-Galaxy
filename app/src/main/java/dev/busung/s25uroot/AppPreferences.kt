@@ -34,6 +34,7 @@ object AppPreferences {
     private const val THEME_MODE = "theme_mode"
     private const val ADVANCED_MODE = "advanced_mode"
     private const val SHIZUKU_MODE = "shizuku_mode"
+    private const val LOCAL_PAYLOAD_MODE = "local_payload_mode"
     private const val CONSUMED_INSTALL_REQUEST = "consumed_install_request"
 
     fun accentColor(context: Context): AccentColor = AccentColor.fromStoredValue(
@@ -57,7 +58,7 @@ object AppPreferences {
     }
 
     fun advancedMode(context: Context): Boolean =
-        prefs(context).getBoolean(ADVANCED_MODE, false)
+        prefs(context).getBoolean(ADVANCED_MODE, true)
 
     fun setAdvancedMode(context: Context, enabled: Boolean) {
         prefs(context).edit()
@@ -71,6 +72,15 @@ object AppPreferences {
     fun setShizukuMode(context: Context, enabled: Boolean) {
         prefs(context).edit()
             .putBoolean(SHIZUKU_MODE, enabled)
+            .apply()
+    }
+
+    fun localPayloadMode(context: Context): Boolean =
+        prefs(context).getBoolean(LOCAL_PAYLOAD_MODE, false)
+
+    fun setLocalPayloadMode(context: Context, enabled: Boolean) {
+        prefs(context).edit()
+            .putBoolean(LOCAL_PAYLOAD_MODE, enabled)
             .apply()
     }
 

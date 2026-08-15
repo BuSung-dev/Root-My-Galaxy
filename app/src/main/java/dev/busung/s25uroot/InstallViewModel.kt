@@ -1,6 +1,7 @@
 package dev.busung.s25uroot
 
 import android.app.Application
+import android.net.Uri
 import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,6 +26,8 @@ enum class InstallPhase {
     Installed,
     Failed,
 }
+
+private enum class PayloadSource { Remote, Local }
 
 data class InstallUiState(
     val phase: InstallPhase = InstallPhase.Checking,
@@ -60,6 +63,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     private var discoveryJob: Job? = null
     private var installJob: Job? = null
     private var activeHistoryEntry: InstallHistoryEntry? = null
+    private var localPayloadUris: Map<String, Uri> = emptyMap()
     val state: StateFlow<InstallUiState> = mutableState.asStateFlow()
     val history: StateFlow<List<InstallHistoryEntry>> = mutableHistory.asStateFlow()
     val targetCatalog: StateFlow<TargetCatalogUiState> = mutableTargetCatalog.asStateFlow()
@@ -129,7 +133,8 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun install(profileId: String? = null) {
+    fun install(profileId: String? = null, localPayloadUris: Map<String, Uri> = emptyMap()) {
+        this.localPayloadUris = localPayloadUris
         if (installJob?.isActive == true || mutableState.value.phase == InstallPhase.Installed) return
         discoveryJob?.cancel()
         installJob = viewModelScope.launch(Dispatchers.IO) {
@@ -149,24 +154,67 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                     }
                     appendLog(app.getString(R.string.log_shizuku_permission))
                 }
-                setPhase(InstallPhase.Checking, app.getString(R.string.status_checking_github))
-                val profile = if (profileId == null) {
-                    repository.resolveTarget(DeviceSnapshot.current())
+                val localExploitUri = localPayloadUris[PAYLOAD_EXPLOIT]
+                val paySource = if (localExploitUri != null) {
+                    PayloadSource.Local
                 } else {
-                    repository.resolveTarget(profileId)
+                    PayloadSource.Remote
                 }
-                appendLog(app.getString(R.string.log_profile, profile.profileId))
-                updateHistoryProfile(profile.profileId)
+                val notifyProfileId: String?
+                val payloads: VerifiedPayloads? = when (paySource) {
+                    PayloadSource.Remote -> {
+                        setPhase(InstallPhase.Checking, app.getString(R.string.status_checking_github))
+                        val resolved = if (profileId == null) {
+                            repository.resolveTarget(DeviceSnapshot.current())
+                        } else {
+                            repository.resolveTarget(profileId)
+                        }
+                        setPhase(InstallPhase.Downloading, app.getString(R.string.status_downloading_payload))
+                        val downloaded = repository.download(resolved) { appendLog("[*] $it") }
+                        appendLog(app.getString(R.string.log_download_verified))
+                        notifyProfileId = resolved.profileId
+                        downloaded
+                    }
+                    PayloadSource.Local -> {
+                        setPhase(InstallPhase.Downloading, app.getString(R.string.status_staging_local_payload))
+                        notifyProfileId = null
+                        appendLog(app.getString(R.string.log_profile_source, paySourceLogLabel(paySource)))
+                        val exploitUri = requireNotNull(localExploitUri) {
+                            app.getString(R.string.error_local_payload_unavailable)
+                        }
+                        repository.stageLocalExploit(syntheticProfile, exploitUri) {
+                            appendLog("[*] $it")
+                        }
+                    }
+                }
 
-                setPhase(InstallPhase.Downloading, app.getString(R.string.status_downloading_payload))
-                val payloads = repository.download(profile) { appendLog("[*] $it") }
-                appendLog(app.getString(R.string.log_download_verified))
+                if (notifyProfileId != null) {
+                    appendLog(app.getString(R.string.log_profile, notifyProfileId))
+                    updateHistoryProfile(notifyProfileId)
+                }
 
                 setPhase(InstallPhase.Exploiting, app.getString(R.string.status_exploit_running))
-                executeExploit(payloads.exploit)
+                val verified = requireNotNull(payloads) { app.getString(R.string.error_local_payload_unavailable) }
+                executeExploit(verified.exploit)
 
                 setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
-                installKernelSu(payloads)
+                val finalPayloads = if (paySource == PayloadSource.Local) {
+                    val kernelSuUri = localPayloadUris[PAYLOAD_KERNELSU]
+                    if (kernelSuUri != null) {
+                        appendLog(app.getString(R.string.log_kernelsu_source, paySourceLogLabel(PayloadSource.Local)))
+                        repository.stageLocalKernelSu(verified, kernelSuUri) { appendLog("[*] $it") }
+                    } else {
+                        val resolved = repository.resolveTarget(DeviceSnapshot.current())
+                        appendLog(app.getString(R.string.log_kernelsu_source, paySourceLogLabel(PayloadSource.Remote)))
+                        setPhase(InstallPhase.Downloading, app.getString(R.string.status_downloading_payload))
+                        val downloaded = repository.download(resolved) { appendLog("[*] $it") }
+                        appendLog(app.getString(R.string.log_download_verified))
+                        downloaded
+                    }
+                } else {
+                    verified
+                }
+                installKernelSu(finalPayloads)
 
                 setPhase(InstallPhase.Installed, app.getString(R.string.status_ksu_active))
                 appendLog(app.getString(R.string.log_install_complete))
@@ -481,7 +529,31 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
 
     private fun File.readTextIfPresent(): String = if (exists()) readText() else ""
 
+    private fun paySourceLogLabel(source: PayloadSource): String = app.getString(
+        if (source == PayloadSource.Local) {
+            R.string.payload_source_local
+        } else {
+            R.string.payload_source_remote
+        },
+    )
+
+    private val syntheticProfile: TargetProfile
+        get() {
+            val snapshot = DeviceSnapshot.current()
+            return TargetProfile(
+                profileId = LOCAL_PROFILE_ID,
+                displayName = app.getString(R.string.local_payload_display_name),
+                models = setOf(snapshot.model),
+                kernelVersions = setOf(snapshot.kernelVersion),
+                exploit = RemoteArtifact("", -1L),
+                kernelSu = RemoteArtifact("", -1L),
+            )
+        }
+
     companion object {
+        const val LOCAL_PROFILE_ID = "local-payload"
+        const val PAYLOAD_EXPLOIT = "exploit"
+        const val PAYLOAD_KERNELSU = "kernelsu"
         private const val EXPLOIT_ATTEMPTS = "24"
         private const val P0_ATTEMPT_TIMEOUT_SEC = "45"
         private const val EXPLOIT_ATTEMPT_TIMEOUT_SEC = "120"

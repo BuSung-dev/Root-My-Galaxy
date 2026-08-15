@@ -1,6 +1,7 @@
 package dev.busung.s25uroot
 
 import android.content.Context
+import android.net.Uri
 import android.system.Os
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -50,6 +51,54 @@ class PayloadRepository(private val context: Context) {
         Os.chmod(exploit.absolutePath, 0b100100100)
         Os.chmod(kernelSu.absolutePath, 0b100100100)
         return VerifiedPayloads(profile, exploit, kernelSu)
+    }
+
+    // Stage one locally selected exploit payload (.so) into the app's payload
+    // directory and return a VerifiedPayloads. The KernelSU artifact is empty, so
+    // installViewModel defers to resolveTarget + download for it.
+    fun stageLocalExploit(
+        profile: TargetProfile,
+        uri: Uri,
+        onProgress: (String) -> Unit,
+    ): VerifiedPayloads {
+        val directory = File(context.filesDir, "payloads/${profile.profileId}").apply { mkdirs() }
+        val destination = File(directory, "cve-2026-43499-app.so")
+        onProgress(context.getString(R.string.repo_importing, context.getString(R.string.artifact_exploit)))
+        copyFromUri(uri, destination, context.getString(R.string.artifact_exploit))
+        Os.chmod(destination.absolutePath, 0b100100100)
+        onProgress(context.getString(R.string.repo_verified, context.getString(R.string.artifact_exploit)))
+        return VerifiedPayloads(profile, destination, File(directory, "ksud-s25u-kdp"))
+    }
+
+    // Rewrite the locally selected KernelSU artifact beside the already-staged
+    // exploit, then return the fully local VerifiedPayloads.
+    fun stageLocalKernelSu(
+        payloads: VerifiedPayloads,
+        uri: Uri,
+        onProgress: (String) -> Unit,
+    ): VerifiedPayloads {
+        val destination = payloads.kernelSu
+        onProgress(context.getString(R.string.repo_importing, context.getString(R.string.artifact_kernelsu)))
+        copyFromUri(uri, destination, context.getString(R.string.artifact_kernelsu))
+        Os.chmod(destination.absolutePath, 0b100100100)
+        onProgress(context.getString(R.string.repo_verified, context.getString(R.string.artifact_kernelsu)))
+        return VerifiedPayloads(payloads.profile, payloads.exploit, destination)
+    }
+
+    private fun copyFromUri(uri: Uri, destination: File, label: String) {
+        val temporary = File(destination.parentFile, "${destination.name}.part")
+        val input = context.contentResolver.openInputStream(uri)
+            ?: error(context.getString(R.string.repo_local_open_failed, label))
+        input.use { stream ->
+            FileOutputStream(temporary).use { output ->
+                stream.copyTo(output, DEFAULT_BUFFER_SIZE)
+                output.fd.sync()
+            }
+        }
+        if (destination.exists()) destination.delete()
+        require(temporary.renameTo(destination)) {
+            context.getString(R.string.repo_finalize_failed, label)
+        }
     }
 
     private fun downloadArtifact(

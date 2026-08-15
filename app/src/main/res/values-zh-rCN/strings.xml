@@ -61,4 +61,31 @@
         <item quantity="other">这些运行记录及其日志将被永久删除。</item>
     </plurals>
     <string name="history_delete">删除</string>
+    <string name="install_confirm_source">请选择在线下载 payload，或使用本设备上存储的 payload 文件。</string>
+    <string name="status_staging_local_payload">正在准备本地 payload</string>
+    <string name="log_profile_source">[*] 来源：%1$s</string>
+    <string name="log_kernelsu_source">[*] KernelSU 来源：%1$s</string>
+    <string name="payload_source_local">本地</string>
+    <string name="payload_source_remote">GitHub</string>
+    <string name="error_local_payload_unavailable">本地 payload 不可用</string>
+    <string name="repo_importing">正在导入 %1$s</string>
+    <string name="repo_local_open_failed">无法打开所选的 %1$s 文件</string>
+    <string name="local_payload_mode">使用本地 payload</string>
+    <string name="local_payload_mode_description">从本设备选择 payload 文件，而不是从 GitHub 下载</string>
+    <string name="local_payload_card_title">使用本地 payload</string>
+    <string name="local_payload_card_description">选择本设备上存储的 exploit 与 KernelSU 文件</string>
+    <string name="local_payload_display_name">本地 payload</string>
+    <string name="select_local_exploit_title">选择漏洞利用 payload</string>
+    <string name="select_local_exploit_body">请从本设备选择漏洞利用共享库（.so）。</string>
+    <string name="select_local_kernelsu_title">选择 KernelSU payload</string>
+    <string name="select_local_kernelsu_body">请从本设备选择 KernelSU（ksud）二进制文件。</string>
+    <string name="action_use_local_payload">本地 payload</string>
+    <string name="action_use_online_payload">在线 payload</string>
+    <string name="action_choose_exploit">选择漏洞利用文件</string>
+    <string name="action_choose_exploit_again">重新选择漏洞利用文件</string>
+    <string name="action_choose_kernelsu">选择 KernelSU 文件</string>
+    <string name="local_kernelsu_optional">可选 — 未选择时将从 GitHub 下载</string>
+    <string name="local_exploit_selected">漏洞利用：%1$s</string>
+    <string name="local_kernelsu_selected">KernelSU：%1$s</string>
+    <string name="local_payload_exploit_required">必须选择漏洞利用 payload</string>
 </resources>
