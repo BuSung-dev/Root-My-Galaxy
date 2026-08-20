@@ -50,6 +50,14 @@ data class TargetCatalogUiState(
 
 private data class CommandResult(val code: Int, val output: String)
 
+private data class ExploitTimeout(
+    val attempts: String,
+    val p0TimeoutSec: String,
+    val attemptTimeoutSec: String,
+    val stallMillis: Long,
+    val totalMillis: Long,
+)
+
 class InstallViewModel(application: Application) : AndroidViewModel(application) {
     private val app = application
     private val repository = PayloadRepository(application)
@@ -193,11 +201,12 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
         val logPrefix = mutableState.value.log
         val bootToken = currentBootToken()
+        val timeout = exploitTimeout()
         val process = if (shizuku) {
             val stagedPayload = shizukuStage(payload, SHIZUKU_PAYLOAD_PATH, "755")
             ShizukuController.exec(
                 arrayOf("/system/bin/sh", "-c", "true"),
-                shizukuEnvironment(bootToken, stagedPayload.absolutePath, helper.absolutePath),
+                shizukuEnvironment(timeout, bootToken, stagedPayload.absolutePath, helper.absolutePath),
             )
         } else {
             val processBuilder = ProcessBuilder(
@@ -208,9 +217,9 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 logFile.absolutePath,
             ).redirectErrorStream(true)
             processBuilder.environment().apply {
-                put("EXPLOIT_ATTEMPTS", EXPLOIT_ATTEMPTS)
-                put("P0_ATTEMPT_TIMEOUT_SEC", P0_ATTEMPT_TIMEOUT_SEC)
-                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", EXPLOIT_ATTEMPT_TIMEOUT_SEC)
+                put("EXPLOIT_ATTEMPTS", timeout.attempts)
+                put("P0_ATTEMPT_TIMEOUT_SEC", timeout.p0TimeoutSec)
+                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", timeout.attemptTimeoutSec)
                 cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
             }
             processBuilder.start()
@@ -235,10 +244,10 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                     lastProgressAt = SystemClock.elapsedRealtime()
                 }
                 val now = SystemClock.elapsedRealtime()
-                require(now - lastProgressAt < EXPLOIT_STALL_MILLIS) {
+                require(now - lastProgressAt < timeout.stallMillis) {
                     app.getString(R.string.error_exploit_stalled)
                 }
-                require(now - startedAt < EXPLOIT_TOTAL_MILLIS) {
+                require(now - startedAt < timeout.totalMillis) {
                     app.getString(R.string.error_exploit_timeout)
                 }
                 delay(if (shizuku) SHIZUKU_LOG_POLL_INTERVAL else LOG_POLL_INTERVAL)
@@ -396,17 +405,39 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun shizukuEnvironment(
+        timeout: ExploitTimeout,
         bootToken: String?,
         payloadPath: String,
         helperPath: String,
     ): Array<String> = buildList {
-        add("EXPLOIT_ATTEMPTS=$EXPLOIT_ATTEMPTS")
-        add("P0_ATTEMPT_TIMEOUT_SEC=$P0_ATTEMPT_TIMEOUT_SEC")
-        add("EXPLOIT_ATTEMPT_TIMEOUT_SEC=$EXPLOIT_ATTEMPT_TIMEOUT_SEC")
+        add("EXPLOIT_ATTEMPTS=${timeout.attempts}")
+        add("P0_ATTEMPT_TIMEOUT_SEC=${timeout.p0TimeoutSec}")
+        add("EXPLOIT_ATTEMPT_TIMEOUT_SEC=${timeout.attemptTimeoutSec}")
         add("CVE43499_ROOT_HELPER=$helperPath")
         add("LD_PRELOAD=$payloadPath")
         cachedP0Offset(bootToken)?.let { add("$P0_OFFSET_ENV=$it") }
     }.toTypedArray()
+
+    private fun exploitTimeout(): ExploitTimeout {
+        val kernel = DeviceSnapshot.current().kernelVersion
+        return if (kernel.startsWith("5.15")) {
+            ExploitTimeout(
+                attempts = EXPLOIT_ATTEMPTS_515,
+                p0TimeoutSec = P0_ATTEMPT_TIMEOUT_SEC_515,
+                attemptTimeoutSec = EXPLOIT_ATTEMPT_TIMEOUT_SEC_515,
+                stallMillis = EXPLOIT_STALL_MILLIS_515,
+                totalMillis = EXPLOIT_TOTAL_MILLIS_515,
+            )
+        } else {
+            ExploitTimeout(
+                attempts = EXPLOIT_ATTEMPTS,
+                p0TimeoutSec = P0_ATTEMPT_TIMEOUT_SEC,
+                attemptTimeoutSec = EXPLOIT_ATTEMPT_TIMEOUT_SEC,
+                stallMillis = EXPLOIT_STALL_MILLIS,
+                totalMillis = EXPLOIT_TOTAL_MILLIS,
+            )
+        }
+    }
 
     private fun readProcessOutput(process: Process, shizuku: Boolean): String {
         val stdout = process.inputStream.bufferedReader().use { it.readText() }
@@ -487,6 +518,11 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         private const val EXPLOIT_ATTEMPT_TIMEOUT_SEC = "120"
         private const val EXPLOIT_STALL_MILLIS = 90_000L
         private const val EXPLOIT_TOTAL_MILLIS = 900_000L
+        private const val EXPLOIT_ATTEMPTS_515 = "8"
+        private const val P0_ATTEMPT_TIMEOUT_SEC_515 = "1200"
+        private const val EXPLOIT_ATTEMPT_TIMEOUT_SEC_515 = "2200"
+        private const val EXPLOIT_STALL_MILLIS_515 = 180_000L
+        private const val EXPLOIT_TOTAL_MILLIS_515 = 3_600_000L
         private const val INSTALL_RECEIPT = "install_receipt"
         private const val RECEIPT_BOOT_TOKEN = "kernel_boot_id"
         private const val RECEIPT_VERIFIED = "verified"
