@@ -34,6 +34,7 @@ object AppPreferences {
     private const val THEME_MODE = "theme_mode"
     private const val ADVANCED_MODE = "advanced_mode"
     private const val SHIZUKU_MODE = "shizuku_mode"
+    private const val KERNELSU_NEXT = "kernelsu_next"
     private const val CONSUMED_INSTALL_REQUEST = "consumed_install_request"
 
     fun accentColor(context: Context): AccentColor = AccentColor.fromStoredValue(
@@ -73,6 +74,18 @@ object AppPreferences {
             .putBoolean(SHIZUKU_MODE, enabled)
             .apply()
     }
+
+    fun useKernelSuNext(context: Context): Boolean =
+        prefs(context).getBoolean(KERNELSU_NEXT, false)
+
+    fun setUseKernelSuNext(context: Context, enabled: Boolean) {
+        prefs(context).edit()
+            .putBoolean(KERNELSU_NEXT, enabled)
+            .apply()
+    }
+
+    fun kernelSuLabel(context: Context): String =
+        if (useKernelSuNext(context)) "KernelSU-Next" else "KernelSU"
 
     @Synchronized
     fun consumeInstallRequest(context: Context, requestId: String?): Boolean {

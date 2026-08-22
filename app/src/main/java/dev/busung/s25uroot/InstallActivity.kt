@@ -50,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -103,13 +104,15 @@ internal data class InstallerStep(
     @StringRes val title: Int,
     @StringRes val detail: Int,
     val icon: ImageVector,
+    val titleArgs: Array<Any> = emptyArray(),
 )
 
-internal val installerSteps = listOf(
+internal fun installerSteps(context: android.content.Context) = listOf(
     InstallerStep(R.string.step_support_title, R.string.step_support_detail, Icons.Rounded.Security),
     InstallerStep(R.string.step_download_title, R.string.step_download_detail, Icons.Rounded.CloudDownload),
     InstallerStep(R.string.step_exploit_title, R.string.step_exploit_detail, Icons.Rounded.Memory),
-    InstallerStep(R.string.step_ksu_title, R.string.step_ksu_detail, Icons.Rounded.Check),
+    InstallerStep(R.string.step_ksu_title, R.string.step_ksu_detail, Icons.Rounded.Check,
+        titleArgs = arrayOf(AppPreferences.kernelSuLabel(context))),
 )
 
 private fun clickHaptic(view: View) {
@@ -281,6 +284,7 @@ private fun InstallerStatusCard(installState: InstallUiState) {
 
 @Composable
 private fun InstallerSteps(phase: InstallPhase) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
@@ -292,7 +296,7 @@ private fun InstallerSteps(phase: InstallPhase) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            installerSteps.forEachIndexed { index, step ->
+            installerSteps(context).forEachIndexed { index, step ->
                 val stepState = stepState(phase, index)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -322,7 +326,7 @@ private fun InstallerSteps(phase: InstallPhase) {
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = stringResource(step.title),
+                            text = if (step.titleArgs.isNotEmpty()) stringResource(step.title, *step.titleArgs) else stringResource(step.title),
                             style = MaterialTheme.typography.titleSmall,
                         )
                         Text(
@@ -376,17 +380,21 @@ private fun InstallerLog(
 }
 
 @Composable
-private fun installPhaseDetail(phase: InstallPhase): String = stringResource(
-    when (phase) {
-        InstallPhase.Checking -> R.string.phase_checking
-        InstallPhase.Ready -> R.string.phase_ready
-        InstallPhase.Downloading -> R.string.phase_downloading
-        InstallPhase.Exploiting -> R.string.phase_exploiting
-        InstallPhase.LoadingKernelSu -> R.string.phase_loading_ksu
-        InstallPhase.Installed -> R.string.phase_installed
-        InstallPhase.Failed -> R.string.phase_failed
-    },
-)
+private fun installPhaseDetail(phase: InstallPhase): String {
+    val label = AppPreferences.kernelSuLabel(LocalContext.current)
+    return stringResource(
+        when (phase) {
+            InstallPhase.Checking -> R.string.phase_checking
+            InstallPhase.Ready -> R.string.phase_ready
+            InstallPhase.Downloading -> R.string.phase_downloading
+            InstallPhase.Exploiting -> R.string.phase_exploiting
+            InstallPhase.LoadingKernelSu -> R.string.phase_loading_ksu
+            InstallPhase.Installed -> R.string.phase_installed
+            InstallPhase.Failed -> R.string.phase_failed
+        },
+        label,
+    )
+}
 
 private fun installProgress(phase: InstallPhase): Float = when (phase) {
     InstallPhase.Checking -> 0.1f

@@ -4,17 +4,17 @@
     <string name="nav_overview">Ana Sayfa</string>
     <string name="nav_history">Geçmiş</string>
     <string name="nav_settings">Ayarlar</string>
-    <string name="install_confirm_title">KernelSU yüklensin mi?</string>
-    <string name="install_confirm_body">Uygulama destek profilini doğrulayacak, ardından exploit ve KernelSU payload dosyalarını GitHub\'dan indirip çalıştıracaktır.</string>
+    <string name="install_confirm_title">%1$s yüklensin mi?</string>
+    <string name="install_confirm_body">Uygulama destek profilini doğrulayacak, ardından exploit ve %1$s payload dosyalarını GitHub\'dan indirip çalıştıracaktır.</string>
     <string name="action_confirm">Onayla</string>
     <string name="action_cancel">İptal</string>
     <string name="action_close">Kapat</string>
     <string name="action_retry">Tekrar Dene</string>
     <string name="action_done">Tamam</string>
     <string name="action_back">Geri</string>
-    <string name="install_tap_manager">KernelSU Manager\'ı yüklemek için dokunun</string>
+    <string name="install_tap_manager">%1$s Manager\'ı yüklemek için dokunun</string>
     <string name="install_tap_retry">Tekrar denemek için dokunun</string>
-    <string name="install_tap_start">KernelSU yüklemek için dokunun</string>
+    <string name="install_tap_start">%1$s yüklemek için dokunun</string>
     <string name="device">Cihaz</string>
     <string name="firmware">Yazılım Sürümü</string>
     <string name="system">Sistem</string><string name="kernel">Çekirdek</string>
@@ -56,42 +56,42 @@
     <string name="step_download_detail">Destek listesini yükle</string>
     <string name="step_exploit_title">Kernel exploit</string>
     <string name="step_exploit_detail">Bootstrap root al</string>
-    <string name="step_ksu_title">KernelSU Yükle</string>
+    <string name="step_ksu_title">%1$s Yükle</string>
     <string name="step_ksu_detail">Modülü yükle ve kontrol kanalını doğrula</string>
     <string name="phase_checking">Desteklenen cihaz ve yazılım kontrol ediliyor</string>
     <string name="phase_ready">Yüklemeye hazır</string>
     <string name="phase_downloading">GitHub\'dan hedefteki commit\'e ait payload dosyaları indiriliyor</string>
     <string name="phase_exploiting">Bu işlem 10 dakika veya daha uzun sürebilir. Cihazınız ısınabilir veya yanıt vermeyebilir.</string>
-    <string name="phase_loading_ksu">Elde edilen bootstrap root ile KernelSU yükleniyor</string>
-    <string name="phase_installed">KernelSU modülü ve kontrol kanalı doğrulandı</string>
+    <string name="phase_loading_ksu">Elde edilen bootstrap root ile %1$s yükleniyor</string>
+    <string name="phase_installed">%1$s modülü ve kontrol kanalı doğrulandı</string>
     <string name="phase_failed">Hata detayları için aşağıdaki günlüğü kontrol edin</string>
 
-    <string name="status_ksu_active">KernelSU aktif</string>
+    <string name="status_ksu_active">%1$s aktif</string>
     <string name="status_not_installed">Yüklü değil</string>
     <string name="status_support_failed">Destek kontrolü başarısız</string>
     <string name="status_checking_github">GitHub destek listesi kontrol ediliyor</string>
     <string name="status_downloading_payload">Payload dosyaları indiriliyor</string>
     <string name="status_exploit_running">Kernel exploit çalıştırılıyor</string>
-    <string name="status_ksu_loading">KernelSU yükleniyor</string>
+    <string name="status_ksu_loading">%1$s yükleniyor</string>
     <string name="status_install_failed">Yükleme başarısız</string>
     <string name="log_profile">[+] Destek profili: %1$s</string>
     <string name="log_download_verified">[+] Payload indirme tamamlandı</string>
     <string name="log_install_complete">[+] Yükleme tamamlandı</string>
     <string name="log_bootstrap_root">[+] Bootstrap root elde edildi</string>
-    <string name="log_ksu_staged">[+] KernelSU hazırlama tamamlandı</string>
-    <string name="log_ksu_control_verified">[+] KernelSU kontrol kanalı doğrulandı</string>
+    <string name="log_ksu_staged">[+] %1$s hazırlama tamamlandı</string>
+    <string name="log_ksu_control_verified">[+] %1$s kontrol kanalı doğrulandı</string>
     <string name="error_helper_unavailable">Bootstrap yardımcısı çalıştırılamıyor</string>
     <string name="error_exploit_stalled">Exploit günlüğü 90 saniye boyunca güncellenmedi</string>
     <string name="error_exploit_timeout">Exploit 15 dakikalık süre sınırını aştı</string>
     <string name="error_payload_exit">Payload çalıştırma hatası: %1$d%2$s</string>
     <string name="error_success_marker">Exploit başarıya dair bir şey bulamadı</string>
-    <string name="error_ksu_stage">KernelSU hazırlığı başarısız oldu: %1$s</string>
-    <string name="error_ksu_verify">KernelSU geç yükleme veya kontrol doğrulaması başarısız (rc=%1$d): %2$s</string>
+    <string name="error_ksu_stage">%1$s hazırlığı başarısız oldu: %2$s</string>
+    <string name="error_ksu_verify">%1$s geç yükleme veya kontrol doğrulaması başarısız (rc=%2$d): %3$s</string>
     <string name="error_boot_id">Geçerli boot_id okunamıyor</string>
     <string name="error_receipt">Yükleme doğrulama kaydı saklanamıyor</string>
 
     <string name="artifact_exploit">exploit</string>
-    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="artifact_kernelsu">%1$s</string>
     <string name="repo_no_profile">Bu model ve kernel sürümünü destekleyen uyumlu payload bulunamadı</string>
     <string name="repo_downloading">%1$s indiriliyor</string>
     <string name="repo_size_mismatch">%1$s boyutu destek listesiyle eşleşmiyor</string>
@@ -137,7 +137,7 @@
     <string name="export_log">Günlüğü dışa aktar</string>
     <string name="export_log_saved">Günlük kaydedildi</string>
     <string name="export_log_failed">Günlük kaydedilemedi</string>
-    <string name="install_tap_open_manager">KernelSU Manager\'ı açmak için dokunun</string>
+    <string name="install_tap_open_manager">%1$s Manager\'ı açmak için dokunun</string>
     <string name="how_it_works">Nasıl çalışır</string>
     <string name="kernelsu_card_description">Android için çekirdek tabanlı root çözümü</string>
     <string name="history_shizuku_used">Shizuku kullanıldı</string>
@@ -164,4 +164,6 @@
         <item quantity="other">Bu kayıtlar ve günlükleri kalıcı olarak silinecek.</item>
     </plurals>
     <string name="history_delete">Sil</string>
+    <string name="kernelsu_next_mode">KernelSU-Next kullan</string>
+    <string name="kernelsu_next_mode_description">KernelSU yerine KernelSU-Next kullanın. Kullanılamazsa geri dönüş yapar.</string>
 </resources>

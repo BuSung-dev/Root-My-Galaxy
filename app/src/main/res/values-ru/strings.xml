@@ -5,17 +5,17 @@
     <string name="nav_overview">Главная</string>
     <string name="nav_history">История</string>
     <string name="nav_settings">Настройки</string>
-    <string name="install_confirm_title">Установить KernelSU?</string>
-    <string name="install_confirm_body">Приложение проверит профиль поддержки, а затем загрузит с GitHub и запустит эксплойт и payload KernelSU.</string>
+    <string name="install_confirm_title">Установить %1$s?</string>
+    <string name="install_confirm_body">Приложение проверит профиль поддержки, а затем загрузит с GitHub и запустит эксплойт и payload %1$s.</string>
     <string name="action_confirm">Подтвердить</string>
     <string name="action_cancel">Отмена</string>
     <string name="action_close">Закрыть</string>
     <string name="action_retry">Повторить</string>
     <string name="action_done">Готово</string>
     <string name="action_back">Назад</string>
-    <string name="install_tap_manager">Нажмите, чтобы установить KernelSU Manager</string>
+    <string name="install_tap_manager">Нажмите, чтобы установить %1$s Manager</string>
     <string name="install_tap_retry">Нажмите, чтобы повторить попытку</string>
-    <string name="install_tap_start">Нажмите, чтобы установить KernelSU</string>
+    <string name="install_tap_start">Нажмите, чтобы установить %1$s</string>
     <string name="device">Устройство</string>
     <string name="firmware">Прошивка</string>
     <string name="system">Система</string><string name="kernel">Ядро</string>
@@ -65,42 +65,42 @@
     <string name="step_download_detail">Загрузка манифеста поддержки</string>
     <string name="step_exploit_title">Эксплойт ядра</string>
     <string name="step_exploit_detail">Получение временного root-доступа</string>
-    <string name="step_ksu_title">Загрузка KernelSU</string>
+    <string name="step_ksu_title">Загрузка %1$s</string>
     <string name="step_ksu_detail">Поздняя загрузка модуля и проверка канала управления</string>
     <string name="phase_checking">Проверка поддержки устройства и прошивки</string>
     <string name="phase_ready">Готово к установке</string>
     <string name="phase_downloading">Загрузка привязанных к commit payload-файлов с GitHub</string>
     <string name="phase_exploiting">Это может занять 10 минут или больше. Устройство может нагреться или перестать отвечать.</string>
-    <string name="phase_loading_ksu">Загрузка KernelSU с использованием полученного временного root-доступа</string>
-    <string name="phase_installed">Модуль KernelSU и канал управления успешно проверены</string>
+    <string name="phase_loading_ksu">Загрузка %1$s с использованием полученного временного root-доступа</string>
+    <string name="phase_installed">Модуль %1$s и канал управления успешно проверены</string>
     <string name="phase_failed">Проверьте место возникновения ошибки в журнале ниже</string>
 
-    <string name="status_ksu_active">KernelSU активен</string>
+    <string name="status_ksu_active">%1$s активен</string>
     <string name="status_not_installed">Не установлен</string>
     <string name="status_support_failed">Не удалось проверить поддержку</string>
     <string name="status_checking_github">Проверка манифеста поддержки на GitHub</string>
     <string name="status_downloading_payload">Загрузка payload-файлов</string>
     <string name="status_exploit_running">Запуск эксплойта ядра</string>
-    <string name="status_ksu_loading">Поздняя загрузка KernelSU</string>
+    <string name="status_ksu_loading">Поздняя загрузка %1$s</string>
     <string name="status_install_failed">Ошибка установки</string>
     <string name="log_profile">[+] Профиль поддержки: %1$s</string>
     <string name="log_download_verified">[+] Загрузка payload-файлов завершена</string>
     <string name="log_install_complete">[+] Установка завершена</string>
     <string name="log_bootstrap_root">[+] Временный root-доступ получен</string>
-    <string name="log_ksu_staged">[+] Подготовка KernelSU завершена</string>
-    <string name="log_ksu_control_verified">[+] Канал управления KernelSU проверен</string>
+    <string name="log_ksu_staged">[+] Подготовка %1$s завершена</string>
+    <string name="log_ksu_control_verified">[+] Канал управления %1$s проверен</string>
     <string name="error_helper_unavailable">Вспомогательный bootstrap-файл не является исполняемым</string>
     <string name="error_exploit_stalled">Журнал эксплойта не обновлялся в течение 90 секунд</string>
     <string name="error_exploit_timeout">Эксплойт превысил лимит времени в 15 минут</string>
     <string name="error_payload_exit">Ошибка выполнения payload: %1$d%2$s</string>
     <string name="error_success_marker">Маркеры успешного выполнения эксплойта не найдены</string>
-    <string name="error_ksu_stage">Не удалось подготовить KernelSU: %1$s</string>
-    <string name="error_ksu_verify">Не удалось выполнить позднюю загрузку KernelSU или проверить канал управления (rc=%1$d): %2$s</string>
+    <string name="error_ksu_stage">Не удалось подготовить %1$s: %2$s</string>
+    <string name="error_ksu_verify">Не удалось выполнить позднюю загрузку %1$s или проверить канал управления (rc=%2$d): %3$s</string>
     <string name="error_boot_id">Не удалось прочитать текущий boot_id</string>
     <string name="error_receipt">Не удалось сохранить запись о проверке установки</string>
 
     <string name="artifact_exploit">эксплойт</string>
-    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="artifact_kernelsu">%1$s</string>
     <string name="repo_no_profile">Для этой модели и версии ядра нет совместимого payload</string>
     <string name="repo_downloading">Загрузка %1$s</string>
     <string name="repo_size_mismatch">Размер %1$s не соответствует манифесту поддержки</string>
@@ -146,7 +146,7 @@
     <string name="export_log">Экспорт журнала</string>
     <string name="export_log_saved">Журнал сохранён</string>
     <string name="export_log_failed">Не удалось сохранить журнал</string>
-    <string name="install_tap_open_manager">Нажмите, чтобы открыть KernelSU Manager</string>
+    <string name="install_tap_open_manager">Нажмите, чтобы открыть %1$s Manager</string>
     <string name="how_it_works">Как это работает</string>
     <string name="kernelsu_card_description">Ядровое root-решение для Android</string>
     <string name="history_shizuku_used">Shizuku использовался</string>
@@ -173,4 +173,6 @@
         <item quantity="other">Эти запуски и их журналы будут удалены навсегда.</item>
     </plurals>
     <string name="history_delete">Удалить</string>
+    <string name="kernelsu_next_mode">Использовать KernelSU-Next</string>
+    <string name="kernelsu_next_mode_description">Использовать KernelSU-Next вместо KernelSU. Возврат к старому варианту при недоступности.</string>
 </resources>

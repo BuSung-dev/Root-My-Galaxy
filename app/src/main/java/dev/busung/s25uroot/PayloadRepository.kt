@@ -22,6 +22,7 @@ class PayloadRepository(private val context: Context) {
         return SupportManifest.parse(manifestBytes).targets.map { profile -> profile.copy(
             exploit = profile.exploit.copy(url = pinArtifactUrl(profile.exploit.url, commit)),
             kernelSu = profile.kernelSu.copy(url = pinArtifactUrl(profile.kernelSu.url, commit)),
+            kernelSuNext = profile.kernelSuNext?.copy(url = pinArtifactUrl(profile.kernelSuNext.url, commit)),
         ) }
     }
 
@@ -41,10 +42,12 @@ class PayloadRepository(private val context: Context) {
             context.getString(R.string.artifact_exploit),
             onProgress,
         )
+        val useNext = AppPreferences.useKernelSuNext(context) && profile.kernelSuNext != null
+        val kernelSuArtifact = if (useNext) profile.kernelSuNext!! else profile.kernelSu
         val kernelSu = downloadArtifact(
-            profile.kernelSu,
+            kernelSuArtifact,
             File(directory, "ksud-s25u-kdp"),
-            context.getString(R.string.artifact_kernelsu),
+            context.getString(R.string.artifact_kernelsu, AppPreferences.kernelSuLabel(context)),
             onProgress,
         )
         Os.chmod(exploit.absolutePath, 0b100100100)

@@ -5,6 +5,7 @@
 
     <queries>
         <package android:name="me.weishu.kernelsu" />
+        <package android:name="vctsrt.cntgtj.uqfwgg" />
         <package android:name="moe.shizuku.manager" />
     </queries>
 
