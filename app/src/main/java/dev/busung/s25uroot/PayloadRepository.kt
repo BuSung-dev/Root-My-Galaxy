@@ -5,6 +5,7 @@ import android.system.Os
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import org.json.JSONObject
@@ -17,6 +18,10 @@ data class VerifiedPayloads(
 
 class PayloadRepository(private val context: Context) {
     fun loadTargets(): List<TargetProfile> {
+        val embeddedManifest = embeddedManifest()
+        if (embeddedManifest != null) {
+            return embeddedManifest.targets
+        }
         val commit = resolveMainCommit()
         val manifestBytes = downloadBytes(rawUrl(commit, "support/targets-v3.json"), MAX_MANIFEST_BYTES)
         return SupportManifest.parse(manifestBytes).targets.map { profile -> profile.copy(
@@ -35,18 +40,26 @@ class PayloadRepository(private val context: Context) {
 
     fun download(profile: TargetProfile, onProgress: (String) -> Unit): VerifiedPayloads {
         val directory = File(context.filesDir, "payloads/${profile.profileId}").apply { mkdirs() }
-        val exploit = downloadArtifact(
-            profile.exploit,
-            File(directory, "cve-2026-43499-app.so"),
-            context.getString(R.string.artifact_exploit),
-            onProgress,
-        )
-        val kernelSu = downloadArtifact(
-            profile.kernelSu,
-            File(directory, "ksud-s25u-kdp"),
-            context.getString(R.string.artifact_kernelsu),
-            onProgress,
-        )
+        val exploit = if (embeddedArtifactExists(profile.profileId, "cve-2026-43499-app.so")) {
+            extractEmbeddedArtifact(profile.profileId, "cve-2026-43499-app.so", File(directory, "cve-2026-43499-app.so"), profile.exploit.size, onProgress)
+        } else {
+            downloadArtifact(
+                profile.exploit,
+                File(directory, "cve-2026-43499-app.so"),
+                context.getString(R.string.artifact_exploit),
+                onProgress,
+            )
+        }
+        val kernelSu = if (embeddedArtifactExists(profile.profileId, "ksud-s25u-kdp")) {
+            extractEmbeddedArtifact(profile.profileId, "ksud-s25u-kdp", File(directory, "ksud-s25u-kdp"), profile.kernelSu.size, onProgress)
+        } else {
+            downloadArtifact(
+                profile.kernelSu,
+                File(directory, "ksud-s25u-kdp"),
+                context.getString(R.string.artifact_kernelsu),
+                onProgress,
+            )
+        }
         Os.chmod(exploit.absolutePath, 0b100100100)
         Os.chmod(kernelSu.absolutePath, 0b100100100)
         return VerifiedPayloads(profile, exploit, kernelSu)
@@ -87,6 +100,55 @@ class PayloadRepository(private val context: Context) {
             context.getString(R.string.repo_finalize_failed, label)
         }
         onProgress(context.getString(R.string.repo_verified, label))
+        return destination
+    }
+
+    private fun embeddedManifest(): SupportManifest? = try {
+        context.assets.open("payload/targets-v3.json").use { input ->
+            SupportManifest.parse(input.readBytes())
+        }
+    } catch (_: IOException) {
+        null
+    }
+
+    private fun embeddedArtifactExists(profileId: String, name: String): Boolean = try {
+        context.assets.open("payload/artifacts/$profileId/$name").use { it.close() }
+        true
+    } catch (_: IOException) {
+        false
+    }
+
+    private fun extractEmbeddedArtifact(
+        profileId: String,
+        name: String,
+        destination: File,
+        expectedSize: Long,
+        onProgress: (String) -> Unit,
+    ): File {
+        onProgress(context.getString(R.string.repo_downloading, name))
+        val temporary = File(destination.parentFile, "${destination.name}.part")
+        context.assets.open("payload/artifacts/$profileId/$name").use { input ->
+            FileOutputStream(temporary).use { output ->
+                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                var total = 0L
+                while (true) {
+                    val count = input.read(buffer)
+                    if (count < 0) break
+                    total += count
+                    require(total <= expectedSize) {
+                        context.getString(R.string.repo_size_exceeded, name)
+                    }
+                    output.write(buffer, 0, count)
+                }
+                output.fd.sync()
+            }
+        }
+        require(temporary.length() == expectedSize) { context.getString(R.string.repo_incomplete, name) }
+        if (destination.exists()) destination.delete()
+        require(temporary.renameTo(destination)) {
+            context.getString(R.string.repo_finalize_failed, name)
+        }
+        onProgress(context.getString(R.string.repo_verified, name))
         return destination
     }
 

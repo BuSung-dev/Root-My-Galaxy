@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 3,
+  "payloads": [
+    {
+      "payloadId": "galaxy-s25-series-2026-06-07",
+      "displayName": "Galaxy S25 series | Kernel 6.6.98",
+      "models": [
+        "SM-S9310",
+        "SM-S931B",
+        "SM-S931N",
+        "SM-S931Q",
+        "SM-S931U",
+        "SM-S931U1",
+        "SM-S931W",
+        "SM-S931Z",
+        "SC-51F",
+        "SCG31",
+        "SM-S9360",
+        "SM-S936B",
+        "SM-S936N",
+        "SM-S936U",
+        "SM-S936U1",
+        "SM-S936W",
+        "SM-S937B",
+        "SM-S937N",
+        "SM-S937U",
+        "SM-S937U1",
+        "SM-S937W",
+        "SM-S9380",
+        "SM-S938B",
+        "SM-S938N",
+        "SM-S938Q",
+        "SM-S938U",
+        "SM-S938U1",
+        "SM-S938W",
+        "SM-S938Z",
+        "SC-52F",
+        "SCG32"
+      ],
+      "kernelVersions": [
+        "6.6.98"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/pa3q-S938NKSUACZF1/cve-2026-43499-app.so",
+        "size": 104128
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-s25u-kdp",
+        "size": 6407096
+      }
+    },
+    {
+      "payloadId": "psq-S9370ZCS9CZG1",
+      "displayName": "Galaxy S25 Edge | Kernel 6.6.98",
+      "models": [
+        "SM-S9370"
+      ],
+      "kernelVersions": [
+        "6.6.98"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/psq-S9370ZCS9CZG1/cve-2026-43499-app.so",
+        "size": 125264
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-s25u-kdp",
+        "size": 6407096
+      }
+    },
+    {
+      "payloadId": "q7q-F966USQU9BZDN",
+      "displayName": "Galaxy Z Fold 7 | Kernel 6.6.98",
+      "models": [
+        "SM-F966U",
+        "SM-F966U1"
+      ],
+      "kernelVersions": [
+        "6.6.98"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/q7q-F966USQU9BZDN/cve-2026-43499-app.so",
+        "size": 111216
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-s25u-kdp",
+        "size": 6407096
+      }
+    },
+    {
+      "payloadId": "e3q-S928USQS6DZF2",
+      "displayName": "Galaxy S24 Ultra | Kernel 6.1.145",
+      "models": [
+        "SM-S928U"
+      ],
+      "kernelVersions": [
+        "6.1.145"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/e3q-S928USQS6DZF2/cve-2026-43499-app.so",
+        "size": 104128
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-e3q-S928USQS6DZF2-kdp",
+        "size": 4726416
+      }
+    },
+    {
+      "payloadId": "e2s-S926BXXUEDZDR",
+      "displayName": "Galaxy S24+ | Kernel 6.1.157",
+      "models": [
+        "SM-S926B"
+      ],
+      "kernelVersions": [
+        "6.1.157"
+      ],
+      "requiresFreshP0Session": true,
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/e2s-S926BXXUEDZDR/cve-2026-43499-app.so",
+        "size": 104128
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-e2s-S926BXXUEDZDR-kdp",
+        "size": 4780056
+      }
+    },
+    {
+      "payloadId": "e1s-S921BXXSFDZE1",
+      "displayName": "Galaxy S24 | Kernel 6.1.157",
+      "models": [
+        "SM-S921B"
+      ],
+      "kernelVersions": [
+        "6.1.157"
+      ],
+      "requiresFreshP0Session": true,
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/e1s-S921BXXSFDZE1/cve-2026-43499-app.so",
+        "size": 104128
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-e1s-S921BXXSFDZE1-kdp",
+        "size": 4920520
+      }
+    },
+    {
+      "payloadId": "essi-A566EXXSCCZG6",
+      "displayName": "Galaxy A56 5G | Kernel 6.6.102",
+      "models": [
+        "SM-A5660",
+        "SM-A566B",
+        "SM-A566E",
+        "SM-A566S",
+        "SM-A566U1",
+        "SM-A566W"
+      ],
+      "kernelVersions": [
+        "6.6.102"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/essi-A566EXXSCCZG6/cve-2026-43499-app.so",
+        "size": 104128
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-A566EXXSCCZG6-kdp",
+        "size": 4765336
+      }
+    },
+    {
+      "payloadId": "a36xq-A366WVLS3AYG1",
+      "displayName": "Galaxy A36 5G | Kernel 6.6.46",
+      "models": [
+        "SM-A366W"
+      ],
+      "kernelVersions": [
+        "6.6.46"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/a36xq-A366WVLS3AYG1/cve-2026-43499-app.so",
+        "size": 128688
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-A366WVLS3AYG1-kdp",
+        "size": 4889120
+      }
+    },
+    {
+      "payloadId": "dm3q-S9180ZHS8FZF5",
+      "displayName": "Galaxy S23 Ultra | Kernel 5.15.189",
+      "models": [
+        "SM-S9180",
+        "SM-S918B",
+        "SM-S918N",
+        "SM-S918Q",
+        "SM-S918U",
+        "SM-S918W",
+        "SM-S918U1"
+      ],
+      "kernelVersions": [
+        "5.15.189"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/dm3q-S9180ZHS8FZF5/cve-2026-43499-app.so",
+        "size": 137728
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-dm3q-S9180ZHS8FZF5-kdp",
+        "size": 4556352
+      }
+    },
+    {
+      "payloadId": "dm1q-S911BXXSAFZE1",
+      "displayName": "Galaxy S23 | Kernel 5.15.189",
+      "models": [
+        "SM-S911B"
+      ],
+      "kernelVersions": [
+        "5.15.189"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/dm1q-S911BXXSAFZE1/cve-2026-43499-app.so",
+        "size": 130528
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-dm1q-S911BXXSAFZE1-kdp",
+        "size": 4879560
+      }
+    },
+    {
+      "payloadId": "e1s-S921NKSSFDZF3",
+      "displayName": "Galaxy S24 | Kernel 6.1.157",
+      "models": [
+        "SM-S921N"
+      ],
+      "kernelVersions": [
+        "6.1.157"
+      ],
+      "requiresFreshP0Session": true,
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/e1s-S921NKSSFDZF3/cve-2026-43499-app.so",
+        "size": 104128
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-e1s-S921NKSSFDZF3-kdp",
+        "size": 4758872
+      }
+    },
+    {
+      "payloadId": "dm1q-S911U1UES6DYI3",
+      "displayName": "Galaxy S23 (base) | Kernel 5.15.153 | tracefs/MCAST route",
+      "models": [
+        "SM-S911U1"
+      ],
+      "kernelVersions": [
+        "5.15.153"
+      ],
+      "exploit": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/artifacts/dm1q-S911U1UES6DYI3/cve-2026-43499-app.so",
+        "size": 130168
+      },
+      "kernelsu": {
+        "url": "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads/main/kernelsu/ksud-dm1q-S911U1UES6DYI3-kdp",
+        "size": 4761608
+      }
+    }
+  ]
+}

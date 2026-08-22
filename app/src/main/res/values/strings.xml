@@ -94,8 +94,9 @@
     <string name="status_ksu_active">KernelSU active</string>
     <string name="status_not_installed">Not installed</string>
     <string name="status_support_failed">Support check failed</string>
-    <string name="status_checking_github">Checking GitHub support manifest</string>
-    <string name="status_downloading_payload">Downloading payloads</string>
+    <string name="status_checking_github">Checking support profile</string>
+    <string name="status_downloading_payload">Preparing payloads</string>
+    <string name="notification_channel_boot">Boot installation</string>
     <string name="status_exploit_running">Running kernel exploit</string>
     <string name="status_ksu_loading">Late-loading KernelSU</string>
     <string name="status_install_failed">Installation failed</string>
@@ -112,6 +113,7 @@
     <string name="error_success_marker">Exploit success markers were not found</string>
     <string name="error_ksu_stage">KernelSU staging failed: %1$s</string>
     <string name="error_ksu_verify">KernelSU late-load or control verification failed (rc=%1$d): %2$s</string>
+    <string name="error_helper_timeout">KernelSU helper did not exit within 120 seconds%1$s</string>
     <string name="error_boot_id">Unable to read the current boot_id</string>
     <string name="error_receipt">Unable to save the installation verification receipt</string>
 
