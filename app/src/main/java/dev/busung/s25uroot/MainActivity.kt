@@ -70,6 +70,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.SelectAll
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Info
@@ -165,6 +166,7 @@ class MainActivity : ComponentActivity() {
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
     private var shizukuMode by mutableStateOf(false)
+    private var useKernelSuNext by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,6 +176,7 @@ class MainActivity : ComponentActivity() {
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
         shizukuMode = AppPreferences.shizukuMode(this)
+        useKernelSuNext = AppPreferences.useKernelSuNext(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
@@ -182,6 +185,7 @@ class MainActivity : ComponentActivity() {
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    useKernelSuNext = useKernelSuNext,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -197,6 +201,10 @@ class MainActivity : ComponentActivity() {
                     onShizukuModeChanged = { enabled ->
                         AppPreferences.setShizukuMode(this, enabled)
                         shizukuMode = enabled
+                    },
+                    onUseKernelSuNextChanged = { enabled ->
+                        AppPreferences.setUseKernelSuNext(this, enabled)
+                        useKernelSuNext = enabled
                     },
                     openInstaller = { profileId ->
                         val installer = Intent(this, InstallActivity::class.java)
@@ -246,20 +254,28 @@ private val languageOptions = listOf(
 
 private const val KERNEL_SU_MANAGER_URL =
     "https://github.com/tiann/KernelSU/releases/download/v3.2.5/KernelSU_v3.2.5_32525-release.apk"
+private const val KERNEL_SU_NEXT_MANAGER_URL =
+    "https://github.com/KernelSU-Next/KernelSU-Next/releases/download/v3.3.0/KernelSU_Next_v3.3.0-spoofed_33214-release.apk"
 private const val KERNEL_SU_MANAGER_PACKAGE = "me.weishu.kernelsu"
+private const val KERNEL_SU_NEXT_MANAGER_PACKAGE = "vctsrt.cntgtj.uqfwgg"
 private const val KERNEL_SU_HOME_URL = "https://kernelsu.org/"
+private const val KERNEL_SU_NEXT_HOME_URL = "https://kernelsu-next.github.io/webpage/"
 private const val SHIZUKU_MANAGER_PACKAGE = "moe.shizuku.manager"
 private const val SHIZUKU_MANAGER_URL = "https://github.com/thedjchi/Shizuku/releases/"
 
 private fun isKernelSuManagerInstalled(context: Context): Boolean =
-    context.packageManager.getLaunchIntentForPackage(KERNEL_SU_MANAGER_PACKAGE) != null
+    context.packageManager.getLaunchIntentForPackage(KERNEL_SU_MANAGER_PACKAGE) != null ||
+        context.packageManager.getLaunchIntentForPackage(KERNEL_SU_NEXT_MANAGER_PACKAGE) != null
 
 private fun openKernelSuManager(context: Context) {
-    val launch = context.packageManager.getLaunchIntentForPackage(KERNEL_SU_MANAGER_PACKAGE)
+    val useNext = AppPreferences.useKernelSuNext(context)
+    val pkg = if (useNext) KERNEL_SU_NEXT_MANAGER_PACKAGE else KERNEL_SU_MANAGER_PACKAGE
+    val url = if (useNext) KERNEL_SU_NEXT_MANAGER_URL else KERNEL_SU_MANAGER_URL
+    val launch = context.packageManager.getLaunchIntentForPackage(pkg)
     if (launch != null) {
         context.startActivity(launch)
     } else {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(KERNEL_SU_MANAGER_URL)))
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 }
 
@@ -279,10 +295,12 @@ private fun RootApp(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    useKernelSuNext: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onUseKernelSuNextChanged: (Boolean) -> Unit,
     openInstaller: (String?) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
@@ -425,9 +443,9 @@ private fun RootApp(
             icon = { Icon(Icons.Rounded.Security, contentDescription = null) },
             title = {
                 DialogDimAmount(0.34f)
-                Text(stringResource(R.string.install_confirm_title))
+                Text(stringResource(R.string.install_confirm_title, AppPreferences.kernelSuLabel(context)))
             },
-            text = { Text(stringResource(R.string.install_confirm_body)) },
+            text = { Text(stringResource(R.string.install_confirm_body, AppPreferences.kernelSuLabel(context))) },
             confirmButton = {
                 FilledTonalButton(onClick = {
                     clickHaptic(view)
@@ -502,6 +520,7 @@ private fun RootApp(
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    useKernelSuNext = useKernelSuNext,
                     updateStatus = updateStatus,
                     onCheckForUpdate = checkForUpdate,
                     onStartDownload = startDownload,
@@ -509,6 +528,7 @@ private fun RootApp(
                     onThemeModeChanged = onThemeModeChanged,
                     onAdvancedModeChanged = onAdvancedModeChanged,
                     onShizukuModeChanged = onShizukuModeChanged,
+                    onUseKernelSuNextChanged = onUseKernelSuNextChanged,
                 )
             }
         }
@@ -707,6 +727,7 @@ private fun UpdateCard(
 
 @Composable
 private fun HowItWorksCard() {
+    val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
@@ -719,7 +740,7 @@ private fun HowItWorksCard() {
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Text(stringResource(R.string.how_it_works), style = MaterialTheme.typography.titleMedium)
-            installerSteps.forEach { step ->
+            installerSteps(context).forEach { step ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -735,7 +756,10 @@ private fun HowItWorksCard() {
                         }
                     }
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(step.title), style = MaterialTheme.typography.titleSmall)
+                        Text(
+                            text = if (step.titleArgs.isNotEmpty()) stringResource(step.title, *step.titleArgs) else stringResource(step.title),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
                         Text(
                             stringResource(step.detail),
                             style = MaterialTheme.typography.bodySmall,
@@ -761,11 +785,7 @@ private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Uni
             when {
                 installState.busy -> Unit
                 installState.phase == InstallPhase.Installed -> {
-                    if (managerInstalled) {
-                        openKernelSuManager(context)
-                    } else {
-                        uriHandler.openUri(KERNEL_SU_MANAGER_URL)
-                    }
+                    openKernelSuManager(context)
                 }
                 else -> onInstall()
             }
@@ -811,7 +831,7 @@ private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Uni
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                         Text(
-                            text = stringResource(R.string.status_ksu_active),
+                            text = stringResource(R.string.status_ksu_active, AppPreferences.kernelSuLabel(context)),
                             style = MaterialTheme.typography.titleMedium,
                         )
                     }
@@ -832,9 +852,10 @@ private fun InstallStatusCard(installState: InstallUiState, onInstall: () -> Uni
                             } else {
                                 R.string.install_tap_manager
                             },
+                            AppPreferences.kernelSuLabel(context),
                         )
                         InstallPhase.Failed -> stringResource(R.string.install_tap_retry)
-                        else -> stringResource(R.string.install_tap_start)
+                        else -> stringResource(R.string.install_tap_start, AppPreferences.kernelSuLabel(context))
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.86f),
@@ -1405,6 +1426,7 @@ private fun SettingsPage(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    useKernelSuNext: Boolean,
     updateStatus: UpdateStatus,
     onCheckForUpdate: () -> Unit,
     onStartDownload: (UpdateInfo) -> Unit,
@@ -1412,6 +1434,7 @@ private fun SettingsPage(
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onUseKernelSuNextChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -1571,6 +1594,18 @@ private fun SettingsPage(
                 onCheckedChange = {
                     clickHaptic(view)
                     onAdvancedModeChanged(it)
+                },
+            )
+        }
+        item {
+            SettingsSwitchCard(
+                icon = Icons.Rounded.Extension,
+                title = stringResource(R.string.kernelsu_next_mode),
+                description = stringResource(R.string.kernelsu_next_mode_description),
+                checked = useKernelSuNext,
+                onCheckedChange = {
+                    clickHaptic(view)
+                    onUseKernelSuNextChanged(it)
                 },
             )
         }
@@ -2002,6 +2037,7 @@ private fun ThemeModeSelector(
 
 @Composable
 private fun AboutDialog(onDismiss: () -> Unit) {
+    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val view = LocalView.current
     AlertDialog(
@@ -2021,7 +2057,9 @@ private fun AboutDialog(onDismiss: () -> Unit) {
                 Surface(
                     onClick = {
                         clickHaptic(view)
-                        uriHandler.openUri(KERNEL_SU_HOME_URL)
+                        uriHandler.openUri(
+                            if (AppPreferences.useKernelSuNext(context)) KERNEL_SU_NEXT_HOME_URL else KERNEL_SU_HOME_URL
+                        )
                     },
                     color = Color.Transparent,
                     shape = MaterialTheme.shapes.medium,
@@ -2034,7 +2072,7 @@ private fun AboutDialog(onDismiss: () -> Unit) {
                         Icon(painterResource(R.drawable.ic_kernelsu), contentDescription = null)
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                stringResource(R.string.kernelsu_card_title),
+                                stringResource(R.string.kernelsu_card_title, AppPreferences.kernelSuLabel(context)),
                                 style = MaterialTheme.typography.titleSmall,
                             )
                             Text(

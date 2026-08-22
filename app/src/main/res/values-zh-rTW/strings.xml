@@ -5,8 +5,8 @@
     <string name="nav_history">執行紀錄</string>
     <string name="nav_settings">設定</string>
 
-    <string name="install_confirm_title">安裝 KernelSU？</string>
-    <string name="install_confirm_body">應用程式將驗證支援設定檔，然後從 GitHub 下載並執行 exploit 與 KernelSU payload。</string>
+    <string name="install_confirm_title">安裝 %1$s？</string>
+    <string name="install_confirm_body">應用程式將驗證支援設定檔，然後從 GitHub 下載並執行 exploit 與 %1$s payload。</string>
 
     <string name="action_confirm">確認</string>
     <string name="action_cancel">取消</string>
@@ -15,9 +15,9 @@
     <string name="action_done">完成</string>
     <string name="action_back">返回</string>
 
-    <string name="install_tap_manager">點擊安裝 KernelSU Manager</string>
+    <string name="install_tap_manager">點擊安裝 %1$s Manager</string>
     <string name="install_tap_retry">點擊重試</string>
-    <string name="install_tap_start">點擊安裝 KernelSU</string>
+    <string name="install_tap_start">點擊安裝 %1$s</string>
 
     <string name="device">裝置</string>
     <string name="firmware">韌體</string>
@@ -65,45 +65,45 @@
     <string name="step_download_detail">載入支援清單</string>
     <string name="step_exploit_title">核心 exploit</string>
     <string name="step_exploit_detail">取得 bootstrap root</string>
-    <string name="step_ksu_title">載入 KernelSU</string>
+    <string name="step_ksu_title">載入 %1$s</string>
     <string name="step_ksu_detail">Late-load 模組並驗證控制通道</string>
 
     <string name="phase_checking">正在檢查支援的裝置與韌體</string>
     <string name="phase_ready">可以開始安裝</string>
     <string name="phase_downloading">正在從 GitHub 下載固定提交的 payload</string>
     <string name="phase_exploiting">可能需要 10 分鐘或更長時間，裝置可能會發燙或停止回應。</string>
-    <string name="phase_loading_ksu">正在使用 bootstrap root 載入 KernelSU</string>
-    <string name="phase_installed">KernelSU 模組與控制通道已驗證</string>
+    <string name="phase_loading_ksu">正在使用 bootstrap root 載入 %1$s</string>
+    <string name="phase_installed">%1$s 模組與控制通道已驗證</string>
     <string name="phase_failed">請在下方日誌中查看失敗位置</string>
 
-    <string name="status_ksu_active">KernelSU 已啟用</string>
+    <string name="status_ksu_active">%1$s 已啟用</string>
     <string name="status_not_installed">未安裝</string>
     <string name="status_support_failed">支援檢查失敗</string>
     <string name="status_checking_github">正在檢查 GitHub 支援清單</string>
     <string name="status_downloading_payload">正在下載 payload</string>
     <string name="status_exploit_running">正在執行核心 exploit</string>
-    <string name="status_ksu_loading">正在 late-load KernelSU</string>
+    <string name="status_ksu_loading">正在 late-load %1$s</string>
     <string name="status_install_failed">安裝失敗</string>
 
     <string name="log_profile">[+] 支援設定檔：%1$s</string>
     <string name="log_download_verified">[+] Payload 下載完成</string>
     <string name="log_install_complete">[+] 安裝完成</string>
     <string name="log_bootstrap_root">[+] 已取得 bootstrap root</string>
-    <string name="log_ksu_staged">[+] KernelSU 暫存完成</string>
-    <string name="log_ksu_control_verified">[+] KernelSU 控制通道已驗證</string>
+    <string name="log_ksu_staged">[+] %1$s 暫存完成</string>
+    <string name="log_ksu_control_verified">[+] %1$s 控制通道已驗證</string>
 
     <string name="error_helper_unavailable">無法執行 bootstrap helper</string>
     <string name="error_exploit_stalled">Exploit 日誌已 90 秒未更新</string>
     <string name="error_exploit_timeout">Exploit 超過 15 分鐘限制</string>
     <string name="error_payload_exit">Payload 執行錯誤：%1$d%2$s</string>
     <string name="error_success_marker">未找到 exploit 成功標記</string>
-    <string name="error_ksu_stage">KernelSU 暫存失敗：%1$s</string>
-    <string name="error_ksu_verify">KernelSU late-load 或控制驗證失敗 (rc=%1$d)：%2$s</string>
+    <string name="error_ksu_stage">%1$s 暫存失敗：%2$s</string>
+    <string name="error_ksu_verify">%1$s late-load 或控制驗證失敗 (rc=%2$d)：%3$s</string>
     <string name="error_boot_id">無法讀取目前的 boot_id</string>
     <string name="error_receipt">無法儲存安裝驗證結果</string>
 
     <string name="artifact_exploit">exploit</string>
-    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="artifact_kernelsu">%1$s</string>
 
     <string name="repo_no_profile">沒有支援此型號與核心版本的相容 payload</string>
     <string name="repo_downloading">正在下載 %1$s</string>
@@ -157,7 +157,7 @@
     <string name="export_log">匯出日誌</string>
     <string name="export_log_saved">日誌已儲存</string>
     <string name="export_log_failed">無法儲存日誌</string>
-    <string name="install_tap_open_manager">點擊開啟 KernelSU Manager</string>
+    <string name="install_tap_open_manager">點擊開啟 %1$s Manager</string>
     <string name="how_it_works">運作原理</string>
     <string name="kernelsu_card_description">以核心為基礎的 Android Root 解決方案</string>
     <string name="history_shizuku_used">已使用 Shizuku</string>
@@ -184,4 +184,6 @@
         <item quantity="other">這些執行紀錄及其日誌將被永久刪除。</item>
     </plurals>
     <string name="history_delete">刪除</string>
+    <string name="kernelsu_next_mode">使用 KernelSU-Next</string>
+    <string name="kernelsu_next_mode_description">使用 KernelSU-Next 取代 KernelSU。不可用時退回原版。</string>
 </resources>

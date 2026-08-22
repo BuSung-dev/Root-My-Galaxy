@@ -4,21 +4,21 @@
     <string name="nav_overview">Asosiy</string>
     <string name="nav_history">Tarix</string>
     <string name="nav_settings">Sozlamalar</string>
-    <string name="install_confirm_title">KernelSU o\'rnatilsinmi?</string>
-    <string name="install_confirm_body">Ilova profil mosligini tekshiradi, so\'ngra GitHub\'dan eksployt va KernelSU paketlarini yuklab olib, ishga tushiradi.</string>
+    <string name="install_confirm_title">%1$s o\'rnatilsinmi?</string>
+    <string name="install_confirm_body">Ilova profil mosligini tekshiradi, so\'ngra GitHub\'dan eksployt va %1$s paketlarini yuklab olib, ishga tushiradi.</string>
     <string name="action_confirm">Tasdiqlash</string>
     <string name="action_cancel">Bekor qilish</string>
     <string name="action_close">Yopish</string>
     <string name="action_retry">Qayta urinish</string>
     <string name="action_done">Tayyor</string>
     <string name="action_back">Orqaga</string>
-    <string name="install_tap_manager">KernelSU menejerini o\'rnatish uchun bosing</string>
-    <string name="install_tap_open_manager">KernelSU menejerini ochish uchun bosing</string>
+    <string name="install_tap_manager">%1$s menejerini o\'rnatish uchun bosing</string>
+    <string name="install_tap_open_manager">%1$s menejerini ochish uchun bosing</string>
     <string name="install_tap_retry">Qayta urinish uchun bosing</string>
-    <string name="install_tap_start">KernelSU\'ni o\'rnatish uchun bosing</string>
+    <string name="install_tap_start">%1$s\'ni o\'rnatish uchun bosing</string>
     <string name="device">Qurilma</string>
     <string name="how_it_works">Bu qanday ishlaydi</string>
-    <string name="kernelsu_card_title">KernelSU</string>
+    <string name="kernelsu_card_title">%1$s</string>
     <string name="kernelsu_card_description">Android uchun karnel-asoslangan rootlash</string>
     <string name="firmware">Proshivka</string>
     <string name="system">Tizim</string><string name="kernel">Yadro</string>
@@ -80,42 +80,42 @@
     <string name="step_download_detail">Moslik manifestini yuklash</string>
     <string name="step_exploit_title">Yadro eksployti</string>
     <string name="step_exploit_detail">Boshlang\'ich (bootstrap) root huquqini olish</string>
-    <string name="step_ksu_title">KernelSU\'ni yuklash</string>
+    <string name="step_ksu_title">%1$s\'ni yuklash</string>
     <string name="step_ksu_detail">Modulni kechiktirib yuklash va boshqaruv kanalini tekshirish</string>
     <string name="phase_checking">Mos keladigan qurilma va proshivka tekshirilmoqda</string>
     <string name="phase_ready">O\'rnatishga tayyor</string>
     <string name="phase_downloading">GitHub\'dan maxsus tasdiqlangan (commit-pinned) paketlar yuklab olinmoqda</string>
     <string name="phase_exploiting">Bu jarayon 10 daqiqa yoki undan ko\'proq vaqt olishi mumkin. Qurilmangiz qizib ketishi yoki qotib qolishi mumkin.</string>
-    <string name="phase_loading_ksu">Olingan boshlang\'ich root orqali KernelSU yuklanmoqda</string>
-    <string name="phase_installed">KernelSU moduli va boshqaruv kanali muvaffaqiyatli tekshirildi</string>
+    <string name="phase_loading_ksu">Olingan boshlang\'ich root orqali %1$s yuklanmoqda</string>
+    <string name="phase_installed">%1$s moduli va boshqaruv kanali muvaffaqiyatli tekshirildi</string>
     <string name="phase_failed">Xatolik sababini quyidagi jurnalda (logda) ko\'rib chiqing</string>
 
-    <string name="status_ksu_active">KernelSU faol</string>
+    <string name="status_ksu_active">%1$s faol</string>
     <string name="status_not_installed">O\'rnatilmagan</string>
     <string name="status_support_failed">Moslikni tekshirish muvaffaqiyatsiz yakunlandi</string>
     <string name="status_checking_github">GitHub moslik manifesti tekshirilmoqda</string>
     <string name="status_downloading_payload">Paketlar yuklab olinmoqda</string>
     <string name="status_exploit_running">Yadro eksployti ishga tushirilmoqda</string>
-    <string name="status_ksu_loading">KernelSU kechiktirib yuklanmoqda</string>
+    <string name="status_ksu_loading">%1$s kechiktirib yuklanmoqda</string>
     <string name="status_install_failed">O\'rnatishda xatolik yuz berdi</string>
     <string name="log_profile">[+] Moslik profili: %1$s</string>
     <string name="log_download_verified">[+] Paketni yuklab olish yakunlandi</string>
     <string name="log_install_complete">[+] O\'rnatish yakunlandi</string>
     <string name="log_bootstrap_root">[+] Boshlang\'ich root olindi</string>
-    <string name="log_ksu_staged">[+] KernelSU tayyorgarligi yakunlandi</string>
-    <string name="log_ksu_control_verified">[+] KernelSU boshqaruv kanali tekshirildi</string>
+    <string name="log_ksu_staged">[+] %1$s tayyorgarligi yakunlandi</string>
+    <string name="log_ksu_control_verified">[+] %1$s boshqaruv kanali tekshirildi</string>
     <string name="error_helper_unavailable">Bootstrap yordamchisini ishga tushirib bo\'lmaydi</string>
     <string name="error_exploit_stalled">Eksployt jurnali 90 soniya davomida yangilanmadi</string>
     <string name="error_exploit_timeout">Eksployt 15 daqiqalik vaqt chegarasidan oshib ketdi</string>
     <string name="error_payload_exit">Paketni ishga tushirishda xatolik yuz berdi: %1$d%2$s</string>
     <string name="error_success_marker">Eksployt muvaffaqiyatli yakunlanganligi haqida belgilar topilmadi</string>
-    <string name="error_ksu_stage">KernelSU tayyorgarligida xatolik yuz berdi: %1$s</string>
-    <string name="error_ksu_verify">KernelSU yuklanishi yoki boshqaruvini tekshirish muvaffaqiyatsiz bo\'ldi (rc=%1$d): %2$s</string>
+    <string name="error_ksu_stage">%1$s tayyorgarligida xatolik yuz berdi: %2$s</string>
+    <string name="error_ksu_verify">%1$s yuklanishi yoki boshqaruvini tekshirish muvaffaqiyatsiz bo\'ldi (rc=%2$d): %3$s</string>
     <string name="error_boot_id">Joriy boot_id\'ni o\'qib bo\'lmadi</string>
     <string name="error_receipt">O\'rnatishni tasdiqlovchi ma\'lumotni saqlab bo\'lmadi</string>
 
     <string name="artifact_exploit">eksployt</string>
-    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="artifact_kernelsu">%1$s</string>
     <string name="repo_no_profile">Ushbu model va yadro versiyasini qo\'llab-quvvatlaydigan mos paket topilmadi</string>
     <string name="repo_downloading">%1$s yuklab olinmoqda</string>
     <string name="repo_size_mismatch">%1$s hajmi moslik manifestiga to\'g\'ri kelmadi</string>
@@ -175,4 +175,6 @@
         <item quantity="other">Bu jarayonlar va ularning jurnallari butunlay o\'chiriladi.</item>
     </plurals>
     <string name="history_delete">O\'chirish</string>
+    <string name="kernelsu_next_mode">KernelSU-Next dan foydalanish</string>
+    <string name="kernelsu_next_mode_description">KernelSU o\'rniga KernelSU-Next dan foydalaning. Mavjud bo\'lmasa, qaytariladi.</string>
 </resources>

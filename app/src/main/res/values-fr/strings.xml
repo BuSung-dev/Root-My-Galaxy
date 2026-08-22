@@ -4,17 +4,17 @@
     <string name="nav_overview">Accueil</string>
     <string name="nav_history">Historique</string>
     <string name="nav_settings">Paramètres</string>
-    <string name="install_confirm_title">Installer KernelSU ?</string>
-    <string name="install_confirm_body">L\'application vérifiera le profil de compatibilité, puis téléchargera et exécutera l\'exploit et la charge utile KernelSU depuis GitHub.</string>
+    <string name="install_confirm_title">Installer %1$s ?</string>
+    <string name="install_confirm_body">L\'application vérifiera le profil de compatibilité, puis téléchargera et exécutera l\'exploit et la charge utile %1$s depuis GitHub.</string>
     <string name="action_confirm">Confirmer</string>
     <string name="action_cancel">Annuler</string>
     <string name="action_close">Fermer</string>
     <string name="action_retry">Réessayer</string>
     <string name="action_done">Terminé</string>
     <string name="action_back">Retour</string>
-    <string name="install_tap_manager">Appuyez pour installer KernelSU Manager</string>
+    <string name="install_tap_manager">Appuyez pour installer %1$s Manager</string>
     <string name="install_tap_retry">Appuyez pour réessayer</string>
-    <string name="install_tap_start">Appuyez pour installer KernelSU</string>
+    <string name="install_tap_start">Appuyez pour installer %1$s</string>
     <string name="device">Appareil</string>
     <string name="firmware">Firmware</string>
     <string name="system">Système</string><string name="kernel">Noyau</string>
@@ -62,42 +62,42 @@
     <string name="step_download_detail">Charger le manifeste de compatibilité</string>
     <string name="step_exploit_title">Exploit du noyau</string>
     <string name="step_exploit_detail">Acquérir les droits root de base</string>
-    <string name="step_ksu_title">Charger KernelSU</string>
+    <string name="step_ksu_title">Charger %1$s</string>
     <string name="step_ksu_detail">Charger le module tardivement et vérifier le canal de contrôle</string>
     <string name="phase_checking">Vérification de l\'appareil et du firmware pris en charge</string>
     <string name="phase_ready">Prêt à installer</string>
     <string name="phase_downloading">Téléchargement des charges utiles depuis GitHub</string>
     <string name="phase_exploiting">Cela peut prendre 10 minutes ou plus. Votre appareil peut chauffer ou ne plus répondre.</string>
-    <string name="phase_loading_ksu">Chargement de KernelSU avec les droits root de base acquis</string>
-    <string name="phase_installed">Module KernelSU et canal de contrôle vérifiés</string>
+    <string name="phase_loading_ksu">Chargement de %1$s avec les droits root de base acquis</string>
+    <string name="phase_installed">Module %1$s et canal de contrôle vérifiés</string>
     <string name="phase_failed">Vérifiez le point d\'échec dans le journal ci-dessous</string>
 
-    <string name="status_ksu_active">KernelSU actif</string>
+    <string name="status_ksu_active">%1$s actif</string>
     <string name="status_not_installed">Non installé</string>
     <string name="status_support_failed">Vérification de compatibilité échouée</string>
     <string name="status_checking_github">Vérification du manifeste GitHub</string>
     <string name="status_downloading_payload">Téléchargement des charges utiles</string>
     <string name="status_exploit_running">Exécution de l\'exploit du noyau</string>
-    <string name="status_ksu_loading">Chargement tardif de KernelSU</string>
+    <string name="status_ksu_loading">Chargement tardif de %1$s</string>
     <string name="status_install_failed">L\'installation a échoué</string>
     <string name="log_profile">[+] Profil de compatibilité : %1$s</string>
     <string name="log_download_verified">[+] Téléchargement des charges utiles terminé</string>
     <string name="log_install_complete">[+] Installation terminée</string>
     <string name="log_bootstrap_root">[+] Droits root de base acquis</string>
-    <string name="log_ksu_staged">[+] Préparation de KernelSU terminée</string>
-    <string name="log_ksu_control_verified">[+] Canal de contrôle KernelSU vérifié</string>
+    <string name="log_ksu_staged">[+] Préparation de %1$s terminée</string>
+    <string name="log_ksu_control_verified">[+] Canal de contrôle de %1$s vérifié</string>
     <string name="error_helper_unavailable">L\'assistant de démarrage n\'est pas exécutable</string>
     <string name="error_exploit_stalled">Le journal de l\'exploit n\'a pas avancé depuis 90 secondes</string>
     <string name="error_exploit_timeout">L\'exploit a dépassé la limite de 15 minutes</string>
     <string name="error_payload_exit">L\'exécution de la charge utile a échoué : %1$d%2$s</string>
     <string name="error_success_marker">Les marqueurs de succès de l\'exploit n\'ont pas été trouvés</string>
-    <string name="error_ksu_stage">La préparation de KernelSU a échoué : %1$s</string>
-    <string name="error_ksu_verify">Le chargement tardif ou la vérification du contrôle de KernelSU a échoué (rc=%1$d) : %2$s</string>
+    <string name="error_ksu_stage">La préparation de %1$s a échoué : %2$s</string>
+    <string name="error_ksu_verify">Le chargement tardif ou la vérification du contrôle de %1$s a échoué (rc=%2$d) : %3$s</string>
     <string name="error_boot_id">Impossible de lire le boot_id actuel</string>
     <string name="error_receipt">Impossible de sauvegarder le reçu de vérification de l\'installation</string>
 
     <string name="artifact_exploit">exploit</string>
-    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="artifact_kernelsu">%1$s</string>
     <string name="repo_no_profile">Aucune charge utile compatible ne prend en charge ce modèle et cette version de noyau</string>
     <string name="repo_downloading">Téléchargement de %1$s</string>
     <string name="repo_size_mismatch">La taille de %1$s ne correspond pas au manifeste de compatibilité</string>
@@ -143,7 +143,7 @@
     <string name="export_log">Exporter le journal</string>
     <string name="export_log_saved">Journal enregistré</string>
     <string name="export_log_failed">Impossible d\'enregistrer le journal</string>
-    <string name="install_tap_open_manager">Toucher pour ouvrir KernelSU Manager</string>
+    <string name="install_tap_open_manager">Toucher pour ouvrir %1$s Manager</string>
     <string name="how_it_works">Comment ça marche</string>
     <string name="kernelsu_card_description">Une solution root basée sur le noyau pour Android</string>
     <string name="history_shizuku_used">Shizuku utilisé</string>
@@ -170,4 +170,6 @@
         <item quantity="other">Ces exécutions et leurs journaux seront définitivement supprimés.</item>
     </plurals>
     <string name="history_delete">Supprimer</string>
+    <string name="kernelsu_next_mode">Utiliser KernelSU-Next</string>
+    <string name="kernelsu_next_mode_description">Utiliser KernelSU-Next au lieu de KernelSU. Retour en arrière si indisponible.</string>
 </resources>

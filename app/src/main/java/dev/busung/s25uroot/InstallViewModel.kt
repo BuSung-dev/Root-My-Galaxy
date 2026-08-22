@@ -73,11 +73,12 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         mutableHistory.value = historyStore.load()
         discoveryJob?.cancel()
         discoveryJob = viewModelScope.launch(Dispatchers.IO) {
+            val label = AppPreferences.kernelSuLabel(app)
             val probe = NativeProbe.run()
             if (detectInstalled()) {
                 mutableState.value = InstallUiState(
                     phase = InstallPhase.Installed,
-                    message = app.getString(R.string.status_ksu_active),
+                    message = app.getString(R.string.status_ksu_active, label),
                     probeOutput = probe,
                     log = probe,
                 )
@@ -138,6 +139,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 probeOutput = mutableState.value.probeOutput,
             )
             startHistory()
+            val label = AppPreferences.kernelSuLabel(app)
             try {
                 if (shizukuEnabled()) {
                     appendLog(app.getString(R.string.log_shizuku_prepare))
@@ -165,10 +167,10 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 setPhase(InstallPhase.Exploiting, app.getString(R.string.status_exploit_running))
                 executeExploit(payloads.exploit)
 
-                setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
+                setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading, label))
                 installKernelSu(payloads)
 
-                setPhase(InstallPhase.Installed, app.getString(R.string.status_ksu_active))
+                setPhase(InstallPhase.Installed, app.getString(R.string.status_ksu_active, label))
                 appendLog(app.getString(R.string.log_install_complete))
                 finishHistory(InstallRunResult.Succeeded)
             } catch (error: Throwable) {
@@ -298,10 +300,11 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun installKernelSu(payloads: VerifiedPayloads) {
+        val label = AppPreferences.kernelSuLabel(app)
         if (shizukuEnabled()) {
             shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_PATH, "755")
             shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_STAGE_PATH, "755")
-            appendLog(app.getString(R.string.log_ksu_staged))
+            appendLog(app.getString(R.string.log_ksu_staged, label))
         } else {
             val source = shellQuote(payloads.kernelSu.absolutePath)
             val stageCommand =
@@ -309,17 +312,17 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                     "/system/bin/cp $source /data/local/tmp/.ksud-stage && " +
                     "/system/bin/chmod 755 /data/local/tmp/ksud-s25u-kdp /data/local/tmp/.ksud-stage"
             val stage = runHelper("-c", stageCommand)
-            require(stage.code == 0) { app.getString(R.string.error_ksu_stage, stage.output) }
-            appendLog(app.getString(R.string.log_ksu_staged))
+            require(stage.code == 0) { app.getString(R.string.error_ksu_stage, label, stage.output) }
+            appendLog(app.getString(R.string.log_ksu_staged, label))
         }
 
         val lateLoad = runHelper("--late-load")
         require(lateLoad.code == 0) {
-            app.getString(R.string.error_ksu_verify, lateLoad.code, lateLoad.output)
+            app.getString(R.string.error_ksu_verify, label, lateLoad.code, lateLoad.output)
         }
         if (lateLoad.output.isNotBlank()) appendLog(lateLoad.output)
         storeInstallReceipt()
-        appendLog(app.getString(R.string.log_ksu_control_verified))
+        appendLog(app.getString(R.string.log_ksu_control_verified, label))
     }
 
     private fun detectInstalled(): Boolean {
