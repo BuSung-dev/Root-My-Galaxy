@@ -1,7 +1,9 @@
 package dev.busung.s25uroot
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -84,6 +86,7 @@ import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.VerifiedUser
+import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -165,6 +168,22 @@ class MainActivity : ComponentActivity() {
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
     private var shizukuMode by mutableStateOf(false)
+    private var bootRootMode by mutableStateOf(false)
+    private var notificationPermissionAsked = false
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
+    /** Single POST_NOTIFICATIONS ask so the boot FGS notification is visible. */
+    private fun maybeRequestNotificationPermission() {
+        if (notificationPermissionAsked) return
+        notificationPermissionAsked = true
+        if (Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,6 +193,7 @@ class MainActivity : ComponentActivity() {
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
         shizukuMode = AppPreferences.shizukuMode(this)
+        bootRootMode = AppPreferences.bootRootMode(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
@@ -182,6 +202,8 @@ class MainActivity : ComponentActivity() {
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    bootRootMode = bootRootMode,
+                    requestNotificationPermission = ::maybeRequestNotificationPermission,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -197,6 +219,10 @@ class MainActivity : ComponentActivity() {
                     onShizukuModeChanged = { enabled ->
                         AppPreferences.setShizukuMode(this, enabled)
                         shizukuMode = enabled
+                    },
+                    onBootRootModeChanged = { enabled ->
+                        AppPreferences.setBootRootMode(this, enabled)
+                        bootRootMode = enabled
                     },
                     openInstaller = { profileId ->
                         val installer = Intent(this, InstallActivity::class.java)
@@ -280,10 +306,13 @@ private fun RootApp(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    bootRootMode: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onBootRootModeChanged: (Boolean) -> Unit,
+    requestNotificationPermission: () -> Unit,
     openInstaller: (String?) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
@@ -476,6 +505,7 @@ private fun RootApp(
             when (page) {
                 AppPage.Overview -> OverviewPage(
                     padding = padding,
+                    requestNotificationPermission = requestNotificationPermission,
                     device = device,
                     installState = installState,
                     updateStatus = updateStatus,
@@ -503,6 +533,7 @@ private fun RootApp(
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    bootRootMode = bootRootMode,
                     updateStatus = updateStatus,
                     onCheckForUpdate = checkForUpdate,
                     onStartDownload = startDownload,
@@ -510,6 +541,7 @@ private fun RootApp(
                     onThemeModeChanged = onThemeModeChanged,
                     onAdvancedModeChanged = onAdvancedModeChanged,
                     onShizukuModeChanged = onShizukuModeChanged,
+                    onBootRootModeChanged = onBootRootModeChanged,
                 )
             }
         }
@@ -552,6 +584,7 @@ private fun DialogDimAmount(amount: Float) {
 private fun OverviewPage(
     padding: PaddingValues,
     device: DeviceSnapshot,
+    requestNotificationPermission: () -> Unit,
     installState: InstallUiState,
     updateStatus: UpdateStatus,
     updateCardDismissed: Boolean,
@@ -559,6 +592,7 @@ private fun OverviewPage(
     onStartDownload: (UpdateInfo) -> Unit,
     onInstall: () -> Unit,
 ) {
+    LaunchedEffect(Unit) { requestNotificationPermission() }
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(padding),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
@@ -1406,6 +1440,7 @@ private fun SettingsPage(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    bootRootMode: Boolean,
     updateStatus: UpdateStatus,
     onCheckForUpdate: () -> Unit,
     onStartDownload: (UpdateInfo) -> Unit,
@@ -1413,6 +1448,7 @@ private fun SettingsPage(
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onBootRootModeChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -1540,7 +1576,7 @@ private fun SettingsPage(
                     title = stringResource(R.string.shizuku_mode),
                     description = stringResource(R.string.shizuku_mode_description),
                     checked = shizukuMode,
-                    position = SettingsCardPosition.Bottom,
+                    position = SettingsCardPosition.Middle,
                     onCheckedChange = { enabled ->
                         clickHaptic(view)
                         if (!enabled) {
@@ -1558,6 +1594,17 @@ private fun SettingsPage(
                                 }
                             }
                         }
+                    },
+                )
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.RestartAlt,
+                    title = stringResource(R.string.settings_boot_root),
+                    description = stringResource(R.string.settings_boot_root_summary),
+                    checked = bootRootMode,
+                    position = SettingsCardPosition.Bottom,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        onBootRootModeChanged(it)
                     },
                 )
             }

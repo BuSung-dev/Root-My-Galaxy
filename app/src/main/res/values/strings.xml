@@ -97,6 +97,7 @@
     <string name="status_support_failed">Support check failed</string>
     <string name="status_checking_github">Checking GitHub support manifest</string>
     <string name="status_downloading_payload">Downloading payloads</string>
+    <string name="notification_channel_boot">Boot installation</string>
     <string name="status_exploit_running">Running kernel exploit</string>
     <string name="status_ksu_loading">Late-loading KernelSU</string>
     <string name="status_install_failed">Installation failed</string>
@@ -139,6 +140,8 @@
     <string name="advanced_mode_description">Manually choose a device-compatible payload during installation</string>
     <string name="shizuku_mode">Use Shizuku</string>
     <string name="shizuku_mode_description">Use Shizuku to run the payload. This can improve reliability.</string>
+    <string name="settings_boot_root">Root on boot</string>
+    <string name="settings_boot_root_summary">Automatically re-run the install after every reboot when root is not active</string>
     <string name="shizuku_not_running_title">Shizuku is not running</string>
     <string name="shizuku_not_running_body">Start the Shizuku service with adb or root and grant this app permission, then enable this option.</string>
     <string name="action_download_shizuku">Download Shizuku</string>
