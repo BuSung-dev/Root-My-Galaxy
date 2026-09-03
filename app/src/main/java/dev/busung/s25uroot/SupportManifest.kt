@@ -6,6 +6,7 @@ import org.json.JSONObject
 data class RemoteArtifact(
     val url: String,
     val size: Long,
+    val verifySize: Boolean = true,
 )
 
 data class TargetProfile(
@@ -61,6 +62,7 @@ data class SupportManifest(
                             exploit = RemoteArtifact(
                                 url = exploit.getString("url"),
                                 size = exploit.getLong("size"),
+                                verifySize = exploit.optBoolean("verifySize", true),
                             ),
                             kernelSu = RemoteArtifact(
                                 url = kernelSu.getString("url"),

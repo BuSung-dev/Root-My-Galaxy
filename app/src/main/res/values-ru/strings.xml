@@ -110,6 +110,7 @@
     <string name="repo_verified">%1$s проверен</string>
     <string name="repo_commit_invalid">GitHub вернул некорректный SHA commit</string>
     <string name="repo_url_invalid">Этот репозиторий артефактов не разрешён</string>
+    <string name="repo_name_invalid">Укажите репозиторий payload в формате владелец/репозиторий</string>
     <string name="repo_response_too_large">Ответ превысил допустимый размер</string>
     <string name="open_github">Открыть GitHub</string>
     <string name="github_card_title">О проекте Root My Galaxy</string>
@@ -119,6 +120,19 @@
     <string name="advanced">Дополнительно</string>
     <string name="advanced_mode">Расширенный режим</string>
     <string name="advanced_mode_description">Выбрать совместимый с устройством payload вручную во время установки</string>
+    <string name="verify_exploit_size">Проверять размер exploit</string>
+    <string name="verify_exploit_size_description">Отклонять exploit, если его размер не совпадает с support-манифестом</string>
+    <string name="payload_repository">Свой репозиторий payload</string>
+    <string name="payload_repository_description">GitHub в формате владелец/репозиторий. Оставьте пустым для официального источника.</string>
+    <string name="custom_exploit_payload">Локальный exploit payload</string>
+    <string name="custom_exploit_payload_description">Выберите свой ELF-файл .so. Он будет использован вместо загружаемого exploit.</string>
+    <string name="custom_payload_not_selected">Не выбран</string>
+    <string name="custom_payload_remove">Удалить локальный payload</string>
+    <string name="custom_payload_not_so">Выберите файл с расширением .so</string>
+    <string name="custom_payload_not_elf">Выбранный файл не является ELF</string>
+    <string name="custom_payload_too_large">Размер выбранного файла превышает 16 МиБ</string>
+    <string name="custom_payload_read_failed">Не удалось прочитать выбранный файл</string>
+    <string name="repo_using_custom_payload">Используется локальный exploit payload: %1$s</string>
     <string name="shizuku_mode">Использовать Shizuku</string>
     <string name="shizuku_mode_description">Использовать Shizuku для запуска payload. Это может повысить надёжность.</string>
     <string name="shizuku_not_running_title">Shizuku не запущен</string>
