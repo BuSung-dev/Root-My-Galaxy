@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Root My Galaxy</string>
+    <string name="nav_overview">الرئيسية</string>
+    <string name="nav_history">السجل</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="install_confirm_title">هل تريد تثبيت KernelSU؟</string>
+    <string name="install_confirm_body">سيقوم التطبيق بالتحقق من ملف التوافق، ثم تنزيل وتشغيل الثغرة وحمولة KernelSU من GitHub.</string>
+    <string name="action_confirm">تأكيد</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_close">إغلاق</string>
+    <string name="action_retry">إعادة المحاولة</string>
+    <string name="action_done">تم</string>
+    <string name="action_back">رجوع</string>
+    <string name="install_tap_manager">انقر لتثبيت مدير KernelSU</string>
+    <string name="install_tap_open_manager">انقر لفتح مدير KernelSU</string>
+    <string name="install_tap_retry">انقر لإعادة المحاولة</string>
+    <string name="install_tap_start">انقر لتثبيت KernelSU</string>
+    <string name="device">الجهاز</string>
+    <string name="how_it_works">كيف يعمل</string>
+    <string name="kernelsu_card_title">KernelSU</string>
+    <string name="kernelsu_card_description">حل جيلبروت/روت مبني على النواة لنظام أندرويد</string>
+    <string name="firmware">البرنامج الثابت (Firmware)</string>
+    <string name="system">النظام</string>
+    <string name="system_abi">معمارية النظام (ABI)</string>
+    <string name="settings">الإعدادات</string>
+    <string name="version_format">%1$s (%2$d)</string>
+    <string name="language">اللغة</string>
+    <string name="language_description">اختر لغة التطبيق</string>
+    <string name="appearance">المظهر</string>
+    <string name="theme_system">النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+    <string name="material_color">السمة</string>
+    <string name="material_color_description">تغيير المظهر</string>
+    <string name="language_system">اتباع النظام</string>
+    <string name="language_korean" translatable="false">한국어</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_japanese" translatable="false">日本語</string>
+    <string name="language_chinese" translatable="false">简体中文</string>
+    <string name="language_chinese_traditional" translatable="false">繁體中文</string>
+    <string name="language_turkish" translatable="false">Türkçe</string>
+    <string name="language_brazillian_portuguese" translatable="false">Português Brasileiro</string>
+    <string name="language_russian" translatable="false">Русский</string>
+    <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
+    <string name="color_dynamic">ديناميكي حسب النظام</string>
+    <string name="color_blue">أزرق</string>
+    <string name="color_violet">بنفسجي</string>
+    <string name="color_green">أخضر</string>
+    <string name="color_orange">برتقالي</string>
+    <string name="history_title">سجل التشغيل</string>
+    <string name="history_empty_title">لا توجد عمليات حتى الآن</string>
+    <string name="history_empty_description">ستظهر نتائج التثبيت والسجلات هنا.</string>
+    <string name="history_running">قيد التشغيل</string>
+    <string name="history_succeeded">نجحت</string>
+    <string name="history_failed">فشلت</string>
+    <string name="history_detail_title">تفاصيل العملية</string>
+    <string name="history_started">بدأت: %1$s</string>
+    <string name="history_completed">اكتملت: %1$s</string>
+    <string name="history_log_empty">لا توجد مخرجات للسجل بعد.</string>
+    <string name="history_payload">الحمولة: %1$s</string>
+    <string name="history_shizuku_used">Shizuku: مستخدم</string>
+    <string name="history_shizuku_not_used">Shizuku: غير مستخدم</string>
+    <string name="export_log">تصدير السجل</string>
+    <string name="export_log_saved">تم حفظ السجل</string>
+    <string name="export_log_failed">تعذر حفظ السجل</string>
+    <string name="about">حول</string>
+    <string name="about_title">حول Root My Galaxy</string>
+    <string name="about_description">حول Root My Galaxy</string>
+    <string name="about_body">مُثبّت بنقرة واحدة يستخدم ثغرة في النواة لعمل روت لأجهزة Samsung Galaxy المدعومة.</string>
+
+    <string name="install_title">تثبيت</string>
+    <string name="install_keep_open">أبقِ هذه الشاشة مفتوحة حتى ينتهي التثبيت</string>
+    <string name="install_live_progress">السجل المباشر</string>
+    <string name="install_preparing">جاري التحضير…</string>
+    <string name="step_support_title">فحص الدعم</string>
+    <string name="step_support_detail">التحقق من ملف تعريف الجهاز والبرنامج الثابت</string>
+    <string name="step_download_title">تنزيل</string>
+    <string name="step_download_detail">تحميل بيان الدعم (manifest)</string>
+    <string name="step_exploit_title">ثغرة النواة</string>
+    <string name="step_exploit_detail">الحصول على صلاحية الروت الأولية</string>
+    <string name="step_ksu_title">تحميل KernelSU</string>
+    <string name="step_ksu_detail">تحميل الوحدة المترابطة والتحقق من قناة التحكم</string>
+    <string name="phase_checking">جاري التحقق من الجهاز والبرنامج الثابت المدعوم</string>
+    <string name="phase_ready">جاهز للتثبيت</string>
+    <string name="phase_downloading">جاري تنزيل الحمولات المحددة من GitHub</string>
+    <string name="phase_exploiting">قد يستغرق هذا 10 دقائق أو أكثر. قد يسخن جهازك أو يتوقف عن الاستجابة مؤقتاً.</string>
+    <string name="phase_loading_ksu">جاري تحميل KernelSU باستخدام صلاحية الروت المكتسبة</string>
+    <string name="phase_installed">تم التحقق من وحدة KernelSU وقناة التحكم</string>
+    <string name="phase_failed">راجع نقطة الفشل في السجل أدناه</string>
+
+    <string name="status_ksu_active">KernelSU نشط</string>
+    <string name="status_not_installed">غير مثبت</string>
+    <string name="status_support_failed">فشل فحص الدعم</string>
+    <string name="status_checking_github">جاري التحقق من بيان دعم GitHub</string>
+    <string name="status_downloading_payload">جاري تنزيل الحمولات</string>
+    <string name="status_exploit_running">جاري تشغيل ثغرة النواة</string>
+    <string name="status_ksu_loading">جاري تحميل KernelSU</string>
+    <string name="status_install_failed">فشل التثبيت</string>
+    <string name="log_profile">[+] ملف تعريف الدعم: %1$s</string>
+    <string name="log_download_verified">[+] اكتمل تنزيل الحمولة</string>
+    <string name="log_install_complete">[+] اكتمل التثبيت</string>
+    <string name="log_bootstrap_root">[+] تم الحصول على صلاحية الروت الأولية</string>
+    <string name="log_ksu_staged">[+] اكتمل تجهيز KernelSU</string>
+    <string name="log_ksu_control_verified">[+] تم التحقق من قناة تحكم KernelSU</string>
+    <string name="error_helper_unavailable">مساعد البدء الأولية غير قابل للتنفيذ</string>
+    <string name="error_exploit_stalled">لم يتقدم سجل الثغرة لمدة 90 ثانية</string>
+    <string name="error_exploit_timeout">تجاوزت الثغرة الحد الزمني البالغ 15 دقيقة</string>
+    <string name="error_payload_exit">فشل تنفيذ الحمولة: %1$d%2$s</string>
+    <string name="error_success_marker">لم يتم العثور على علامات نجاح الثغرة</string>
+    <string name="error_ksu_stage">فشل تجهيز KernelSU: %1$s</string>
+    <string name="error_ksu_verify">فشل التحقق من تحميل أو تحكم KernelSU (rc=%1$d): %2$s</string>
+    <string name="error_boot_id">تعذر قراءة boot_id الحالي</string>
+    <string name="error_receipt">تعذر حفظ إيصال التحقق من التثبيت</string>
+
+    <string name="artifact_exploit">الثغرة (exploit)</string>
+    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="repo_no_profile">لا توجد حمولة متوافقة تدعم هذا الموديل وإصدار النواة</string>
+    <string name="repo_downloading">جاري تنزيل %1$s</string>
+    <string name="repo_size_mismatch">حجم %1$s لا يطابق بيان الدعم</string>
+    <string name="repo_size_exceeded">تجاوز %1$s الحجم المعلن</string>
+    <string name="repo_incomplete">تنزيل %1$s غير مكتمل</string>
+    <string name="repo_finalize_failed">تعذر إنهاء ملف %1$s</string>
+    <string name="repo_verified">تم التحقق من %1$s</string>
+    <string name="repo_commit_invalid">أرجع GitHub معرّف SHA غير صالحة للتثبيت</string>
+    <string name="repo_url_invalid">مستودع الأصول غير مسموح به</string>
+    <string name="repo_response_too_large">تجاوز الاستجابة حد الحجم المسموح به</string>
+    <string name="open_github">فتح GitHub</string>
+    <string name="github_card_title">استكشف Root My Galaxy</string>
+    <string name="github_card_description">عرض الشفرة المصدرية وتعليمات الاستخدام.</string>
+    <string name="action_continue">المتابعة على أي حال</string>
+    <string name="action_next">التالي</string>
+    <string name="advanced">متقدم</string>
+    <string name="advanced_mode">الوضع المتقدم</string>
+    <string name="advanced_mode_description">اختيار حمولة متوافقة مع الجهاز يدويًا أثناء التثبيت</string>
+    <string name="shizuku_mode">استخدام Shizuku</string>
+    <string name="shizuku_mode_description">استخدام Shizuku لتشغيل الحمولة. هذا يمكن أن يحسن الاستقرار.</string>
+    <string name="shizuku_not_running_title">Shizuku لا يعمل</string>
+    <string name="shizuku_not_running_body">قم ببدء خدمة Shizuku عبر adb أو الروت وامنح هذا التطبيق الإذن، ثم قم بتفعيل هذا الخيار.</string>
+    <string name="action_download_shizuku">تنزيل Shizuku</string>
+    <string name="error_shizuku_unavailable">Shizuku لا يعمل. قم ببدء Shizuku عبر adb أو الروت أولاً.</string>
+    <string name="error_shizuku_permission">لم يتم منح إذن Shizuku</string>
+    <string name="error_shizuku_stage">تعذر تجهيز %1$s من خلال Shizuku: %2$s</string>
+    <string name="log_shizuku_prepare">[*] جاري تحضير تنفيذ Shizuku</string>
+    <string name="log_shizuku_permission">[+] تم منح إذن Shizuku</string>
+    <string name="repo_profile_missing">ملف تعريف الدعم %1$s لم يعد متوفراً</string>
+    <string name="select_device_title">اختر حمولة</string>
+    <string name="select_device_description">حدد حمولة حسب موديل الجهاز وإصدار النواة.</string>
+    <string name="show_my_device_only">إظهار جهزي فقط</string>
+    <string name="no_matching_devices">لا توجد حمولات تطابق هذا الموديل وإصدار النواة.</string>
+    <string name="device_mismatch_title">عدم تطابق الجهاز</string>
+    <string name="device_mismatch_body">هذا الهاتف هو %1$s، لكن الحمولة المحددة تدعم %2$s. قد يؤدي تشغيلها إلى تعطل الجهاز أو تلفه.</string>
+    <string name="kernel_version_mismatch_title">عدم تطابق إصدار النواة</string>
+    <string name="kernel_version_mismatch_body">هذا الهاتف يستخدم النواة %1$s، لكن الحمولة المحددة تدعم %2$s. قد تكون الإزاحات غير متوافقة.</string>
+</resources>
