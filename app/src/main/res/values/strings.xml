@@ -104,6 +104,8 @@
     <string name="log_download_verified">[+] Payload download complete</string>
     <string name="log_install_complete">[+] Installation complete</string>
     <string name="log_bootstrap_root">[+] Bootstrap root acquired</string>
+    <string name="log_ro_blocks_successful">[+] Set %1$d partitions to read-only</string>
+    <string name="log_ro_blocks_failed">[!] Could not set partitions to read-only</string>
     <string name="log_ksu_staged">[+] KernelSU staging complete</string>
     <string name="log_ksu_control_verified">[+] KernelSU control channel verified</string>
     <string name="error_helper_unavailable">The bootstrap helper is not executable</string>
