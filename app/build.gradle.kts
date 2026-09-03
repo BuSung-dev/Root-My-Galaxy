@@ -24,6 +24,12 @@ android {
                 arguments += "-DANDROID_STL=none"
             }
         }
+
+        // Optional offline flavor: `./gradlew assembleRelease -PrmgOfflinePayloads=true`
+        // bundles payloads/targets-v3.json and payload artifacts from assets. The
+        // default (online) build requires no bundled payloads and behaves like upstream.
+        val offlinePayloads = (project.findProperty("rmgOfflinePayloads") as? String)?.toBooleanStrictOrNull() ?: false
+        buildConfigField("boolean", "OFFLINE_PAYLOADS", offlinePayloads.toString())
     }
 
     buildFeatures {

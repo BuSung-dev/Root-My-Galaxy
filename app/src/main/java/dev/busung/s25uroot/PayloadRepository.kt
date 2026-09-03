@@ -15,8 +15,24 @@ data class VerifiedPayloads(
     val kernelSu: File,
 )
 
+/**
+ * Payload source repository.
+ *
+ * Two modes are supported at build time:
+ *  - Online (default): the original upstream implementation, unchanged — the
+ *    manifest and artifacts are fetched from the upstream payloads repository
+ *    pinned to the latest commit.
+ *  - Offline (opt-in via the `rmgOfflinePayloads` Gradle property): the
+ *    manifest and all artifacts are read from bundled assets
+ *    (`payloads/targets-v3.json` and `payloads/<payloadId>/...`), so no
+ *    network is required at runtime.
+ */
 class PayloadRepository(private val context: Context) {
     fun loadTargets(): List<TargetProfile> {
+        if (BuildConfig.OFFLINE_PAYLOADS) {
+            val bytes = context.assets.open(MANIFEST_ASSET).use { it.readBytes() }
+            return SupportManifest.parse(bytes).targets
+        }
         val commit = resolveMainCommit()
         val manifestBytes = downloadBytes(rawUrl(commit, "support/targets-v3.json"), MAX_MANIFEST_BYTES)
         return SupportManifest.parse(manifestBytes).targets.map { profile -> profile.copy(
@@ -60,28 +76,52 @@ class PayloadRepository(private val context: Context) {
     ): File {
         onProgress(context.getString(R.string.repo_downloading, label))
         val temporary = File(destination.parentFile, "${destination.name}.part")
-        val connection = open(artifact.url)
-        require(connection.contentLengthLong == -1L || connection.contentLengthLong == artifact.size) {
-            context.getString(R.string.repo_size_mismatch, label)
-        }
-        var total = 0L
-        connection.inputStream.use { input ->
-            FileOutputStream(temporary).use { output ->
-                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                while (true) {
-                    val count = input.read(buffer)
-                    if (count < 0) break
-                    total += count
-                    require(total <= artifact.size) {
-                        context.getString(R.string.repo_size_exceeded, label)
-                    }
-                    output.write(buffer, 0, count)
-                }
-                output.fd.sync()
+        if (BuildConfig.OFFLINE_PAYLOADS) {
+            require(artifact.url.startsWith(ASSET_PREFIX)) {
+                context.getString(R.string.repo_url_invalid)
             }
+            val source = context.assets.open(artifact.url.removePrefix(ASSET_PREFIX))
+            var total = 0L
+            source.use { input ->
+                FileOutputStream(temporary).use { output ->
+                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                    while (true) {
+                        val count = input.read(buffer)
+                        if (count < 0) break
+                        total += count
+                        require(total <= artifact.size) {
+                            context.getString(R.string.repo_size_exceeded, label)
+                        }
+                        output.write(buffer, 0, count)
+                    }
+                    output.fd.sync()
+                }
+            }
+            require(total == artifact.size) { context.getString(R.string.repo_incomplete, label) }
+        } else {
+            val connection = open(artifact.url)
+            require(connection.contentLengthLong == -1L || connection.contentLengthLong == artifact.size) {
+                context.getString(R.string.repo_size_mismatch, label)
+            }
+            var total = 0L
+            connection.inputStream.use { input ->
+                FileOutputStream(temporary).use { output ->
+                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                    while (true) {
+                        val count = input.read(buffer)
+                        if (count < 0) break
+                        total += count
+                        require(total <= artifact.size) {
+                            context.getString(R.string.repo_size_exceeded, label)
+                        }
+                        output.write(buffer, 0, count)
+                    }
+                    output.fd.sync()
+                }
+            }
+            connection.disconnect()
+            require(total == artifact.size) { context.getString(R.string.repo_incomplete, label) }
         }
-        connection.disconnect()
-        require(total == artifact.size) { context.getString(R.string.repo_incomplete, label) }
         if (destination.exists()) destination.delete()
         require(temporary.renameTo(destination)) {
             context.getString(R.string.repo_finalize_failed, label)
@@ -89,6 +129,8 @@ class PayloadRepository(private val context: Context) {
         onProgress(context.getString(R.string.repo_verified, label))
         return destination
     }
+
+    // ---- Online-only upstream helpers (upstream implementation, unchanged) ----
 
     private fun resolveMainCommit(): String {
         val response = downloadBytes(COMMIT_API_URL, MAX_COMMIT_RESPONSE_BYTES)
@@ -136,6 +178,8 @@ class PayloadRepository(private val context: Context) {
         }
 
     companion object {
+        private const val MANIFEST_ASSET = "payloads/targets-v3.json"
+        private const val ASSET_PREFIX = "asset://"
         private const val COMMIT_API_URL =
             "https://api.github.com/repos/BuSung-dev/Root-My-Galaxy-Payloads/git/ref/heads/main"
         private const val RAW_REPOSITORY =
