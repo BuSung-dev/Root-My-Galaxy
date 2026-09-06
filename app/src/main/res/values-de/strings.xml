@@ -5,11 +5,11 @@
     <string name="nav_history">Verlauf</string>
     <string name="nav_settings">Einstellungen</string>
     <string name="install_confirm_title">KernelSU installieren?</string>
-    <string name="install_confirm_body">Die App überprüft das Support-Profil und lädt anschließend den Exploit sowie den KernelSU-Payload von GitHub und führt sie aus.</string>
+    <string name="install_confirm_body">Die App überprüft das Support-Profil und lädt anschließend den Exploit sowie die KernelSU-Payload von GitHub und führt sie aus.</string>
     <string name="action_confirm">Bestätigen</string>
     <string name="action_cancel">Abbrechen</string>
     <string name="action_close">Schließen</string>
-    <string name="action_retry">Erneut versuchen</string>
+    <string name="action_retry">Wiederholen</string>
     <string name="action_done">Fertig</string>
     <string name="action_back">Zurück</string>
     <string name="install_tap_manager">Tippen, um den KernelSU Manager zu installieren</string>
@@ -23,7 +23,7 @@
     <string name="firmware">Firmware</string>
     <string name="system">System</string>
     <string name="kernel">Kernel</string>
-    <string name="system_abi">System ABI</string>
+    <string name="system_abi">System-ABI</string>
     <string name="settings">Einstellungen</string>
     <string name="version_format">%1$s (%2$d)</string>
     <string name="language">Sprache</string>
@@ -152,10 +152,10 @@
     <string name="select_device_description">Wähle eine Payload anhand von Gerätemodell und Kernel-Version aus.</string>
     <string name="show_my_device_only">Nur mein Gerät zeigen</string>
     <string name="no_matching_devices">Keine Payload stimmt mit diesem Gerätemodell und dieser Kernel-Version überein.</string>
-    <string name="device_mismatch_title">Geräte-Inkompatibilität</string>
-    <string name="device_mismatch_body">Dieses Gerät ist %1$s, aber das ausgewählte Payload unterstützt %2$s. Das Ausführen kann das Gerät zum Absturz bringen oder beschädigen.</string>
-    <string name="kernel_version_mismatch_title">Kernel-Version-Inkompabilität</string>
-    <string name="kernel_version_mismatch_body">Dieses Gerät benutzt Kernel-Version %1$s, aber das ausgewählte Payload unterstützt %2$s. Die Kernel-Offsets sind möglicherweise inkompatibel.</string>
+    <string name="device_mismatch_title">Gerät inkompatibel</string>
+    <string name="device_mismatch_body">Dieses Gerät ist %1$s, aber die ausgewählte Payload unterstützt %2$s. Das Ausführen kann das Gerät zum Absturz bringen oder beschädigen.</string>
+    <string name="kernel_version_mismatch_title">Kernel-Version inkompatibel</string>
+    <string name="kernel_version_mismatch_body">Dieses Gerät benutzt Kernel-Version %1$s, aber die ausgewählte Payload unterstützt %2$s. Die Kernel-Offsets sind möglicherweise inkompatibel.</string>
     <string name="updater_available_title">Ein Update ist verfügbar</string>
     <string name="updater_available_body">Version %1$s ist jetzt verfügbar</string>
     <string name="updater_available_body_short">%1$s ist verfügbar</string>
