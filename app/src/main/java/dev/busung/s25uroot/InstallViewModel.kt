@@ -195,7 +195,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 appendLog(app.getString(R.string.log_download_verified))
 
                 setPhase(InstallPhase.Exploiting, app.getString(R.string.status_exploit_running))
-                executeExploit(payloads.exploit)
+                executeExploit(payloads.exploit, profile.requiresFreshP0Session)
 
                 setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
                 installKernelSu(payloads)
@@ -213,7 +213,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    private suspend fun executeExploit(payload: File) {
+    private suspend fun executeExploit(payload: File, requiresFreshP0Session: Boolean) {
         val shizuku = shizukuEnabled()
         val logFile = if (shizuku) File(SHIZUKU_LOG_PATH) else File(app.filesDir, "exploit.log")
         if (shizuku) {
@@ -227,11 +227,17 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         }
         val logPrefix = mutableState.value.log
         val bootToken = currentBootToken()
+        val cachedP0Offset = if (requiresFreshP0Session) null else cachedP0Offset(bootToken)
         val process = if (shizuku) {
             val stagedPayload = shizukuStage(payload, SHIZUKU_PAYLOAD_PATH, "755")
             ShizukuController.exec(
                 arrayOf("/system/bin/sh", "-c", "true"),
-                shizukuEnvironment(bootToken, stagedPayload.absolutePath, helper.absolutePath),
+                shizukuEnvironment(
+                    stagedPayload.absolutePath,
+                    helper.absolutePath,
+                    requiresFreshP0Session,
+                    cachedP0Offset,
+                ),
             )
         } else {
             val processBuilder = ProcessBuilder(
@@ -241,12 +247,9 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 helper.absolutePath,
                 logFile.absolutePath,
             ).redirectErrorStream(true)
-            processBuilder.environment().apply {
-                put("EXPLOIT_ATTEMPTS", EXPLOIT_ATTEMPTS)
-                put("P0_ATTEMPT_TIMEOUT_SEC", P0_ATTEMPT_TIMEOUT_SEC)
-                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", EXPLOIT_ATTEMPT_TIMEOUT_SEC)
-                cachedP0Offset(bootToken)?.let { put(P0_OFFSET_ENV, it) }
-            }
+            processBuilder.environment().putAll(
+                exploitEnvironment(requiresFreshP0Session, cachedP0Offset),
+            )
             processBuilder.start()
         }
         val captured = StringBuilder()
@@ -266,14 +269,16 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             while (process.isAlive) {
                 val rawLog = readLog()
                 if (rawLog != lastRawLog) {
-                    cacheP0Offset(bootToken, rawLog)
+                    if (!requiresFreshP0Session) cacheP0Offset(bootToken, rawLog)
                     publishExploitLog(logPrefix, rawLog)
                     lastRawLog = rawLog
                     lastProgressAt = SystemClock.elapsedRealtime()
                 }
                 val now = SystemClock.elapsedRealtime()
-                require(now - lastProgressAt < EXPLOIT_STALL_MILLIS) {
-                    app.getString(R.string.error_exploit_stalled)
+                if (!requiresFreshP0Session) {
+                    require(now - lastProgressAt < EXPLOIT_STALL_MILLIS) {
+                        app.getString(R.string.error_exploit_stalled)
+                    }
                 }
                 require(now - startedAt < EXPLOIT_TOTAL_MILLIS) {
                     app.getString(R.string.error_exploit_timeout)
@@ -283,7 +288,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
 
             val exitCode = process.waitFor()
             val rawLog = readLog()
-            cacheP0Offset(bootToken, rawLog)
+            if (!requiresFreshP0Session) cacheP0Offset(bootToken, rawLog)
             publishExploitLog(logPrefix, rawLog)
             // Both transports drain into `captured` during the poll loop, so
             // this never blocks on a child still holding the pipe open.
@@ -435,16 +440,16 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun shizukuEnvironment(
-        bootToken: String?,
         payloadPath: String,
         helperPath: String,
+        requiresFreshP0Session: Boolean,
+        cachedP0Offset: String?,
     ): Array<String> = buildList {
-        add("EXPLOIT_ATTEMPTS=$EXPLOIT_ATTEMPTS")
-        add("P0_ATTEMPT_TIMEOUT_SEC=$P0_ATTEMPT_TIMEOUT_SEC")
-        add("EXPLOIT_ATTEMPT_TIMEOUT_SEC=$EXPLOIT_ATTEMPT_TIMEOUT_SEC")
+        exploitEnvironment(requiresFreshP0Session, cachedP0Offset).forEach { (name, value) ->
+            add("$name=$value")
+        }
         add("CVE43499_ROOT_HELPER=$helperPath")
         add("LD_PRELOAD=$payloadPath")
-        cachedP0Offset(bootToken)?.let { add("$P0_OFFSET_ENV=$it") }
     }.toTypedArray()
 
     /**
@@ -571,6 +576,18 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         private val P0_OFFSET_PATTERN = Regex(
             "slide-kaslr-ok[^\\n]*slide=([0-9a-fA-F]{16})",
         )
+
+        internal fun exploitEnvironment(
+            requiresFreshP0Session: Boolean,
+            cachedP0Offset: String?,
+        ): Map<String, String> = buildMap {
+            put("EXPLOIT_ATTEMPTS", if (requiresFreshP0Session) "1" else EXPLOIT_ATTEMPTS)
+            if (!requiresFreshP0Session) {
+                put("P0_ATTEMPT_TIMEOUT_SEC", P0_ATTEMPT_TIMEOUT_SEC)
+                put("EXPLOIT_ATTEMPT_TIMEOUT_SEC", EXPLOIT_ATTEMPT_TIMEOUT_SEC)
+                cachedP0Offset?.let { put(P0_OFFSET_ENV, it) }
+            }
+        }
 
         private fun stripAnsi(value: String): String = ANSI_ESCAPE.replace(value, "").replace("\r", "")
     }

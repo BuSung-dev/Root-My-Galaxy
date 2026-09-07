@@ -1,5 +1,6 @@
 package dev.busung.s25uroot
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -24,6 +25,16 @@ class TargetProfileTest {
     fun rejectsUnlistedModelOrKernelVersion() {
         assertFalse(profile.matches(snapshot("SM-S928B", "6.6.98-android15-8-build")))
         assertFalse(profile.matches(snapshot("SM-S938N", "6.6.102-android15-8-build")))
+    }
+
+    @Test
+    fun freshP0SessionRunsOnceWithoutCacheOrShortTimeoutOverrides() {
+        val freshProfile = profile.copy(requiresFreshP0Session = true)
+
+        assertEquals(
+            mapOf("EXPLOIT_ATTEMPTS" to "1"),
+            InstallViewModel.exploitEnvironment(freshProfile.requiresFreshP0Session, "0x1a0000"),
+        )
     }
 
     private fun snapshot(
