@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Root My Galaxy</string>
+    <string name="nav_overview">Ana səhifə</string>
+    <string name="nav_history">Tarixçə</string>
+    <string name="nav_settings">Parametrlər</string>
+    <string name="install_confirm_title">KernelSU quraşdırılsın?</string>
+    <string name="install_confirm_body">Tətbiq dəstək profilini yoxlayacaq, sonra GitHub üzərindən exploiti və KernelSU payloadı endirib icra edəcək.</string>
+    <string name="action_confirm">Təsdiqlə</string>
+    <string name="action_cancel">Ləğv et</string>
+    <string name="action_close">Bağla</string>
+    <string name="action_retry">Yenidən cəhd et</string>
+    <string name="action_done">Hazırdır</string>
+    <string name="action_back">Geri</string>
+    <string name="install_tap_manager">KernelSU Manager quraşdırmaq üçün toxunun</string>
+    <string name="install_tap_open_manager">KernelSU Manager açmaq üçün toxunun</string>
+    <string name="install_tap_retry">Yenidən cəhd etmək üçün toxunun</string>
+    <string name="install_tap_start">KernelSU quraşdırmaq üçün toxunun</string>
+    <string name="device">Cihaz</string>
+    <string name="how_it_works">Necə işləyir</string>
+    <string name="kernelsu_card_title">KernelSU</string>
+    <string name="kernelsu_card_description">Android üçün kernel əsaslı root həlli</string>
+    <string name="firmware">Mikroproqram</string>
+    <string name="system">Sistem</string>
+    <string name="kernel">Kernel</string>
+    <string name="system_abi">Sistem ABI</string>
+    <string name="settings">Parametrlər</string>
+    <string name="version_format">%1$s (%2$d)</string>
+    <string name="language">Dil</string>
+    <string name="language_description">Tətbiqin dilini seçin</string>
+    <string name="appearance">Görünüş</string>
+    <string name="theme_system">Sistem</string>
+    <string name="theme_light">Açıq</string>
+    <string name="theme_dark">Tünd</string>
+    <string name="material_color">Mövzu</string>
+    <string name="material_color_description">Görünüşü dəyişin</string>
+    <string name="language_system">Sistem dilindən istifadə et</string>
+    <string name="language_korean" translatable="false">한국어</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_german" translatable="false">Deutsch</string>
+    <string name="language_japanese" translatable="false">日本語</string>
+    <string name="language_chinese" translatable="false">简体中文</string>
+    <string name="language_chinese_traditional" translatable="false">繁體中文</string>
+    <string name="language_turkish" translatable="false">Türkçe</string>
+    <string name="language_brazillian_portuguese" translatable="false">Português Brasileiro</string>
+    <string name="language_russian" translatable="false">Русский</string>
+    <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
+    <string name="language_uzbek" translatable="false">O\'zbek</string>
+    <string name="language_azerbaijani" translatable="false">Azərbaycan</string>
+    <string name="color_dynamic">Sistemin dinamik rəngləri</string>
+    <string name="color_blue">Mavi</string>
+    <string name="color_violet">Bənövşəyi</string>
+    <string name="color_green">Yaşıl</string>
+    <string name="color_orange">Narıncı</string>
+    <string name="history_title">İcra tarixçəsi</string>
+    <string name="history_empty_title">Hələ heç bir icra yoxdur</string>
+    <string name="history_empty_description">Quraşdırma nəticələri və jurnallar burada görünəcək.</string>
+    <string name="history_running">İcra olunur</string>
+    <string name="history_succeeded">Uğurlu oldu</string>
+    <string name="history_failed">Uğursuz oldu</string>
+    <string name="history_detail_title">İcra təfərrüatları</string>
+    <string name="history_started">Başladı: %1$s</string>
+    <string name="history_completed">Tamamlandı: %1$s</string>
+    <string name="history_log_empty">Hələ jurnal qeydi yoxdur.</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="history_shizuku_used">Shizuku: istifadə olundu</string>
+    <string name="history_shizuku_not_used">Shizuku: istifadə olunmadı</string>
+    <string name="export_log">Jurnalı ixrac et</string>
+    <string name="export_log_saved">Jurnal yadda saxlanıldı</string>
+    <string name="export_log_failed">Jurnalı yadda saxlamaq mümkün olmadı</string>
+    <string name="about">Haqqında</string>
+    <string name="about_title">Root My Galaxy haqqında</string>
+    <string name="about_description">Root My Galaxy haqqında</string>
+    <string name="about_body">Dəstəklənən Samsung Galaxy cihazlarında root əldə etmək üçün kernel exploitindən istifadə edən, bir toxunuşla işləyən quraşdırıcı.</string>
+
+    <string name="install_title">Quraşdır</string>
+    <string name="install_keep_open">Quraşdırma bitənədək bu ekranı açıq saxlayın</string>
+    <string name="install_live_progress">Jurnal</string>
+    <string name="install_preparing">Hazırlanır…</string>
+    <string name="step_support_title">Dəstək yoxlaması</string>
+    <string name="step_support_detail">Cihaz və mikroproqram profilini yoxlayın</string>
+    <string name="step_download_title">Endir</string>
+    <string name="step_download_detail">Dəstək manifestini yükləyin</string>
+    <string name="step_exploit_title">Kernel exploit</string>
+    <string name="step_exploit_detail">Bootstrap root əldə edin</string>
+    <string name="step_ksu_title">KernelSU yüklə</string>
+    <string name="step_ksu_detail">Modulu sonradan yükləyin və idarəetmə kanalını yoxlayın</string>
+    <string name="phase_checking">Dəstəklənən cihaz və mikroproqram yoxlanılır</string>
+    <string name="phase_ready">Quraşdırmağa hazırdır</string>
+    <string name="phase_downloading">GitHub üzərindən müəyyən dəyişiklik qeydinə bağlanmış payloadlar endirilir</string>
+    <string name="phase_exploiting">Bu, 10 dəqiqə və ya daha uzun çəkə bilər. Cihazınız qıza və ya cavab verməyə bilər.</string>
+    <string name="phase_loading_ksu">Əldə edilmiş bootstrap root ilə KernelSU yüklənir</string>
+    <string name="phase_installed">KernelSU modulu və idarəetmə kanalı yoxlanıldı</string>
+    <string name="phase_failed">Aşağıdakı jurnalda xətanın baş verdiyi yeri nəzərdən keçirin</string>
+
+    <string name="status_ksu_active">KernelSU aktivdir</string>
+    <string name="status_not_installed">Quraşdırılmayıb</string>
+    <string name="status_support_failed">Dəstək yoxlaması uğursuz oldu</string>
+    <string name="status_checking_github">GitHub dəstək manifesti yoxlanılır</string>
+    <string name="status_downloading_payload">Payloadlar endirilir</string>
+    <string name="status_exploit_running">Kernel exploit icra olunur</string>
+    <string name="status_ksu_loading">KernelSU sonradan yüklənir</string>
+    <string name="status_install_failed">Quraşdırma uğursuz oldu</string>
+    <string name="log_profile">[+] Dəstək profili: %1$s</string>
+    <string name="log_download_verified">[+] Payloadın endirilməsi tamamlandı</string>
+    <string name="log_install_complete">[+] Quraşdırma tamamlandı</string>
+    <string name="log_bootstrap_root">[+] Bootstrap root əldə edildi</string>
+    <string name="log_ksu_staged">[+] KernelSU hazırlığı tamamlandı</string>
+    <string name="log_ksu_control_verified">[+] KernelSU idarəetmə kanalı yoxlanıldı</string>
+    <string name="error_helper_unavailable">Bootstrap köməkçi proqramı icra oluna bilmir</string>
+    <string name="error_exploit_stalled">Exploitin jurnalına 90 saniyə ərzində yeni qeyd əlavə edilmədi</string>
+    <string name="error_exploit_timeout">Exploit 15 dəqiqəlik həddi aşdı</string>
+    <string name="error_payload_exit">Payloadın icrası uğursuz oldu: %1$d%2$s</string>
+    <string name="error_success_marker">Exploitin uğur göstəriciləri tapılmadı</string>
+    <string name="error_ksu_stage">KernelSU hazırlığı uğursuz oldu: %1$s</string>
+    <string name="error_ksu_verify">KernelSU sonradan yüklənməsi və ya idarəetmənin yoxlanması uğursuz oldu (nəticə kodu=%1$d): %2$s</string>
+    <string name="error_helper_timeout">KernelSU köməkçi proqramı 120 saniyə ərzində işini bitirmədi%1$s</string>
+    <string name="error_boot_id">Cari boot_id-ni oxumaq mümkün olmadı</string>
+    <string name="error_receipt">Quraşdırmanın yoxlanma qəbzini yadda saxlamaq mümkün olmadı</string>
+
+    <string name="artifact_exploit">exploit</string>
+    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="repo_no_profile">Bu modeli və kernel versiyasını dəstəkləyən uyğun payload yoxdur</string>
+    <string name="repo_downloading">%1$s endirilir</string>
+    <string name="repo_size_mismatch">%1$s ölçüsü dəstək manifestinə uyğun gəlmir</string>
+    <string name="repo_size_exceeded">%1$s göstərilən ölçünü aşdı</string>
+    <string name="repo_incomplete">%1$s endirilməsi tamamlanmayıb</string>
+    <string name="repo_finalize_failed">%1$s faylını tamamlamaq mümkün olmadı</string>
+    <string name="repo_verified">%1$s yoxlanıldı</string>
+    <string name="repo_commit_invalid">GitHub etibarsız dəyişiklik qeydi SHA dəyəri qaytardı</string>
+    <string name="repo_url_invalid">Artefakt repozitoriyasına icazə verilmir</string>
+    <string name="repo_response_too_large">Cavab ölçü həddini aşdı</string>
+    <string name="open_github">GitHub aç</string>
+    <string name="github_card_title">Root My Galaxy ilə tanış olun</string>
+    <string name="github_card_description">Mənbə koduna və istifadə təlimatlarına baxın.</string>
+    <string name="action_continue">Yenə də davam et</string>
+    <string name="action_next">Növbəti</string>
+    <string name="advanced">Qabaqcıl</string>
+    <string name="advanced_mode">Qabaqcıl rejim</string>
+    <string name="advanced_mode_description">Quraşdırma zamanı cihaza uyğun payloadı əl ilə seçin</string>
+    <string name="shizuku_mode">Shizuku istifadə et</string>
+    <string name="shizuku_mode_description">Payloadı icra etmək üçün Shizuku istifadə edin. Bu, etibarlılığı artıra bilər.</string>
+    <string name="shizuku_not_running_title">Shizuku işləmir</string>
+    <string name="shizuku_not_running_body">Shizuku xidmətini adb vasitəsilə və ya root ilə başladın və bu tətbiqə icazə verin, sonra bu seçimi aktivləşdirin.</string>
+    <string name="action_download_shizuku">Shizuku endir</string>
+    <string name="error_shizuku_unavailable">Shizuku işləmir. Əvvəlcə Shizuku xidmətini adb vasitəsilə və ya root ilə başladın.</string>
+    <string name="error_shizuku_permission">Shizuku icazəsi verilmədi</string>
+    <string name="error_shizuku_stage">%1$s Shizuku vasitəsilə hazırlana bilmədi: %2$s</string>
+    <string name="log_shizuku_prepare">[*] Shizuku vasitəsilə icra hazırlanır</string>
+    <string name="log_shizuku_permission">[+] Shizuku icazəsi verildi</string>
+    <string name="repo_profile_missing">%1$s dəstək profili artıq mövcud deyil</string>
+    <string name="select_device_title">Payload seçin</string>
+    <string name="select_device_description">Cihaz modelinə və kernel versiyasına görə payload seçin.</string>
+    <string name="show_my_device_only">Yalnız cihazımı göstər</string>
+    <string name="no_matching_devices">Bu modelə və kernel versiyasına uyğun payload yoxdur.</string>
+    <string name="device_mismatch_title">Cihaz uyğunsuzluğu</string>
+    <string name="device_mismatch_body">Bu telefon %1$s modelidir, lakin seçilmiş payload %2$s modelini dəstəkləyir. Onun icrası cihazın qəza ilə dayanmasına və ya zədələnməsinə səbəb ola bilər.</string>
+    <string name="kernel_version_mismatch_title">Kernel versiyası uyğunsuzluğu</string>
+    <string name="kernel_version_mismatch_body">Bu telefon %1$s kernel versiyasından istifadə edir, lakin seçilmiş payload %2$s versiyasını dəstəkləyir. Yerdəyişmə dəyərləri uyğunsuz ola bilər.</string>
+    <string name="updater_available_title">Yeniləmə mövcuddur</string>
+    <string name="updater_available_body">Versiya %1$s artıq mövcuddur</string>
+    <string name="updater_available_body_short">%1$s mövcuddur</string>
+    <string name="updater_button_download">Endir &amp; quraşdır</string>
+    <string name="updater_downloading">Endirilir…</string>
+    <string name="updater_download_failed">Endirmə uğursuz oldu</string>
+    <string name="updater_check">Yeniləmələri yoxla</string>
+    <string name="updater_checking">Yeniləmələr yoxlanılır…</string>
+    <string name="updater_up_to_date">Ən son versiyadan istifadə edirsiniz</string>
+    <string name="updater_failed">Yeniləmələri yoxlamaq mümkün olmadı</string>
+    <string name="history_delete">Sil</string>
+    <string name="history_select_all">Hamısını seç</string>
+    <string name="history_clear_selection">Seçimi təmizlə</string>
+    <string name="history_delete_selected">Sil (%1$d)</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">Bu icra silinsin?</item>
+        <item quantity="other">%1$d icra silinsin?</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">Bu icra və onun jurnalı həmişəlik silinəcək.</item>
+        <item quantity="other">Bu icralar və onların jurnalları həmişəlik silinəcək.</item>
+    </plurals>
+</resources>
