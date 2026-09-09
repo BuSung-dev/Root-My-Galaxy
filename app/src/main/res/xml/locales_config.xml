@@ -10,4 +10,5 @@
     <locale android:name="ru" />
     <locale android:name="vi" />
     <locale android:name="uz" />
+    <locale android:name="az" />
 </locale-config>

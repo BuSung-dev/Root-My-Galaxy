@@ -243,6 +243,7 @@ private val languageOptions = listOf(
     LanguageOption(R.string.language_russian, "ru"),
     LanguageOption(R.string.language_vietnamese, "vi"),
     LanguageOption(R.string.language_uzbek, "uz"),
+    LanguageOption(R.string.language_azerbaijani, "az"),
 )
 
 private const val KERNEL_SU_MANAGER_URL =

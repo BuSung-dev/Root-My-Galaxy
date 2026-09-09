@@ -46,6 +46,7 @@
     <string name="language_russian" translatable="false">Русский</string>
     <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
     <string name="language_uzbek" translatable="false">O\'zbek</string>
+    <string name="language_azerbaijani" translatable="false">Azərbaycan</string>
     <string name="color_dynamic">System dynamic</string>
     <string name="color_blue">Blue</string>
     <string name="color_violet">Violet</string>
