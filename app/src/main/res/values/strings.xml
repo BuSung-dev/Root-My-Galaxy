@@ -137,6 +137,8 @@
     <string name="advanced">Advanced</string>
     <string name="advanced_mode">Advanced mode</string>
     <string name="advanced_mode_description">Manually choose a device-compatible payload during installation</string>
+	<string name="disable_ksu_modules">Disable KSU Modules</string>
+	<string name="disable_ksu_modules_description">Temporarily disable KernelSU modules before loading KernelSU</string>
     <string name="shizuku_mode">Use Shizuku</string>
     <string name="shizuku_mode_description">Use Shizuku to run the payload. This can improve reliability.</string>
     <string name="shizuku_not_running_title">Shizuku is not running</string>

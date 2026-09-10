@@ -197,7 +197,13 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 setPhase(InstallPhase.Exploiting, app.getString(R.string.status_exploit_running))
                 executeExploit(payloads.exploit)
 
-                setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
+				if (AppPreferences.disableKsuModules(app)) {
+					DisableConflictingKSUModules()
+				} else {
+					appendLog("[*] Disable KSU Modules option is OFF")
+				}
+
+				setPhase(InstallPhase.LoadingKernelSu, app.getString(R.string.status_ksu_loading))
                 installKernelSu(payloads)
 
                 setPhase(InstallPhase.Installed, app.getString(R.string.status_ksu_active))
@@ -211,6 +217,38 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 activeRunShizuku = null
             }
         }
+    }
+	
+    private fun DisableConflictingKSUModules() {
+        val script = "/data/adb/modules"
+        val backup = "${script}_bak"
+		
+        val command = """
+        if [ -d '$script' ]; then
+            if [ ! -e '$backup' ]; then
+                /system/bin/mv '$script' '$backup' || exit 1
+                /system/bin/chmod 755 '$backup' || exit 1
+            else
+                random_suffix=$(/system/bin/tr -dc 'A-Za-z0-9' < /dev/urandom | /system/bin/head -c 13)
+                new_backup="${script}_bak_${'$'}random_suffix"
+                counter=1
+
+                while [ -e "${'$'}new_backup" ]; do
+                    random_suffix=$(/system/bin/tr -dc 'A-Za-z0-9' < /dev/urandom | /system/bin/head -c 13)
+                    new_backup="${script}_bak_${'$'}random_suffix"
+                    counter=${'$'}((counter + 1))
+                done
+
+                /system/bin/mv '$script' "${'$'}new_backup" || exit 1
+                /system/bin/chmod 755 "${'$'}new_backup" || exit 1
+            fi
+        fi
+        """.trimIndent()
+		val result = runHelper("-c", command)
+		require(result.code == 0) {
+            "Failed to disable $script: ${result.output}"
+        }
+        appendLog("[*] Disable conflicting KSU Modules before KernelSU load")
     }
 
     private suspend fun executeExploit(payload: File) {
