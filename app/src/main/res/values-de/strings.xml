@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Root My Galaxy</string>
+    <string name="nav_overview">Startseite</string>
+    <string name="nav_history">Verlauf</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="install_confirm_title">KernelSU installieren?</string>
+    <string name="install_confirm_body">Die App überprüft das Support-Profil und lädt anschließend den Exploit sowie den KernelSU-Payload von GitHub und führt sie aus.</string>
+    <string name="action_confirm">Bestätigen</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_close">Schließen</string>
+    <string name="action_retry">Erneut versuchen</string>
+    <string name="action_done">Fertig</string>
+    <string name="action_back">Zurück</string>
+    <string name="install_tap_manager">Tippen, um den KernelSU Manager zu installieren</string>
+    <string name="install_tap_open_manager">Tippen, um den KernelSU Manager zu öffnen</string>
+    <string name="install_tap_retry">Tippen zum Wiederholen</string>
+    <string name="install_tap_start">Tippen um KernelSU zu installieren</string>
+    <string name="device">Gerät</string>
+    <string name="how_it_works">So funktioniert es</string>
+    <string name="kernelsu_card_title">KernelSU</string>
+    <string name="kernelsu_card_description">Eine kernelbasierte Root-Lösung für Android</string>
+    <string name="firmware">Firmware</string>
+    <string name="system">System</string>
+    <string name="kernel">Kernel</string>
+    <string name="system_abi">System ABI</string>
+    <string name="settings">Einstellungen</string>
+    <string name="version_format">%1$s (%2$d)</string>
+    <string name="language">Sprache</string>
+    <string name="language_description">App-Sprache auswählen</string>
+    <string name="appearance">Aussehen</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="material_color">Theme</string>
+    <string name="material_color_description">Das Aussehen ändern</string>
+    <string name="language_system">System folgen</string>
+    <string name="language_korean" translatable="false">한국어</string>
+    <string name="language_english" translatable="false">English</string>
+    <string name="language_german" translatable="false">Deutsch</string>
+    <string name="language_japanese" translatable="false">日本語</string>
+    <string name="language_chinese" translatable="false">简体中文</string>
+    <string name="language_chinese_traditional" translatable="false">繁體中文</string>
+    <string name="language_turkish" translatable="false">Türkçe</string>
+    <string name="language_brazillian_portuguese" translatable="false">Português Brasileiro</string>
+    <string name="language_russian" translatable="false">Русский</string>
+    <string name="language_vietnamese" translatable="false">Tiếng Việt</string>
+    <string name="language_uzbek" translatable="false">O\'zbek</string>
+    <string name="color_dynamic">System-Dynamisch</string>
+    <string name="color_blue">Blau</string>
+    <string name="color_violet">Violett</string>
+    <string name="color_green">Grün</string>
+    <string name="color_orange">Orange</string>
+    <string name="history_title">Verlauf</string>
+    <string name="history_empty_title">Noch keine Versuche</string>
+    <string name="history_empty_description">Installationsergebnisse und Logs erscheinen hier.</string>
+    <string name="history_running">Läuft</string>
+    <string name="history_succeeded">Erfolgreich</string>
+    <string name="history_failed">Fehlgeschlagen</string>
+    <string name="history_detail_title">Details zum Durchlauf</string>
+    <string name="history_started">Gestartet: %1$s</string>
+    <string name="history_completed">Abgeschlossen: %1$s</string>
+    <string name="history_log_empty">Noch kein Log-Output</string>
+    <string name="history_payload">Payload: %1$s</string>
+    <string name="history_shizuku_used">Shizuku: Genutzt</string>
+    <string name="history_shizuku_not_used">Shizuku: Nicht genutzt</string>
+    <string name="export_log">Log exportieren</string>
+    <string name="export_log_saved">Log gespeichert</string>
+    <string name="export_log_failed">Log konnte nicht gespeichert werden</string>
+    <string name="about">Über</string>
+    <string name="about_title">Über Root My Galaxy</string>
+    <string name="about_description">Über Root My Galaxy</string>
+    <string name="about_body">Ein-Klick-Installer, der einen Kernel-Exploit verwendet, um unterstützte Samsung Galaxy-Geräte zu rooten.</string>
+
+    <string name="install_title">Installieren</string>
+    <string name="install_keep_open">Diesen Bildschirm geöffnet lassen, bis die Installation abgeschlossen ist</string>
+    <string name="install_live_progress">Log</string>
+    <string name="install_preparing">Vorbereiten…</string>
+    <string name="step_support_title">Unterstützungsprüfung</string>
+    <string name="step_support_detail">Gerät und Firmware-Profil verifizieren</string>
+    <string name="step_download_title">Herunterladen</string>
+    <string name="step_download_detail">Unterstützungsmanifest laden</string>
+    <string name="step_exploit_title">Kernel-Exploit</string>
+    <string name="step_exploit_detail">Bootstrap-Root abrufen</string>
+    <string name="step_ksu_title">KernelSU laden</string>
+    <string name="step_ksu_detail">Modul nachträglich laden und Steuerungskanal verifizieren</string>
+    <string name="phase_checking">Unterstütztes Gerät und Firmware werden geprüft</string>
+    <string name="phase_ready">Bereit zur Installation</string>
+    <string name="phase_downloading">Commit-gebundene Payloads von GitHub herunterladen</string>
+    <string name="phase_exploiting">Dieser Vorgang kann 10 Minuten oder länger dauern. Dein Gerät kann heiß werden oder nicht mehr reagieren.</string>
+    <string name="phase_loading_ksu">KernelSU wird mit dem erhaltenen Bootstrap-Root geladen</string>
+    <string name="phase_installed">KernelSU-Modul und Steuerungskanal verifiziert</string>
+    <string name="phase_failed">Überprüfe den Fehlerpunkt im folgenden Log</string>
+
+    <string name="status_ksu_active">KernelSU aktiv</string>
+    <string name="status_not_installed">Nicht installiert</string>
+    <string name="status_support_failed">Support-Check fehlgeschlagen</string>
+    <string name="status_checking_github">GitHub-Unterstützungsmanifest wird geprüft</string>
+    <string name="status_downloading_payload">Payloads werden heruntergeladen</string>
+    <string name="status_exploit_running">Kernel-Exploit wird ausgeführt</string>
+    <string name="status_ksu_loading">KernelSU wird nachträglich geladen</string>
+    <string name="status_install_failed">Installation fehlgeschlagen</string>
+    <string name="log_profile">[+] Support-Profil: %1$s</string>
+    <string name="log_download_verified">[+] Payload-Download abgeschlossen</string>
+    <string name="log_install_complete">[+] Installation abgeschlossen</string>
+    <string name="log_bootstrap_root">[+] Bootstrap-Root erhalten</string>
+    <string name="log_ksu_staged">[+] KernelSU-Staging abgeschlossen</string>
+    <string name="log_ksu_control_verified">[+] KernelSU-Steuerungskanal verifiziert</string>
+    <string name="error_helper_unavailable">Bootstrap-Helfer ist nicht ausführbar</string>
+    <string name="error_exploit_stalled">Exploit-Log ist seit 90 Sekunden nicht vorangeschritten</string>
+    <string name="error_exploit_timeout">Exploit hat das 15-Minuten-Limit überschritten</string>
+    <string name="error_payload_exit">Payload fehlgeschlagen: %1$d%2$s</string>
+    <string name="error_success_marker">Erfolgsmarker für den Exploit wurden nicht gefunden</string>
+    <string name="error_ksu_stage">KernelSU-Staging fehlgeschlagen: %1$s</string>
+    <string name="error_ksu_verify">KernelSU nachträglich laden oder Steuerungskanal-Verifizierung fehlgeschlagen (rc=%1$d): %2$s</string>
+    <string name="error_helper_timeout">KernelSU-Helfer wurde nicht innerhalb von 120 Sekunden beendet%1$s</string>
+    <string name="error_boot_id">Aktuelle boot_id konnte nicht gelesen werden</string>
+    <string name="error_receipt">Installationsprüfbeleg konnte nicht gespeichert werden</string>
+
+    <string name="artifact_exploit">exploit</string>
+    <string name="artifact_kernelsu">KernelSU</string>
+    <string name="repo_no_profile">Keine kompatible Payload für dieses Modell und diese Kernel-Version gefunden</string>
+    <string name="repo_downloading">Download von %1$s</string>
+    <string name="repo_size_mismatch">Größe von %1$s stimmt nicht mit dem Support-Manifest überein</string>
+    <string name="repo_size_exceeded">%1$s ist größer als angegeben</string>
+    <string name="repo_incomplete">Download von %1$s ist unvollständig</string>
+    <string name="repo_finalize_failed">Die Datei %1$s konnte nicht fertiggestellt werden</string>
+    <string name="repo_verified">%1$s verifiziert</string>
+    <string name="repo_commit_invalid">GitHub hat einen ungültigen Commit-SHA zurückgegeben</string>
+    <string name="repo_url_invalid">Das Artefakt-Repository ist nicht zulässig</string>
+    <string name="repo_response_too_large">Die Antwort hat das Größenlimit überschritten</string>
+    <string name="open_github">GitHub öffnen</string>
+    <string name="github_card_title">Root My Galaxy erkunden</string>
+    <string name="github_card_description">Quellcode und Nutzungshinweise ansehen.</string>
+    <string name="action_continue">Trotzdem fortfahren</string>
+    <string name="action_next">Weiter</string>
+    <string name="advanced">Erweitert</string>
+    <string name="advanced_mode">Erweiterter Modus</string>
+    <string name="advanced_mode_description">Während der Installation manuell eine gerätekompatible Payload auswählen</string>
+    <string name="shizuku_mode">Shizuku benutzen</string>
+    <string name="shizuku_mode_description">Shizuku zum Ausführen der Payload verwenden. Dies kann die Zuverlässigkeit verbessern</string>
+    <string name="shizuku_not_running_title">Shizuku ist nicht aktiv</string>
+    <string name="shizuku_not_running_body">Starte den Shizuku-Dienst über ADB oder Root, erteile dieser App die Berechtigung und aktiviere dann diese Option.</string>
+    <string name="action_download_shizuku">Shizuku herunterladen</string>
+    <string name="error_shizuku_unavailable">Shizuku ist nicht aktiv. Starte Shizuku zuerst über ADB oder Root.</string>
+    <string name="error_shizuku_permission">Die Shizuku-Berechtigung wurde nicht erteilt</string>
+    <string name="error_shizuku_stage">Konnte %1$s nicht über Shizuku vorbereiten: %2$s</string>
+    <string name="log_shizuku_prepare">[*] Shizuku-Ausführung wird vorbereitet</string>
+    <string name="log_shizuku_permission">[+] Shizuku-Berechtigung erteilt</string>
+    <string name="repo_profile_missing">Support-Profil %1$s ist nicht mehr verfügbar</string>
+    <string name="select_device_title">Wähle eine Payload</string>
+    <string name="select_device_description">Wähle eine Payload anhand von Gerätemodell und Kernel-Version aus.</string>
+    <string name="show_my_device_only">Nur mein Gerät zeigen</string>
+    <string name="no_matching_devices">Keine Payload stimmt mit diesem Gerätemodell und dieser Kernel-Version überein.</string>
+    <string name="device_mismatch_title">Geräte-Inkompatibilität</string>
+    <string name="device_mismatch_body">Dieses Gerät ist %1$s, aber das ausgewählte Payload unterstützt %2$s. Das Ausführen kann das Gerät zum Absturz bringen oder beschädigen.</string>
+    <string name="kernel_version_mismatch_title">Kernel-Version-Inkompabilität</string>
+    <string name="kernel_version_mismatch_body">Dieses Gerät benutzt Kernel-Version %1$s, aber das ausgewählte Payload unterstützt %2$s. Die Kernel-Offsets sind möglicherweise inkompatibel.</string>
+    <string name="updater_available_title">Ein Update ist verfügbar</string>
+    <string name="updater_available_body">Version %1$s ist jetzt verfügbar</string>
+    <string name="updater_available_body_short">%1$s ist verfügbar</string>
+    <string name="updater_button_download">Herunterladen &amp; Installieren</string>
+    <string name="updater_downloading">Wird heruntergeladen…</string>
+    <string name="updater_download_failed">Download fehlgeschlagen</string>
+    <string name="updater_check">Auf Updates überprüfen</string>
+    <string name="updater_checking">Nach Updates wird gesucht…</string>
+    <string name="updater_up_to_date">Du bist auf dem neuesten Stand</string>
+    <string name="updater_failed">Suche nach Updates fehlgeschlagen</string>
+    <string name="history_delete">Löschen</string>
+    <string name="history_select_all">Alle auswählen</string>
+    <string name="history_clear_selection">Auswahl aufheben</string>
+    <string name="history_delete_selected">(%1$d) Löschen</string>
+    <plurals name="history_delete_selected_title">
+        <item quantity="one">Diesen Durchlauf löschen?</item>
+        <item quantity="other">%1$d Durchläufe löschen?</item>
+    </plurals>
+    <plurals name="history_delete_selected_body">
+        <item quantity="one">Dieser Durchlauf und sein Protokoll werden unwiderruflich gelöscht.</item>
+        <item quantity="other">Diese Durchläufe und ihre Protokolle werden unwiderruflich gelöscht.</item>
+    </plurals>
+</resources>

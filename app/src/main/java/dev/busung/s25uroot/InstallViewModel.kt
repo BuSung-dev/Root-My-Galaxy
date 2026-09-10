@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
+import java.security.MessageDigest
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -50,6 +51,30 @@ data class TargetCatalogUiState(
 
 private data class CommandResult(val code: Int, val output: String)
 
+/**
+ * Payloads are truncated to a fixed release size, so a rebuild of a target --
+ * or a different target padded to the same size -- has exactly the length of
+ * whatever is already staged, and would keep running in its place.
+ */
+internal fun stagedFileIsCurrent(staged: File, source: File): Boolean {
+    if (!staged.exists()) return false
+    val stagedDigest = sha256OrNull(staged) ?: return false
+    return stagedDigest == sha256OrNull(source)
+}
+
+private fun sha256OrNull(file: File): String? = runCatching {
+    file.inputStream().use { input ->
+        val digest = MessageDigest.getInstance("SHA-256")
+        val buffer = ByteArray(8192)
+        while (true) {
+            val count = input.read(buffer)
+            if (count < 0) break
+            digest.update(buffer, 0, count)
+        }
+        digest.digest().joinToString("") { "%02x".format(it) }
+    }
+}.getOrNull()
+
 class InstallViewModel(application: Application) : AndroidViewModel(application) {
     private val app = application
     private val repository = PayloadRepository(application)
@@ -60,6 +85,9 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
     private var discoveryJob: Job? = null
     private var installJob: Job? = null
     private var activeHistoryEntry: InstallHistoryEntry? = null
+
+    @Volatile
+    private var activeRunShizuku: Boolean? = null
     val state: StateFlow<InstallUiState> = mutableState.asStateFlow()
     val history: StateFlow<List<InstallHistoryEntry>> = mutableHistory.asStateFlow()
     val targetCatalog: StateFlow<TargetCatalogUiState> = mutableTargetCatalog.asStateFlow()
@@ -138,6 +166,10 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 probeOutput = mutableState.value.probeOutput,
             )
             startHistory()
+            // Freeze the transport for the whole run so a mid-run preference
+            // change cannot mix Shizuku and standalone execution between the
+            // exploit and the KernelSU staging steps.
+            activeRunShizuku = AppPreferences.shizukuMode(app)
             try {
                 if (shizukuEnabled()) {
                     appendLog(app.getString(R.string.log_shizuku_prepare))
@@ -175,6 +207,8 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 appendLog("[-] ${error.message ?: error.javaClass.simpleName}")
                 setPhase(InstallPhase.Failed, app.getString(R.string.status_install_failed))
                 finishHistory(InstallRunResult.Failed)
+            } finally {
+                activeRunShizuku = null
             }
         }
     }
@@ -219,7 +253,10 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         val readLog: () -> String = if (shizuku) {
             { drainProcessOutput(process, captured) }
         } else {
-            { logFile.readTextIfPresent() }
+            // Keep draining stdout while polling: if the helper fills the OS
+            // pipe buffer it blocks on write and stops making log progress,
+            // which would trip the stall detector spuriously.
+            { drainProcessOutput(process, captured); logFile.readTextIfPresent() }
         }
 
         try {
@@ -248,7 +285,9 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
             val rawLog = readLog()
             cacheP0Offset(bootToken, rawLog)
             publishExploitLog(logPrefix, rawLog)
-            val earlyOutput = readProcessOutput(process, shizuku).trim()
+            // Both transports drain into `captured` during the poll loop, so
+            // this never blocks on a child still holding the pipe open.
+            val earlyOutput = captured.toString().trim()
             require(exitCode == 0) {
                 app.getString(
                     R.string.error_payload_exit,
@@ -297,7 +336,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         updateHistoryLog()
     }
 
-    private fun installKernelSu(payloads: VerifiedPayloads) {
+    private suspend fun installKernelSu(payloads: VerifiedPayloads) {
         if (shizukuEnabled()) {
             shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_PATH, "755")
             shizukuStage(payloads.kernelSu, SHIZUKU_KSUD_STAGE_PATH, "755")
@@ -305,9 +344,9 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         } else {
             val source = shellQuote(payloads.kernelSu.absolutePath)
             val stageCommand =
-                "/system/bin/cp $source /data/local/tmp/ksud-s25u-kdp && " +
-                    "/system/bin/cp $source /data/local/tmp/.ksud-stage && " +
-                    "/system/bin/chmod 755 /data/local/tmp/ksud-s25u-kdp /data/local/tmp/.ksud-stage"
+                "/system/bin/cp $source $SHIZUKU_KSUD_PATH && " +
+                    "/system/bin/cp $source $SHIZUKU_KSUD_STAGE_PATH && " +
+                    "/system/bin/chmod 755 $SHIZUKU_KSUD_PATH $SHIZUKU_KSUD_STAGE_PATH"
             val stage = runHelper("-c", stageCommand)
             require(stage.code == 0) { app.getString(R.string.error_ksu_stage, stage.output) }
             appendLog(app.getString(R.string.log_ksu_staged))
@@ -379,11 +418,11 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
 
     private fun nativeHelperFile() = File(app.applicationInfo.nativeLibraryDir, "libcve43499root.so")
 
-    private fun shizukuEnabled(): Boolean = AppPreferences.shizukuMode(app)
+    private fun shizukuEnabled(): Boolean = activeRunShizuku ?: AppPreferences.shizukuMode(app)
 
     private fun shizukuStage(source: File, target: String, mode: String): File {
         val staged = File(target)
-        if (staged.exists() && staged.length() == source.length()) return staged
+        if (stagedFileIsCurrent(staged, source)) return staged
         try {
             ShizukuController.writeFile(target, mode, source.inputStream())
         } catch (error: Throwable) {
@@ -408,13 +447,14 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         cachedP0Offset(bootToken)?.let { add("$P0_OFFSET_ENV=$it") }
     }.toTypedArray()
 
-    private fun readProcessOutput(process: Process, shizuku: Boolean): String {
-        val stdout = process.inputStream.bufferedReader().use { it.readText() }
-        val stderr = if (shizuku) process.errorStream.bufferedReader().use { it.readText() } else ""
-        return stdout + stderr
-    }
-
-    private fun runHelper(vararg arguments: String): CommandResult {
+    /**
+     * Runs the bootstrap helper for a short management command. Unlike the
+     * exploit run there is no log file to poll, so output is drained inline
+     * and a hard deadline guards against a helper that never exits — without
+     * this, a hung `--late-load` leaves the install stuck in LoadingKernelSu
+     * indefinitely.
+     */
+    private suspend fun runHelper(vararg arguments: String): CommandResult {
         val helper = helperFile()
         val process = if (shizukuEnabled()) {
             ShizukuController.exec(arrayOf(helper.absolutePath) + arguments)
@@ -423,8 +463,30 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
                 .redirectErrorStream(true)
                 .start()
         }
-        val output = readProcessOutput(process, shizukuEnabled())
-        return CommandResult(process.waitFor(), stripAnsi(output.trim()))
+        val captured = StringBuilder()
+        val startedAt = SystemClock.elapsedRealtime()
+        try {
+            while (process.isAlive) {
+                drainProcessOutput(process, captured)
+                require(SystemClock.elapsedRealtime() - startedAt < HELPER_TIMEOUT_MILLIS) {
+                    app.getString(
+                        R.string.error_helper_timeout,
+                        captured.toString().trim().takeIf(String::isNotBlank)
+                            ?.let { ": $it" } ?: "",
+                    )
+                }
+                delay(HELPER_POLL_INTERVAL)
+            }
+            drainProcessOutput(process, captured)
+            val exitCode = process.waitFor()
+            return CommandResult(exitCode, stripAnsi(captured.toString().trim()))
+        } finally {
+            if (process.isAlive) {
+                process.destroy()
+                delay(500.milliseconds)
+                if (process.isAlive) process.destroyForcibly()
+            }
+        }
     }
 
     private fun shellQuote(value: String) = "'${value.replace("'", "'\\''")}'"
@@ -487,6 +549,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         private const val EXPLOIT_ATTEMPT_TIMEOUT_SEC = "120"
         private const val EXPLOIT_STALL_MILLIS = 90_000L
         private const val EXPLOIT_TOTAL_MILLIS = 900_000L
+        private const val HELPER_TIMEOUT_MILLIS = 120_000L
         private const val INSTALL_RECEIPT = "install_receipt"
         private const val RECEIPT_BOOT_TOKEN = "kernel_boot_id"
         private const val RECEIPT_VERIFIED = "verified"
@@ -502,6 +565,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         private const val SHIZUKU_KSUD_PATH = "/data/local/tmp/ksud-s25u-kdp"
         private const val SHIZUKU_KSUD_STAGE_PATH = "/data/local/tmp/.ksud-stage"
         private val LOG_POLL_INTERVAL = 250.milliseconds
+        private val HELPER_POLL_INTERVAL = 250.milliseconds
         private val SHIZUKU_LOG_POLL_INTERVAL = 1.seconds
         private val ANSI_ESCAPE = Regex("\u001B\\[[0-?]*[ -/]*[@-~]")
         private val P0_OFFSET_PATTERN = Regex(
