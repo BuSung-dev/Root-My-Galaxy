@@ -37,6 +37,18 @@ data class TargetProfile(
         get() = kernelVersions.joinToString()
 }
 
+/**
+ * Picks the profile for [snapshot].
+ *
+ * An exact full kernel-release match wins, so regional builds that share a
+ * model and the three-part kernel version (for example `SM-S9360` ZCS vs ZHS)
+ * resolve to the profile that documents their build. Profiles that only list a
+ * three-part version keep the legacy first-match behaviour.
+ */
+fun List<TargetProfile>.resolveFor(snapshot: DeviceSnapshot): TargetProfile? =
+    firstOrNull { it.matches(snapshot) && snapshot.kernelRelease in it.kernelVersions }
+        ?: firstOrNull { it.matches(snapshot) }
+
 data class SupportManifest(
     val schemaVersion: Int,
     val targets: List<TargetProfile>,

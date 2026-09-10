@@ -26,7 +26,7 @@ class PayloadRepository(private val context: Context) {
     }
 
     fun resolveTarget(snapshot: DeviceSnapshot): TargetProfile = loadTargets()
-        .firstOrNull { it.matches(snapshot) }
+        .resolveFor(snapshot)
         ?: error(context.getString(R.string.repo_no_profile))
 
     fun resolveTarget(profileId: String): TargetProfile = loadTargets()
