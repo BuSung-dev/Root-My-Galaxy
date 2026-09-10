@@ -6,7 +6,7 @@
     <string name="nav_settings">設定</string>
 
     <string name="install_confirm_title">安裝 KernelSU？</string>
-    <string name="install_confirm_body">應用程式將驗證支援設定檔，然後從 GitHub 下載並執行 exploit 與 KernelSU payload。</string>
+    <string name="install_confirm_body">應用程式將驗證支援設定檔，然後從 GitHub 下載並執行 exploit 與 KernelSU payload。\n\nRoot 權限會在重新啟動後失效，成功與否取決於目前的記憶體狀態。如果失敗，請重新啟動裝置後再試一次。您也可以嘗試使用 Shizuku 來提高成功率。</string>
 
     <string name="action_confirm">確認</string>
     <string name="action_cancel">取消</string>

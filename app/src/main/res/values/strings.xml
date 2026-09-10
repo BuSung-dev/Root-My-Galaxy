@@ -5,7 +5,7 @@
     <string name="nav_history">History</string>
     <string name="nav_settings">Settings</string>
     <string name="install_confirm_title">Install KernelSU?</string>
-    <string name="install_confirm_body">The app will verify the support profile, then download and run the exploit and KernelSU payload from GitHub.</string>
+    <string name="install_confirm_body">The app will verify the support profile, then download and run the exploit and KernelSU payload from GitHub.\n\nRoot access is lost after a reboot and its success depends on the current RAM state. If the process fails, reboot your device and try again. You can also try using Shizuku to improve your success rate.</string>
     <string name="action_confirm">Confirm</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_close">Close</string>
