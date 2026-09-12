@@ -18,7 +18,8 @@
     <string name="install_tap_start">Нажмите, чтобы установить KernelSU</string>
     <string name="device">Устройство</string>
     <string name="firmware">Прошивка</string>
-    <string name="system">Система</string><string name="kernel">Ядро</string>
+    <string name="system">Система</string>
+	<string name="kernel">Ядро</string>
     <string name="system_abi">ABI системы</string>
     <string name="settings">Настройки</string>
     <string name="version_format">%1$s (%2$d)</string>
@@ -69,11 +70,11 @@
     <string name="step_ksu_detail">Поздняя загрузка модуля и проверка канала управления</string>
     <string name="phase_checking">Проверка поддержки устройства и прошивки</string>
     <string name="phase_ready">Готово к установке</string>
-    <string name="phase_downloading">Загрузка привязанных к commit payload-файлов с GitHub</string>
-    <string name="phase_exploiting">Это может занять 10 минут или больше. Устройство может нагреться или перестать отвечать.</string>
+    <string name="phase_downloading">Загрузка привязанных к коммиту payload-файлов с GitHub</string>
+    <string name="phase_exploiting">Это может занять больше 10 минут. Устройство может нагреться или перестать отвечать.</string>
     <string name="phase_loading_ksu">Загрузка KernelSU с использованием полученного временного root-доступа</string>
     <string name="phase_installed">Модуль KernelSU и канал управления успешно проверены</string>
-    <string name="phase_failed">Проверьте место возникновения ошибки в журнале ниже</string>
+    <string name="phase_failed">Проверьте причину ошибки в журнале ниже</string>
 
     <string name="status_ksu_active">KernelSU активен</string>
     <string name="status_not_installed">Не установлен</string>
@@ -96,6 +97,7 @@
     <string name="error_success_marker">Маркеры успешного выполнения эксплойта не найдены</string>
     <string name="error_ksu_stage">Не удалось подготовить KernelSU: %1$s</string>
     <string name="error_ksu_verify">Не удалось выполнить позднюю загрузку KernelSU или проверить канал управления (rc=%1$d): %2$s</string>
+	<string name="error_helper_timeout">Процесс KernelSU не завершился в течение 120 секунд%1$s</string>
     <string name="error_boot_id">Не удалось прочитать текущий boot_id</string>
     <string name="error_receipt">Не удалось сохранить запись о проверке установки</string>
 
@@ -108,7 +110,7 @@
     <string name="repo_incomplete">Загрузка %1$s не завершена</string>
     <string name="repo_finalize_failed">Не удалось завершить сохранение файла %1$s</string>
     <string name="repo_verified">%1$s проверен</string>
-    <string name="repo_commit_invalid">GitHub вернул некорректный SHA commit</string>
+    <string name="repo_commit_invalid">GitHub вернул некорректный SHA коммита</string>
     <string name="repo_url_invalid">Этот репозиторий артефактов не разрешён</string>
     <string name="repo_response_too_large">Ответ превысил допустимый размер</string>
     <string name="open_github">Открыть GitHub</string>
@@ -137,7 +139,7 @@
     <string name="device_mismatch_title">Несовместимое устройство</string>
     <string name="device_mismatch_body">Модель этого телефона — %1$s, однако выбранный payload предназначен для %2$s. Его запуск может привести к сбою или повреждению устройства.</string>
     <string name="kernel_version_mismatch_title">Несовместимая версия ядра</string>
-    <string name="kernel_version_mismatch_body">На этом телефоне используется ядро %1$s, однако выбранный payload поддерживает %2$s. offsets могут быть несовместимы.</string>
+    <string name="kernel_version_mismatch_body">На этом телефоне используется ядро %1$s, однако выбранный payload поддерживает %2$s. Оффсеты могут быть несовместимы.</string>
     <string name="about">О приложении</string>
     <string name="about_title">О Root My Galaxy</string>
     <string name="about_description">О Root My Galaxy</string>
@@ -148,7 +150,7 @@
     <string name="export_log_failed">Не удалось сохранить журнал</string>
     <string name="install_tap_open_manager">Нажмите, чтобы открыть KernelSU Manager</string>
     <string name="how_it_works">Как это работает</string>
-    <string name="kernelsu_card_description">Ядровое root-решение для Android</string>
+    <string name="kernelsu_card_description">Root-решение на уровне ядра для Android</string>
     <string name="history_shizuku_used">Shizuku использовался</string>
     <string name="history_shizuku_not_used">Shizuku не использовался</string>
     <string name="updater_available_title">Доступно обновление</string>
