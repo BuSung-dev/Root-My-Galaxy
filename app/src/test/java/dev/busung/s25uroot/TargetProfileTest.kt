@@ -34,7 +34,7 @@ class TargetProfileTest {
         model = model,
         device = "unused",
         kernelRelease = kernelRelease,
-        kernelVersionInfo = "#1 SMP PREEMPT",
+kernelVersionInfo = "#1 SMP PREEMPT",
         machine = "aarch64",
         buildId = "BP4A.251205.006.S938BCZG1",
         fingerprint = "samsung/example",

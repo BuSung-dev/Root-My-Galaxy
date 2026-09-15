@@ -16,6 +16,11 @@ data class VerifiedPayloads(
 )
 
 class PayloadRepository(private val context: Context) {
+    private val repository: String
+        get() = AppPreferences.payloadRepository(context)
+    private val branch: String
+        get() = AppPreferences.payloadBranch(context)
+
     fun loadTargets(): List<TargetProfile> {
         val commit = resolveMainCommit()
         val manifestBytes = downloadBytes(rawUrl(commit, "support/targets-v3.json"), MAX_MANIFEST_BYTES)
@@ -91,7 +96,7 @@ class PayloadRepository(private val context: Context) {
     }
 
     private fun resolveMainCommit(): String {
-        val response = downloadBytes(COMMIT_API_URL, MAX_COMMIT_RESPONSE_BYTES)
+        val response = downloadBytes(commitApiUrl(), MAX_COMMIT_RESPONSE_BYTES)
         val commit = JSONObject(response.toString(Charsets.UTF_8))
             .getJSONObject("object")
             .getString("sha")
@@ -99,11 +104,29 @@ class PayloadRepository(private val context: Context) {
         return commit
     }
 
-    private fun rawUrl(commit: String, path: String) = "$RAW_REPOSITORY/$commit/$path"
+    private fun commitApiUrl() =
+        "https://api.github.com/repos/$repository/git/refs/heads/$branch"
+
+    private fun rawRepository() =
+        "https://raw.githubusercontent.com/$repository"
+
+    private fun rawUrl(commit: String, path: String) = "${rawRepository()}/$commit/$path"
+
+    private fun mutableRawPrefix() = "${rawRepository()}/$branch/"
+
+    private fun legacyMutableRawPrefix() =
+        "https://raw.githubusercontent.com/${AppPreferences.DEFAULT_PAYLOAD_REPOSITORY}/" +
+            "${AppPreferences.DEFAULT_PAYLOAD_BRANCH}/"
 
     private fun pinArtifactUrl(url: String, commit: String): String {
-        require(url.startsWith(MUTABLE_RAW_PREFIX)) { context.getString(R.string.repo_url_invalid) }
-        return "$RAW_REPOSITORY/$commit/${url.removePrefix(MUTABLE_RAW_PREFIX)}"
+        val prefix = mutableRawPrefix()
+        val legacyPrefix = legacyMutableRawPrefix()
+        val relative = when {
+            url.startsWith(prefix) -> url.removePrefix(prefix)
+            url.startsWith(legacyPrefix) -> url.removePrefix(legacyPrefix)
+            else -> error(context.getString(R.string.repo_url_invalid))
+        }
+        return "${rawRepository()}/$commit/$relative"
     }
 
     private fun downloadBytes(url: String, maximum: Int): ByteArray {
@@ -136,11 +159,6 @@ class PayloadRepository(private val context: Context) {
         }
 
     companion object {
-        private const val COMMIT_API_URL =
-            "https://api.github.com/repos/BuSung-dev/Root-My-Galaxy-Payloads/git/ref/heads/main"
-        private const val RAW_REPOSITORY =
-            "https://raw.githubusercontent.com/BuSung-dev/Root-My-Galaxy-Payloads"
-        private const val MUTABLE_RAW_PREFIX = "$RAW_REPOSITORY/main/"
         private const val MAX_COMMIT_RESPONSE_BYTES = 16 * 1024
         private const val MAX_MANIFEST_BYTES = 256 * 1024
     }

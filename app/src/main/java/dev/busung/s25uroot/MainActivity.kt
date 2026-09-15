@@ -67,6 +67,7 @@ import androidx.compose.material.icons.rounded.BrightnessAuto
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.SelectAll
 import androidx.compose.material.icons.rounded.Error
@@ -105,6 +106,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -165,6 +167,8 @@ class MainActivity : ComponentActivity() {
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
     private var shizukuMode by mutableStateOf(false)
+    private var payloadRepository by mutableStateOf("")
+    private var payloadBranch by mutableStateOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,6 +178,8 @@ class MainActivity : ComponentActivity() {
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
         shizukuMode = AppPreferences.shizukuMode(this)
+        payloadRepository = AppPreferences.payloadRepository(this)
+        payloadBranch = AppPreferences.payloadBranch(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
@@ -182,6 +188,8 @@ class MainActivity : ComponentActivity() {
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    payloadRepository = payloadRepository,
+                    payloadBranch = payloadBranch,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -197,6 +205,14 @@ class MainActivity : ComponentActivity() {
                     onShizukuModeChanged = { enabled ->
                         AppPreferences.setShizukuMode(this, enabled)
                         shizukuMode = enabled
+                    },
+                    onPayloadRepositoryChanged = { repository ->
+                        AppPreferences.setPayloadRepository(this, repository)
+                        payloadRepository = repository
+                    },
+                    onPayloadBranchChanged = { branch ->
+                        AppPreferences.setPayloadBranch(this, branch)
+                        payloadBranch = branch
                     },
                     openInstaller = { profileId ->
                         val installer = Intent(this, InstallActivity::class.java)
@@ -251,6 +267,8 @@ private const val KERNEL_SU_MANAGER_PACKAGE = "me.weishu.kernelsu"
 private const val KERNEL_SU_HOME_URL = "https://kernelsu.org/"
 private const val SHIZUKU_MANAGER_PACKAGE = "moe.shizuku.manager"
 private const val SHIZUKU_MANAGER_URL = "https://github.com/thedjchi/Shizuku/releases/"
+private val PAYLOAD_REPOSITORY_PATTERN = Regex("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+private val PAYLOAD_BRANCH_PATTERN = Regex("^[A-Za-z0-9_.\\-/]+$")
 
 private fun isKernelSuManagerInstalled(context: Context): Boolean =
     context.packageManager.getLaunchIntentForPackage(KERNEL_SU_MANAGER_PACKAGE) != null
@@ -280,10 +298,14 @@ private fun RootApp(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    payloadRepository: String,
+    payloadBranch: String,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onPayloadRepositoryChanged: (String) -> Unit,
+    onPayloadBranchChanged: (String) -> Unit,
     openInstaller: (String?) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
@@ -503,6 +525,8 @@ private fun RootApp(
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    payloadRepository = payloadRepository,
+                    payloadBranch = payloadBranch,
                     updateStatus = updateStatus,
                     onCheckForUpdate = checkForUpdate,
                     onStartDownload = startDownload,
@@ -510,6 +534,8 @@ private fun RootApp(
                     onThemeModeChanged = onThemeModeChanged,
                     onAdvancedModeChanged = onAdvancedModeChanged,
                     onShizukuModeChanged = onShizukuModeChanged,
+                    onPayloadRepositoryChanged = onPayloadRepositoryChanged,
+                    onPayloadBranchChanged = onPayloadBranchChanged,
                 )
             }
         }
@@ -1252,6 +1278,12 @@ private fun HistoryDetail(
                 )
                 IconButton(onClick = {
                     clickHaptic(view)
+                    copyLogToClipboard(context, entry.log)
+                }) {
+                    Icon(Icons.Rounded.ContentCopy, contentDescription = stringResource(R.string.action_copy_log))
+                }
+                IconButton(onClick = {
+                    clickHaptic(view)
                     exportLogLauncher.launch(
                         Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
@@ -1406,6 +1438,8 @@ private fun SettingsPage(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    payloadRepository: String,
+    payloadBranch: String,
     updateStatus: UpdateStatus,
     onCheckForUpdate: () -> Unit,
     onStartDownload: (UpdateInfo) -> Unit,
@@ -1413,6 +1447,8 @@ private fun SettingsPage(
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onPayloadRepositoryChanged: (String) -> Unit,
+    onPayloadBranchChanged: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -1421,6 +1457,7 @@ private fun SettingsPage(
     var showColorDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
     var showShizukuMissingDialog by remember { mutableStateOf(false) }
+    var showPayloadRepositoryDialog by remember { mutableStateOf(false) }
     var languageMenuTop by remember { mutableStateOf(32.dp) }
     var colorMenuTop by remember { mutableStateOf(32.dp) }
     val density = LocalDensity.current
@@ -1451,6 +1488,21 @@ private fun SettingsPage(
                 }) {
                     Text(stringResource(R.string.action_cancel))
                 }
+            },
+        )
+    }
+
+    if (showPayloadRepositoryDialog) {
+        PayloadRepositoryDialog(
+            initialRepository = payloadRepository,
+            initialBranch = payloadBranch,
+            repositoryPlaceholder = AppPreferences.DEFAULT_PAYLOAD_REPOSITORY,
+            branchPlaceholder = AppPreferences.DEFAULT_PAYLOAD_BRANCH,
+            onDismiss = { showPayloadRepositoryDialog = false },
+            onSave = { repository, branch ->
+                showPayloadRepositoryDialog = false
+                onPayloadRepositoryChanged(repository)
+                onPayloadBranchChanged(branch)
             },
         )
     }
@@ -1564,16 +1616,30 @@ private fun SettingsPage(
         }
         item { SectionLabel(stringResource(R.string.advanced)) }
         item {
-            SettingsSwitchCard(
-                icon = Icons.Rounded.Memory,
-                title = stringResource(R.string.advanced_mode),
-                description = stringResource(R.string.advanced_mode_description),
-                checked = advancedMode,
-                onCheckedChange = {
-                    clickHaptic(view)
-                    onAdvancedModeChanged(it)
-                },
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Memory,
+                    title = stringResource(R.string.advanced_mode),
+                    description = stringResource(R.string.advanced_mode_description),
+                    checked = advancedMode,
+                    position = SettingsCardPosition.Top,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        onAdvancedModeChanged(it)
+                    },
+                )
+                SettingsCard(
+                    icon = Icons.Rounded.Link,
+                    title = stringResource(R.string.payload_repository),
+                    description = stringResource(R.string.payload_repository_description),
+                    valueBelow = "$payloadRepository @ $payloadBranch",
+                    position = SettingsCardPosition.Bottom,
+                    onClick = {
+                        clickHaptic(view)
+                        showPayloadRepositoryDialog = true
+                    },
+                )
+            }
         }
         item { SectionLabel(stringResource(R.string.about)) }
         item {
@@ -1848,6 +1914,102 @@ private fun TargetSelectionSheet(
 }
 
 @Composable
+private fun PayloadRepositoryDialog(
+    initialRepository: String,
+    initialBranch: String,
+    repositoryPlaceholder: String,
+    branchPlaceholder: String,
+    onDismiss: () -> Unit,
+    onSave: (repository: String, branch: String) -> Unit,
+) {
+    val view = LocalView.current
+    var repository by remember(initialRepository) { mutableStateOf(initialRepository) }
+    var branch by remember(initialBranch) { mutableStateOf(initialBranch) }
+    val invalidRepository = stringResource(R.string.payload_repository_invalid)
+    val invalidBranch = stringResource(R.string.payload_branch_invalid)
+    val repositoryError = remember(repository, invalidRepository) {
+        if (repository.isBlank() || !PAYLOAD_REPOSITORY_PATTERN.matches(repository.trim())) {
+            invalidRepository
+        } else {
+            null
+        }
+    }
+    val branchError = remember(branch, invalidBranch) {
+        if (branch.isBlank() || !PAYLOAD_BRANCH_PATTERN.matches(branch.trim())) {
+            invalidBranch
+        } else {
+            null
+        }
+    }
+    val valid = repositoryError == null && branchError == null
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Rounded.Link, contentDescription = null) },
+        title = {
+            DialogDimAmount(0.34f)
+            Text(stringResource(R.string.payload_repository_title))
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                OutlinedTextField(
+                    value = repository,
+                    onValueChange = { repository = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = repositoryError != null,
+                    label = { Text(stringResource(R.string.payload_repository_label)) },
+                    placeholder = { Text(repositoryPlaceholder) },
+                    supportingText = { Text(stringResource(R.string.payload_repository_hint)) },
+                )
+                repositoryError?.let {
+                    Text(
+                        it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                OutlinedTextField(
+                    value = branch,
+                    onValueChange = { branch = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = branchError != null,
+                    label = { Text(stringResource(R.string.payload_branch)) },
+                    placeholder = { Text(branchPlaceholder) },
+                    supportingText = { Text(stringResource(R.string.payload_branch_hint)) },
+                )
+                branchError?.let {
+                    Text(
+                        it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            FilledTonalButton(
+                onClick = {
+                    clickHaptic(view)
+                    onSave(repository.trim(), branch.trim())
+                },
+                enabled = valid,
+            ) {
+                Text(stringResource(R.string.action_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                clickHaptic(view)
+                onDismiss()
+            }) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+    )
+}
+
+@Composable
 private fun SectionLabel(text: String) {
     Text(
         text = text,
@@ -1871,7 +2033,8 @@ private fun SettingsCard(
     icon: ImageVector,
     title: String,
     description: String,
-    value: String,
+    value: String = "",
+    valueBelow: String? = null,
     position: SettingsCardPosition = SettingsCardPosition.Single,
     onClick: () -> Unit,
 ) {
@@ -1889,28 +2052,42 @@ private fun SettingsCard(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     ) {
-        Row(
+        Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(title, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                if (valueBelow == null && value.isNotBlank()) {
+                    Text(
+                        value,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                    )
+                }
+            }
+            if (valueBelow != null) {
+                Spacer(Modifier.height(10.dp))
                 Text(
-                    description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    valueBelow,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
-            Text(
-                value,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                maxLines = 1,
-            )
         }
     }
 }

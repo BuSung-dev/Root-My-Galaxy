@@ -34,7 +34,32 @@ object AppPreferences {
     private const val THEME_MODE = "theme_mode"
     private const val ADVANCED_MODE = "advanced_mode"
     private const val SHIZUKU_MODE = "shizuku_mode"
+    private const val PAYLOAD_REPOSITORY = "payload_repository"
+    private const val PAYLOAD_BRANCH = "payload_branch"
     private const val CONSUMED_INSTALL_REQUEST = "consumed_install_request"
+
+    const val DEFAULT_PAYLOAD_REPOSITORY = "BuSung-dev/Root-My-Galaxy-Payloads"
+    const val DEFAULT_PAYLOAD_BRANCH = "main"
+
+    fun payloadRepository(context: Context): String =
+        prefs(context).getString(PAYLOAD_REPOSITORY, DEFAULT_PAYLOAD_REPOSITORY)
+            ?: DEFAULT_PAYLOAD_REPOSITORY
+
+    fun setPayloadRepository(context: Context, repository: String) {
+        prefs(context).edit()
+            .putString(PAYLOAD_REPOSITORY, repository)
+            .apply()
+    }
+
+    fun payloadBranch(context: Context): String =
+        prefs(context).getString(PAYLOAD_BRANCH, DEFAULT_PAYLOAD_BRANCH)
+            ?: DEFAULT_PAYLOAD_BRANCH
+
+    fun setPayloadBranch(context: Context, branch: String) {
+        prefs(context).edit()
+            .putString(PAYLOAD_BRANCH, branch)
+            .apply()
+    }
 
     fun accentColor(context: Context): AccentColor = AccentColor.fromStoredValue(
         prefs(context).getString(ACCENT_COLOR, null),

@@ -51,7 +51,6 @@
     <string name="history_detail_title">Detalhes da execução</string>
     <string name="history_started">Começou: %1$s</string>
     <string name="history_completed">Completou: %1$s</string>
-    <string name="history_log">Logs de execução</string>
     <string name="history_log_empty">Nenhum output de log por enquanto.</string>
 
     <string name="install_title">Instalar</string>

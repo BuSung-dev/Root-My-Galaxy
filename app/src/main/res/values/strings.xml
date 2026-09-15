@@ -67,6 +67,8 @@
     <string name="export_log">Export log</string>
     <string name="export_log_saved">Log saved</string>
     <string name="export_log_failed">Unable to save the log</string>
+    <string name="action_copy_log">Copy log</string>
+    <string name="log_copied">Log copied to clipboard</string>
     <string name="about">About</string>
     <string name="about_title">About Root My Galaxy</string>
     <string name="about_description">About Root My Galaxy</string>
@@ -137,6 +139,16 @@
     <string name="advanced">Advanced</string>
     <string name="advanced_mode">Advanced mode</string>
     <string name="advanced_mode_description">Manually choose a device-compatible payload during installation</string>
+    <string name="payload_repository">Payload repository</string>
+    <string name="payload_repository_description">GitHub repository that provides the payload catalog and files</string>
+    <string name="payload_repository_title">Change payload repository</string>
+    <string name="payload_repository_label">Owner/Repository</string>
+    <string name="payload_repository_hint">Used to fetch the support manifest and payload files</string>
+    <string name="payload_repository_invalid">Use the owner/repository format</string>
+    <string name="payload_branch">Branch</string>
+    <string name="payload_branch_hint">Git branch to fetch from, e.g. main or master</string>
+    <string name="payload_branch_invalid">Enter a valid branch name</string>
+    <string name="action_save">Save</string>
     <string name="shizuku_mode">Use Shizuku</string>
     <string name="shizuku_mode_description">Use Shizuku to run the payload. This can improve reliability.</string>
     <string name="shizuku_not_running_title">Shizuku is not running</string>
