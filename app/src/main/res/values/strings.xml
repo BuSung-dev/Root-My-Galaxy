@@ -137,6 +137,13 @@
     <string name="advanced">Advanced</string>
     <string name="advanced_mode">Advanced mode</string>
     <string name="advanced_mode_description">Manually choose a device-compatible payload during installation</string>
+    <string name="rescue_disable_ksu_modules">Rescue mode: disable KernelSU modules</string>
+    <string name="rescue_disable_ksu_modules_description">Before KernelSU late-load, mark all installed and pending modules disabled without deleting them. They stay disabled until you re-enable them.</string>
+    <string name="log_rescue_preparing">[*] Rescue mode: disabling KernelSU modules before late-load</string>
+    <string name="log_rescue_ready">[+] RESCUE_PREPARED: KernelSU modules marked disabled</string>
+    <string name="error_rescue_disable_modules">Rescue mode failed while disabling KernelSU modules (rc=%1$d): %2$s</string>
+    <string name="error_ksu_kptr_prepare">Unable to prepare kptr_restrict for KernelSU late-load (rc=%1$d): %2$s</string>
+    <string name="error_s9360_profile_mismatch">SM-S9360 / S9360ZCSCCZG1 must use pa2q-S9360ZCSCCZG1; selected profile was %1$s.</string>
     <string name="shizuku_mode">Use Shizuku</string>
     <string name="shizuku_mode_description">Use Shizuku to run the payload. This can improve reliability.</string>
     <string name="shizuku_not_running_title">Shizuku is not running</string>

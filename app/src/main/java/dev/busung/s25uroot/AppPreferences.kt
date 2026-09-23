@@ -33,6 +33,7 @@ object AppPreferences {
     private const val ACCENT_COLOR = "accent_color"
     private const val THEME_MODE = "theme_mode"
     private const val ADVANCED_MODE = "advanced_mode"
+    private const val RESCUE_DISABLE_KSU_MODULES = "rescue_disable_ksu_modules"
     private const val SHIZUKU_MODE = "shizuku_mode"
     private const val CONSUMED_INSTALL_REQUEST = "consumed_install_request"
 
@@ -62,6 +63,15 @@ object AppPreferences {
     fun setAdvancedMode(context: Context, enabled: Boolean) {
         prefs(context).edit()
             .putBoolean(ADVANCED_MODE, enabled)
+            .apply()
+    }
+
+    fun rescueDisableKsuModules(context: Context): Boolean =
+        prefs(context).getBoolean(RESCUE_DISABLE_KSU_MODULES, true)
+
+    fun setRescueDisableKsuModules(context: Context, enabled: Boolean) {
+        prefs(context).edit()
+            .putBoolean(RESCUE_DISABLE_KSU_MODULES, enabled)
             .apply()
     }
 

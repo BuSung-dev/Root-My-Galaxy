@@ -164,6 +164,7 @@ class MainActivity : ComponentActivity() {
     private var accentColor by mutableStateOf(AccentColor.Dynamic)
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
+    private var rescueDisableKsuModules by mutableStateOf(false)
     private var shizukuMode by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -173,6 +174,7 @@ class MainActivity : ComponentActivity() {
         accentColor = AppPreferences.accentColor(this)
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
+        rescueDisableKsuModules = AppPreferences.rescueDisableKsuModules(this)
         shizukuMode = AppPreferences.shizukuMode(this)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
@@ -181,6 +183,7 @@ class MainActivity : ComponentActivity() {
                     accentColor = accentColor,
                     themeMode = themeMode,
                     advancedMode = advancedMode,
+                    rescueDisableKsuModules = rescueDisableKsuModules,
                     shizukuMode = shizukuMode,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
@@ -193,6 +196,10 @@ class MainActivity : ComponentActivity() {
                     onAdvancedModeChanged = { enabled ->
                         AppPreferences.setAdvancedMode(this, enabled)
                         advancedMode = enabled
+                    },
+                    onRescueDisableKsuModulesChanged = { enabled ->
+                        AppPreferences.setRescueDisableKsuModules(this, enabled)
+                        rescueDisableKsuModules = enabled
                     },
                     onShizukuModeChanged = { enabled ->
                         AppPreferences.setShizukuMode(this, enabled)
@@ -279,10 +286,12 @@ private fun RootApp(
     accentColor: AccentColor,
     themeMode: AppThemeMode,
     advancedMode: Boolean,
+    rescueDisableKsuModules: Boolean,
     shizukuMode: Boolean,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
+    onRescueDisableKsuModulesChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
     openInstaller: (String?) -> Unit,
 ) {
@@ -502,6 +511,7 @@ private fun RootApp(
                     accentColor = accentColor,
                     themeMode = themeMode,
                     advancedMode = advancedMode,
+                    rescueDisableKsuModules = rescueDisableKsuModules,
                     shizukuMode = shizukuMode,
                     updateStatus = updateStatus,
                     onCheckForUpdate = checkForUpdate,
@@ -509,6 +519,7 @@ private fun RootApp(
                     onAccentColorChanged = onAccentColorChanged,
                     onThemeModeChanged = onThemeModeChanged,
                     onAdvancedModeChanged = onAdvancedModeChanged,
+                    onRescueDisableKsuModulesChanged = onRescueDisableKsuModulesChanged,
                     onShizukuModeChanged = onShizukuModeChanged,
                 )
             }
@@ -1405,6 +1416,7 @@ private fun SettingsPage(
     accentColor: AccentColor,
     themeMode: AppThemeMode,
     advancedMode: Boolean,
+    rescueDisableKsuModules: Boolean,
     shizukuMode: Boolean,
     updateStatus: UpdateStatus,
     onCheckForUpdate: () -> Unit,
@@ -1412,6 +1424,7 @@ private fun SettingsPage(
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
+    onRescueDisableKsuModulesChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
@@ -1564,16 +1577,30 @@ private fun SettingsPage(
         }
         item { SectionLabel(stringResource(R.string.advanced)) }
         item {
-            SettingsSwitchCard(
-                icon = Icons.Rounded.Memory,
-                title = stringResource(R.string.advanced_mode),
-                description = stringResource(R.string.advanced_mode_description),
-                checked = advancedMode,
-                onCheckedChange = {
-                    clickHaptic(view)
-                    onAdvancedModeChanged(it)
-                },
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Memory,
+                    title = stringResource(R.string.advanced_mode),
+                    description = stringResource(R.string.advanced_mode_description),
+                    checked = advancedMode,
+                    position = SettingsCardPosition.Top,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        onAdvancedModeChanged(it)
+                    },
+                )
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Security,
+                    title = stringResource(R.string.rescue_disable_ksu_modules),
+                    description = stringResource(R.string.rescue_disable_ksu_modules_description),
+                    checked = rescueDisableKsuModules,
+                    position = SettingsCardPosition.Bottom,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        onRescueDisableKsuModulesChanged(it)
+                    },
+                )
+            }
         }
         item { SectionLabel(stringResource(R.string.about)) }
         item {

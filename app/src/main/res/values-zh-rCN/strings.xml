@@ -21,6 +21,13 @@
     <string name="github_card_description">查看源代码和使用方法。</string>
     <string name="action_continue">忽略并继续</string><string name="action_next">下一步</string>
     <string name="advanced">高级</string><string name="advanced_mode">高级模式</string><string name="advanced_mode_description">安装时手动选择设备兼容 payload</string>
+    <string name="rescue_disable_ksu_modules">救砖模式：禁用 KernelSU 模块</string>
+    <string name="rescue_disable_ksu_modules_description">在 KernelSU late-load 前给已安装和待更新模块写入 disable 标记，不删除模块；之后需手动重新启用。</string>
+    <string name="log_rescue_preparing">[*] 救砖模式：正在 late-load 前禁用 KernelSU 模块</string>
+    <string name="log_rescue_ready">[+] RESCUE_PREPARED：KernelSU 模块已标记为禁用</string>
+    <string name="error_rescue_disable_modules">救砖模式禁用 KernelSU 模块失败 (rc=%1$d)：%2$s</string>
+    <string name="error_ksu_kptr_prepare">准备 KernelSU late-load 所需的 kptr_restrict 失败 (rc=%1$d)：%2$s</string>
+    <string name="error_s9360_profile_mismatch">SM-S9360 / S9360ZCSCCZG1 必须使用 pa2q-S9360ZCSCCZG1；当前选择为 %1$s。</string>
     <string name="shizuku_mode">使用 Shizuku</string><string name="shizuku_mode_description">使用 Shizuku 运行 payload，可能提高可靠性。</string><string name="shizuku_not_running_title">Shizuku 未在运行</string><string name="shizuku_not_running_body">请先通过 adb 或 root 启动 Shizuku 服务，并授予此应用权限，然后启用该选项。</string><string name="action_download_shizuku">下载 Shizuku</string><string name="error_shizuku_unavailable">Shizuku 未在运行，请先通过 adb 或 root 启动 Shizuku。</string><string name="error_shizuku_permission">未授予 Shizuku 权限</string><string name="error_shizuku_stage">无法通过 Shizuku 部署 %1$s：%2$s</string><string name="log_shizuku_prepare">[*] 正在准备 Shizuku 执行</string><string name="log_shizuku_permission">[+] 已授予 Shizuku 权限</string>
     <string name="repo_profile_missing">支持配置 %1$s 已不可用</string>
     <string name="select_device_title">选择支持的 payload</string><string name="select_device_description">按设备型号和内核版本选择 payload。</string><string name="show_my_device_only">仅显示我的设备</string><string name="no_matching_devices">没有与此型号和内核版本匹配的 payload。</string>

@@ -88,16 +88,72 @@ object ShizukuController {
     }
 
     fun writeFile(remotePath: String, mode: String, source: InputStream) {
-        val process = exec(arrayOf("sh", "-c", "cat > '$remotePath' && chmod $mode '$remotePath'"))
-        val exitCode = try {
-            process.outputStream.use { output ->
-                source.use { input -> input.copyTo(output, DEFAULT_BUFFER_SIZE) }
+        val process = exec(
+            arrayOf(
+                "sh",
+                "-c",
+                "cat > '$remotePath' && chmod $mode '$remotePath'",
+            ),
+        )
+
+        val stderr = StringBuilder()
+        val stderrThread = Thread {
+            runCatching {
+                process.errorStream.bufferedReader().useLines { lines ->
+                    lines.forEach { line ->
+                        synchronized(stderr) {
+                            stderr.appendLine(line)
+                        }
+                    }
+                }
             }
-            process.waitFor()
+        }.apply {
+            isDaemon = true
+            name = "shizuku-stage-stderr"
+            start()
+        }
+
+        var writeFailure: Throwable? = null
+        var exitCode: Int? = null
+        try {
+            process.outputStream.use { output ->
+                source.use { input ->
+                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                    while (true) {
+                        val count = input.read(buffer)
+                        if (count < 0) break
+                        output.write(buffer, 0, count)
+                    }
+                    output.flush()
+                }
+            }
+            exitCode = process.waitFor()
+        } catch (error: Throwable) {
+            writeFailure = error
+            runCatching { process.outputStream.close() }
+            exitCode = runCatching { process.waitFor() }.getOrNull()
         } finally {
             if (process.isAlive) process.destroy()
+            stderrThread.join(1_000)
         }
-        check(exitCode == 0) { "Failed to stage $remotePath (exit $exitCode)" }
+
+        val remoteError = synchronized(stderr) { stderr.toString().trim() }
+        if (writeFailure != null) {
+            val detail = buildString {
+                append("write failed: ")
+                append(writeFailure?.message ?: writeFailure?.javaClass?.simpleName)
+                if (exitCode != null) append("; remote exit=$exitCode")
+                if (remoteError.isNotBlank()) append("; stderr=$remoteError")
+            }
+            throw IllegalStateException(detail, writeFailure)
+        }
+
+        check(exitCode == 0) {
+            buildString {
+                append("Failed to stage $remotePath (exit $exitCode)")
+                if (remoteError.isNotBlank()) append("; stderr=$remoteError")
+            }
+        }
     }
 
     private class RemoteProcess(private val remote: IRemoteProcess) : Process() {
