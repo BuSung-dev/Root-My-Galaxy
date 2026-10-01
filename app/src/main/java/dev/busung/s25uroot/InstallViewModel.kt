@@ -390,11 +390,17 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         if (bootToken == null) return null
         val stored = app.getSharedPreferences(P0_CACHE, Application.MODE_PRIVATE)
         if (stored.getString(P0_CACHE_BOOT_TOKEN, null) != bootToken) return null
+        // Offsets observed during a failed run are only hypotheses. Older
+        // versions cached them immediately, which could force every retry in
+        // the same boot to reuse a bad offset. Only reuse an offset after a
+        // complete exploit success has verified it.
+        if (!stored.getBoolean(P0_CACHE_VERIFIED, false)) return null
         return stored.getString(P0_CACHE_OFFSET, null)
     }
 
     private fun cacheP0Offset(bootToken: String?, log: String) {
         if (bootToken == null) return
+        if (!log.contains("done=1 root=1")) return
         val match = P0_OFFSET_PATTERN.findAll(log).lastOrNull() ?: return
         val offset = match.groupValues[1].toLongOrNull(16) ?: return
         if (offset !in 0..P0_OFFSET_MAX || offset and P0_OFFSET_MASK != 0L) return
@@ -406,6 +412,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         stored.edit()
             .putString(P0_CACHE_BOOT_TOKEN, bootToken)
             .putString(P0_CACHE_OFFSET, value)
+            .putBoolean(P0_CACHE_VERIFIED, true)
             .apply()
     }
 
@@ -556,6 +563,7 @@ class InstallViewModel(application: Application) : AndroidViewModel(application)
         private const val P0_CACHE = "p0_cache"
         private const val P0_CACHE_BOOT_TOKEN = "kernel_boot_id"
         private const val P0_CACHE_OFFSET = "offset"
+        private const val P0_CACHE_VERIFIED = "verified"
         private const val P0_OFFSET_ENV = "SLIDE_P0_OFFSET"
         private const val P0_OFFSET_MAX = 0x1f0000L
         private const val P0_OFFSET_MASK = 0xffffL
