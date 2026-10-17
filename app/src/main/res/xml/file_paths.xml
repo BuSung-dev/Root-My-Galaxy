@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <cache-path name="updates" path="updates/" />
+    <external-files-path name="payloads" path="Download/RootMyGalaxy/payloads" />
+    <files-path name="internal_payloads" path="payloads" />
 </paths>

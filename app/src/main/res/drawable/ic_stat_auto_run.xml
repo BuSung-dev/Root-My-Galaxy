@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Monochrome status-bar silhouette. Notification small icons are rendered
+     as a mask, so this must be a solid white shape on a transparent
+     background; a themed launcher icon renders as a blank square here. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFFFF">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,2C12,2 5,9.5 5,14.5C5,17.87 8.13,20 11.5,20C11.5,20 11.5,20 11.5,20L11.5,22L12.5,22L12.5,20L12.5,20C15.87,20 19,17.87 19,14.5C19,9.5 12,2 12,2ZM12,22C12,22 12,22 12,22Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,6.5C12,6.5 8.5,10.5 8.5,14C8.5,15.93 9.82,17.5 11.5,17.5C13.18,17.5 14.5,15.93 14.5,14C14.5,10.5 12,6.5 12,6.5Z" />
+</vector>

@@ -1,10 +1,12 @@
 package dev.busung.s25uroot
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.Toast
@@ -67,6 +69,7 @@ import androidx.compose.material.icons.rounded.BrightnessAuto
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.SelectAll
 import androidx.compose.material.icons.rounded.Error
@@ -77,12 +80,14 @@ import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.Memory
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.Security
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.SystemUpdate
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
@@ -105,6 +110,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -165,6 +171,14 @@ class MainActivity : ComponentActivity() {
     private var themeMode by mutableStateOf(AppThemeMode.System)
     private var advancedMode by mutableStateOf(false)
     private var shizukuMode by mutableStateOf(false)
+    private var payloadRepository by mutableStateOf("")
+    private var payloadBranch by mutableStateOf("")
+    private var autoRunOnBoot by mutableStateOf(false)
+    private var bootDelay by mutableStateOf(0)
+    // Read in onCreate: a field initializer would run before the activity has
+    // a base context, so the default stays empty until then.
+    private var autoRunStatus by mutableStateOf(AutoRunStatus())
+    private var canPostNotifications by mutableStateOf(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,6 +188,12 @@ class MainActivity : ComponentActivity() {
         themeMode = AppPreferences.themeMode(this)
         advancedMode = AppPreferences.advancedMode(this)
         shizukuMode = AppPreferences.shizukuMode(this)
+        payloadRepository = AppPreferences.payloadRepository(this)
+        payloadBranch = AppPreferences.payloadBranch(this)
+        autoRunOnBoot = AppPreferences.autoRunOnBoot(this)
+        bootDelay = AppPreferences.bootDelay(this)
+        refreshAutoRunState()
+        handleAutoRunIntent(intent)
         setContent {
             RootMyGalaxyTheme(accentColor = accentColor, themeMode = themeMode) {
                 RootApp(
@@ -182,6 +202,8 @@ class MainActivity : ComponentActivity() {
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    payloadRepository = payloadRepository,
+                    payloadBranch = payloadBranch,
                     onAccentColorChanged = { color ->
                         AppPreferences.setAccentColor(this, color)
                         accentColor = color
@@ -198,6 +220,49 @@ class MainActivity : ComponentActivity() {
                         AppPreferences.setShizukuMode(this, enabled)
                         shizukuMode = enabled
                     },
+                    onPayloadRepositoryChanged = { repository ->
+                        AppPreferences.setPayloadRepository(this, repository)
+                        payloadRepository = repository
+                    },
+                    onPayloadBranchChanged = { branch ->
+                        AppPreferences.setPayloadBranch(this, branch)
+                        payloadBranch = branch
+                    },
+                    autoRunOnBoot = autoRunOnBoot,
+                    bootDelay = bootDelay,
+                    autoRunStatus = autoRunStatus,
+                    canPostNotifications = canPostNotifications,
+                    onNotificationsPermissionResult = { granted ->
+                        onNotificationsPermissionResult(granted)
+                    },
+                    onAutoRunOnBootChanged = { enabled ->
+                        AppPreferences.setAutoRunOnBoot(this, enabled)
+                        if (enabled) {
+                            // Arming the toggle is an explicit re-arm, so it
+                            // clears any pause and the retry budget with it.
+                            AutoRunManager.onAutoRunEnabled(this)
+                            AutoRunManager.clearAwaitingUnlock(this)
+                            AutoRunScheduler.schedule(this, bootDelay)
+                        } else {
+                            AutoRunManager.onAutoRunDisabled(this)
+                            AutoRunScheduler.cancel(this)
+                        }
+                        refreshAutoRunState()
+                    },
+                    onBootDelayChanged = { delay ->
+                        AppPreferences.setBootDelay(this, delay)
+                        bootDelay = delay
+                        if (autoRunOnBoot) {
+                            AutoRunScheduler.schedule(this, delay)
+                        }
+                        refreshAutoRunState()
+                    },
+                    onAutoRunMaxAttemptsChanged = { attempts ->
+                        AppPreferences.setAutoRunMaxAttempts(this, attempts)
+                        refreshAutoRunState()
+                    },
+                    onAutoRunRunNow = ::runAutoApplyNow,
+                    onAutoRunReset = ::rearmAutoRun,
                     openInstaller = { profileId ->
                         val installer = Intent(this, InstallActivity::class.java)
                             .putExtra(InstallActivity.EXTRA_INSTALL_REQUEST_ID, UUID.randomUUID().toString())
@@ -213,7 +278,97 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        refreshAutoRunState()
         if (resumedOnce) installViewModel.refresh() else resumedOnce = true
+    }
+
+    /**
+     * The boot alarm targets this activity, so a launcher that is already
+     * running receives the auto-run intent here instead of through onCreate.
+     * Without this the payload silently never runs when the app was open.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleAutoRunIntent(intent)
+    }
+
+    private fun refreshAutoRunState() {
+        autoRunOnBoot = AppPreferences.autoRunOnBoot(this)
+        autoRunStatus = AutoRunManager.status(this)
+        canPostNotifications = AutoRunNotifier.canPost(this)
+    }
+
+    /**
+     * Runs a boot attempt that the user has brought into the foreground, either
+     * by tapping the auto-run notification or by an alarm landing while the app
+     * was already open. The retry budget, the boot_id failsafe and the pause
+     * state all live in [AutoRunManager]; this only translates its decision
+     * into "launch the installer" or "stay quiet".
+     */
+    private fun handleAutoRunIntent(intent: Intent) {
+        if (intent.action != BootReceiver.ACTION_AUTO_RUN) return
+        // Consume the action so a configuration change cannot replay the run.
+        intent.action = null
+        if (!AppPreferences.autoRunOnBoot(this)) {
+            AutoRunScheduler.cancel(this)
+            refreshAutoRunState()
+            return
+        }
+        // The fired alarm is consumed; drop it so only one installer is queued.
+        AutoRunScheduler.cancel(this)
+        val attempt = AutoRunManager.beginAttempt(this)
+        // The user answered the prompt, so the notification has done its job.
+        AutoRunNotifier.cancel(this)
+        refreshAutoRunState()
+        when (attempt.action) {
+            AutoRunAction.Proceed -> startActivity(
+                Intent(this, InstallActivity::class.java)
+                    .putExtra(InstallActivity.EXTRA_INSTALL_REQUEST_ID, UUID.randomUUID().toString())
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            )
+
+            AutoRunAction.Suspend -> Toast.makeText(
+                this,
+                getString(R.string.auto_run_suspended_toast),
+                Toast.LENGTH_LONG,
+            ).show()
+
+            AutoRunAction.Retry -> Unit
+        }
+    }
+
+    /** Fires the boot attempt right away instead of waiting for the next boot. */
+    private fun runAutoApplyNow() {
+        AppPreferences.setAutoRunOnBoot(this, true)
+        AutoRunManager.onAutoRunEnabled(this)
+        // Straight to the attempt: the user is already in the app, so there is
+        // no reason to make them wait for the alarm.
+        handleAutoRunIntent(
+            Intent(this, MainActivity::class.java).setAction(BootReceiver.ACTION_AUTO_RUN),
+        )
+    }
+
+    /**
+     * Permission results arrive on the activity, not on the composable: the
+     * settings page only receives the flag and reports back, otherwise it would
+     * try to assign to its own val parameter.
+     */
+    private fun onNotificationsPermissionResult(granted: Boolean) {
+        canPostNotifications = granted
+        refreshAutoRunState()
+    }
+
+    /**
+     * Clears a pause so the loop runs again on the next boot. The toggle is
+     * re-armed here because a pause always leaves it off.
+     */
+    private fun rearmAutoRun() {
+        AppPreferences.setAutoRunOnBoot(this, true)
+        AutoRunManager.onAutoRunEnabled(this)
+        AutoRunScheduler.cancel(this)
+        refreshAutoRunState()
+        Toast.makeText(this, R.string.auto_run_rearmed_toast, Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -251,6 +406,8 @@ private const val KERNEL_SU_MANAGER_PACKAGE = "me.weishu.kernelsu"
 private const val KERNEL_SU_HOME_URL = "https://kernelsu.org/"
 private const val SHIZUKU_MANAGER_PACKAGE = "moe.shizuku.manager"
 private const val SHIZUKU_MANAGER_URL = "https://github.com/thedjchi/Shizuku/releases/"
+private val PAYLOAD_REPOSITORY_PATTERN = Regex("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+private val PAYLOAD_BRANCH_PATTERN = Regex("^[A-Za-z0-9_.\\-/]+$")
 
 private fun isKernelSuManagerInstalled(context: Context): Boolean =
     context.packageManager.getLaunchIntentForPackage(KERNEL_SU_MANAGER_PACKAGE) != null
@@ -280,10 +437,24 @@ private fun RootApp(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    payloadRepository: String,
+    payloadBranch: String,
+    autoRunOnBoot: Boolean,
+    bootDelay: Int,
+    autoRunStatus: AutoRunStatus,
+    canPostNotifications: Boolean,
+    onNotificationsPermissionResult: (Boolean) -> Unit,
     onAccentColorChanged: (AccentColor) -> Unit,
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onPayloadRepositoryChanged: (String) -> Unit,
+    onPayloadBranchChanged: (String) -> Unit,
+    onAutoRunOnBootChanged: (Boolean) -> Unit,
+    onBootDelayChanged: (Int) -> Unit,
+    onAutoRunMaxAttemptsChanged: (Int) -> Unit,
+    onAutoRunRunNow: () -> Unit,
+    onAutoRunReset: () -> Unit,
     openInstaller: (String?) -> Unit,
 ) {
     val installState by installViewModel.state.collectAsStateWithLifecycle()
@@ -503,6 +674,15 @@ private fun RootApp(
                     themeMode = themeMode,
                     advancedMode = advancedMode,
                     shizukuMode = shizukuMode,
+                    payloadRepository = payloadRepository,
+                    payloadBranch = payloadBranch,
+                    autoRunOnBoot = autoRunOnBoot,
+                    bootDelay = bootDelay,
+                    autoRunStatus = autoRunStatus,
+                    canPostNotifications = canPostNotifications,
+                    onNotificationsPermissionResult = { granted ->
+                        onNotificationsPermissionResult(granted)
+                    },
                     updateStatus = updateStatus,
                     onCheckForUpdate = checkForUpdate,
                     onStartDownload = startDownload,
@@ -510,6 +690,13 @@ private fun RootApp(
                     onThemeModeChanged = onThemeModeChanged,
                     onAdvancedModeChanged = onAdvancedModeChanged,
                     onShizukuModeChanged = onShizukuModeChanged,
+                    onPayloadRepositoryChanged = onPayloadRepositoryChanged,
+                    onPayloadBranchChanged = onPayloadBranchChanged,
+                    onAutoRunOnBootChanged = onAutoRunOnBootChanged,
+                    onBootDelayChanged = onBootDelayChanged,
+                    onAutoRunMaxAttemptsChanged = onAutoRunMaxAttemptsChanged,
+                    onAutoRunRunNow = onAutoRunRunNow,
+                    onAutoRunReset = onAutoRunReset,
                 )
             }
         }
@@ -1252,6 +1439,12 @@ private fun HistoryDetail(
                 )
                 IconButton(onClick = {
                     clickHaptic(view)
+                    copyLogToClipboard(context, entry.log)
+                }) {
+                    Icon(Icons.Rounded.ContentCopy, contentDescription = stringResource(R.string.action_copy_log))
+                }
+                IconButton(onClick = {
+                    clickHaptic(view)
                     exportLogLauncher.launch(
                         Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
@@ -1406,6 +1599,13 @@ private fun SettingsPage(
     themeMode: AppThemeMode,
     advancedMode: Boolean,
     shizukuMode: Boolean,
+    payloadRepository: String,
+    payloadBranch: String,
+    autoRunOnBoot: Boolean,
+    bootDelay: Int,
+    autoRunStatus: AutoRunStatus,
+    canPostNotifications: Boolean,
+    onNotificationsPermissionResult: (Boolean) -> Unit,
     updateStatus: UpdateStatus,
     onCheckForUpdate: () -> Unit,
     onStartDownload: (UpdateInfo) -> Unit,
@@ -1413,6 +1613,13 @@ private fun SettingsPage(
     onThemeModeChanged: (AppThemeMode) -> Unit,
     onAdvancedModeChanged: (Boolean) -> Unit,
     onShizukuModeChanged: (Boolean) -> Unit,
+    onPayloadRepositoryChanged: (String) -> Unit,
+    onPayloadBranchChanged: (String) -> Unit,
+    onAutoRunOnBootChanged: (Boolean) -> Unit,
+    onBootDelayChanged: (Int) -> Unit,
+    onAutoRunMaxAttemptsChanged: (Int) -> Unit,
+    onAutoRunRunNow: () -> Unit,
+    onAutoRunReset: () -> Unit,
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -1421,10 +1628,39 @@ private fun SettingsPage(
     var showColorDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
     var showShizukuMissingDialog by remember { mutableStateOf(false) }
+    var showPayloadRepositoryDialog by remember { mutableStateOf(false) }
+    var showBootDelayDialog by remember { mutableStateOf(false) }
+    var showAutoRunRetryDialog by remember { mutableStateOf(false) }
+    // The boot delay dialog is reachable from the toggle (which must arm
+    // auto-run on confirm) and from the delay card (which must only store the
+    // delay).
+    var bootDelayEnablesAutoRun by remember { mutableStateOf(false) }
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        onNotificationsPermissionResult(granted)
+    }
+    val requestNotificationPermission: () -> Unit = {
+        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+    // Lets the user confirm the prompt works without waiting for a reboot, so
+    // a broken notification is diagnosable instead of silent.
+    val sendTestNotification: () -> Unit = {
+        val attempt = autoRunStatus.attempts + 1
+        val posted = AutoRunNotifier.notifyRunReady(context, attempt, autoRunStatus.maxAttempts)
+        Toast.makeText(
+            context,
+            context.getString(
+                if (posted) R.string.auto_run_notify_test_ok else R.string.auto_run_notify_test_failed,
+            ),
+            Toast.LENGTH_LONG,
+        ).show()
+    }
     var languageMenuTop by remember { mutableStateOf(32.dp) }
     var colorMenuTop by remember { mutableStateOf(32.dp) }
     val density = LocalDensity.current
     val currentLanguageTag = AppPreferences.languageTag(context)
+    var bootDelayValue by remember { mutableStateOf<Int>(bootDelay) }
 
     if (showShizukuMissingDialog) {
         AlertDialog(
@@ -1451,6 +1687,51 @@ private fun SettingsPage(
                 }) {
                     Text(stringResource(R.string.action_cancel))
                 }
+            },
+        )
+    }
+
+    if (showPayloadRepositoryDialog) {
+        PayloadRepositoryDialog(
+            initialRepository = payloadRepository,
+            initialBranch = payloadBranch,
+            repositoryPlaceholder = AppPreferences.DEFAULT_PAYLOAD_REPOSITORY,
+            branchPlaceholder = AppPreferences.DEFAULT_PAYLOAD_BRANCH,
+            onDismiss = { showPayloadRepositoryDialog = false },
+            onSave = { repository, branch ->
+                showPayloadRepositoryDialog = false
+                onPayloadRepositoryChanged(repository)
+                onPayloadBranchChanged(branch)
+            },
+        )
+    }
+
+    if (showBootDelayDialog) {
+        BootDelayDialog(
+            currentDelay = bootDelayValue,
+            minDelay = AppPreferences.MIN_BOOT_DELAY,
+            maxDelay = AppPreferences.MAX_BOOT_DELAY,
+            onDismiss = { showBootDelayDialog = false },
+            onConfirm = { delay ->
+                bootDelayValue = delay
+                showBootDelayDialog = false
+                onBootDelayChanged(delay)
+                if (bootDelayEnablesAutoRun) onAutoRunOnBootChanged(true)
+            },
+        )
+    }
+
+    if (showAutoRunRetryDialog) {
+        AutoRunRetryDialog(
+            maxAttempts = autoRunStatus.maxAttempts,
+            baseDelaySeconds = bootDelayValue,
+            canPostNotifications = canPostNotifications,
+            onRequestNotifications = requestNotificationPermission,
+            sendTestNotification = sendTestNotification,
+            onDismiss = { showAutoRunRetryDialog = false },
+            onConfirm = { attempts ->
+                showAutoRunRetryDialog = false
+                onAutoRunMaxAttemptsChanged(attempts)
             },
         )
     }
@@ -1564,16 +1845,92 @@ private fun SettingsPage(
         }
         item { SectionLabel(stringResource(R.string.advanced)) }
         item {
-            SettingsSwitchCard(
-                icon = Icons.Rounded.Memory,
-                title = stringResource(R.string.advanced_mode),
-                description = stringResource(R.string.advanced_mode_description),
-                checked = advancedMode,
-                onCheckedChange = {
-                    clickHaptic(view)
-                    onAdvancedModeChanged(it)
-                },
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Memory,
+                    title = stringResource(R.string.advanced_mode),
+                    description = stringResource(R.string.advanced_mode_description),
+                    checked = advancedMode,
+                    position = SettingsCardPosition.Top,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        onAdvancedModeChanged(it)
+                    },
+                )
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Schedule,
+                    title = stringResource(R.string.auto_run_on_boot),
+                    description = autoRunSwitchSummary(autoRunStatus),
+                    checked = autoRunOnBoot,
+                    position = SettingsCardPosition.Middle,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        if (it) {
+                            // Show the boot delay dialog before enabling
+                            bootDelayEnablesAutoRun = true
+                            showBootDelayDialog = true
+                        } else {
+                            AutoRunScheduler.cancel(context)
+                            AutoRunNotifier.cancel(context)
+                            onAutoRunOnBootChanged(false)
+                        }
+                    },
+                )
+                SettingsCard(
+                    icon = Icons.Rounded.Timer,
+                    title = stringResource(R.string.boot_delay),
+                    description = stringResource(R.string.boot_delay_description),
+                    valueBelow = stringResource(R.string.boot_delay_seconds, bootDelay),
+                    position = SettingsCardPosition.Middle,
+                    onClick = {
+                        clickHaptic(view)
+                        bootDelayEnablesAutoRun = false
+                        showBootDelayDialog = true
+                    },
+                )
+                AutoRunStatusCard(
+                    status = autoRunStatus,
+                    position = SettingsCardPosition.Middle,
+                    onRunNow = onAutoRunRunNow,
+                    onReset = onAutoRunReset,
+                )
+                AutoRunPolicyCard(
+                    status = autoRunStatus,
+                    baseDelaySeconds = bootDelay,
+                    canPostNotifications = canPostNotifications,
+                    position = SettingsCardPosition.Middle,
+                    onClick = {
+                        clickHaptic(view)
+                        showAutoRunRetryDialog = true
+                    },
+                )
+                SettingsSwitchCard(
+                    icon = Icons.Rounded.Save,
+                    title = stringResource(R.string.payloads_save),
+                    description = if (AppPreferences.payloadsSaveEnabled(context)) {
+                        stringResource(R.string.payloads_save_summary)
+                    } else {
+                        stringResource(R.string.payloads_save_summary_off)
+                    },
+                    checked = AppPreferences.payloadsSaveEnabled(context),
+                    position = SettingsCardPosition.Middle,
+                    onCheckedChange = {
+                        clickHaptic(view)
+                        AppPreferences.setPayloadsSaveEnabled(context, it)
+                    },
+                )
+                SettingsCard(
+                    icon = Icons.Rounded.Link,
+                    title = stringResource(R.string.payload_repository),
+                    description = stringResource(R.string.payload_repository_description),
+                    valueBelow = "$payloadRepository @ $payloadBranch",
+                    position = SettingsCardPosition.Bottom,
+                    onClick = {
+                        clickHaptic(view)
+                        showPayloadRepositoryDialog = true
+                    },
+                )
+            }
         }
         item { SectionLabel(stringResource(R.string.about)) }
         item {
@@ -1848,7 +2205,103 @@ private fun TargetSelectionSheet(
 }
 
 @Composable
-private fun SectionLabel(text: String) {
+private fun PayloadRepositoryDialog(
+    initialRepository: String,
+    initialBranch: String,
+    repositoryPlaceholder: String,
+    branchPlaceholder: String,
+    onDismiss: () -> Unit,
+    onSave: (repository: String, branch: String) -> Unit,
+) {
+    val view = LocalView.current
+    var repository by remember(initialRepository) { mutableStateOf(initialRepository) }
+    var branch by remember(initialBranch) { mutableStateOf(initialBranch) }
+    val invalidRepository = stringResource(R.string.payload_repository_invalid)
+    val invalidBranch = stringResource(R.string.payload_branch_invalid)
+    val repositoryError = remember(repository, invalidRepository) {
+        if (repository.isBlank() || !PAYLOAD_REPOSITORY_PATTERN.matches(repository.trim())) {
+            invalidRepository
+        } else {
+            null
+        }
+    }
+    val branchError = remember(branch, invalidBranch) {
+        if (branch.isBlank() || !PAYLOAD_BRANCH_PATTERN.matches(branch.trim())) {
+            invalidBranch
+        } else {
+            null
+        }
+    }
+    val valid = repositoryError == null && branchError == null
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Rounded.Link, contentDescription = null) },
+        title = {
+            DialogDimAmount(0.34f)
+            Text(stringResource(R.string.payload_repository_title))
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                OutlinedTextField(
+                    value = repository,
+                    onValueChange = { repository = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = repositoryError != null,
+                    label = { Text(stringResource(R.string.payload_repository_label)) },
+                    placeholder = { Text(repositoryPlaceholder) },
+                    supportingText = { Text(stringResource(R.string.payload_repository_hint)) },
+                )
+                repositoryError?.let {
+                    Text(
+                        it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                OutlinedTextField(
+                    value = branch,
+                    onValueChange = { branch = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = branchError != null,
+                    label = { Text(stringResource(R.string.payload_branch)) },
+                    placeholder = { Text(branchPlaceholder) },
+                    supportingText = { Text(stringResource(R.string.payload_branch_hint)) },
+                )
+                branchError?.let {
+                    Text(
+                        it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            FilledTonalButton(
+                onClick = {
+                    clickHaptic(view)
+                    onSave(repository.trim(), branch.trim())
+                },
+                enabled = valid,
+            ) {
+                Text(stringResource(R.string.action_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                clickHaptic(view)
+                onDismiss()
+            }) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+    )
+}
+
+@Composable
+internal fun SectionLabel(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
@@ -1857,7 +2310,7 @@ private fun SectionLabel(text: String) {
     )
 }
 
-private enum class SettingsCardPosition {
+internal enum class SettingsCardPosition {
     Single,
     GroupedSingle,
     Top,
@@ -1866,12 +2319,13 @@ private enum class SettingsCardPosition {
 }
 
 @Composable
-private fun SettingsCard(
+internal fun SettingsCard(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     title: String,
     description: String,
-    value: String,
+    value: String = "",
+    valueBelow: String? = null,
     position: SettingsCardPosition = SettingsCardPosition.Single,
     onClick: () -> Unit,
 ) {
@@ -1889,34 +2343,48 @@ private fun SettingsCard(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     ) {
-        Row(
+        Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(icon, contentDescription = null, modifier = Modifier.size(28.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(title, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                if (valueBelow == null && value.isNotBlank()) {
+                    Text(
+                        value,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                    )
+                }
+            }
+            if (valueBelow != null) {
+                Spacer(Modifier.height(10.dp))
                 Text(
-                    description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    valueBelow,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
-            Text(
-                value,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                maxLines = 1,
-            )
         }
     }
 }
 
 @Composable
-private fun SettingsSwitchCard(
+internal fun SettingsSwitchCard(
     icon: ImageVector,
     title: String,
     description: String,
@@ -2089,7 +2557,7 @@ private fun AboutDialog(onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun expressiveClickableCardShape(
+internal fun expressiveClickableCardShape(
     interactionSource: MutableInteractionSource,
     position: SettingsCardPosition = SettingsCardPosition.Single,
 ): RoundedCornerShape {

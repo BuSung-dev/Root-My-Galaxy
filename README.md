@@ -15,10 +15,9 @@ The device feed and native payloads are maintained in
 
 ## Application
 
-
-<img width="200" alt="KakaoTalk_20260718_170922353" src="https://github.com/user-attachments/assets/3f562ea4-8c39-4ade-bfd3-93eea1a1cc24" />
-<img width="200" alt="KakaoTalk_20260718_171127319" src="https://github.com/user-attachments/assets/8dde0443-12cf-4058-ba76-0337aefb92a0" />
-<img width="200" alt="KakaoTalk_20260718_171030202" src="https://github.com/user-attachments/assets/f656e8af-60a6-4fcb-a3db-d4232bede613" />
+<img width="200" src="https://github.com/user-attachments/assets/da6d0a0a-e5aa-41c3-9b38-7ec01c08c3bd" />
+<img width="200" src="https://github.com/user-attachments/assets/a9142c17-4e2f-4b18-8c03-fe17e531aa3a" />
+<img width="200" src="https://github.com/user-attachments/assets/7af17f0c-7827-47c8-ab23-a985a019e972" />
 
 The app selects a payload whose model list and three-part kernel version match
 the phone. For example, `6.6.98-android15-8-...` matches `6.6.98`. Advanced
@@ -29,10 +28,27 @@ and kernel-version warnings.
 
 Requirements:
 
-- Android Studio JBR 21
-- Android SDK 37
+- JDK 21
+- Android SDK 37 (`platforms;android-37.0`)
 - Android NDK 28 or newer
 - CMake 3.22.1
+
+Point Gradle at your SDK by setting `sdk.dir` in `local.properties`, or export
+`ANDROID_HOME` (or `ANDROID_SDK_ROOT`) before building.
+
+### Linux / macOS
+
+```bash
+# One-time setup (adjust the SDK path as needed)
+export JAVA_HOME="$JAVA_HOME"        # e.g. /usr/lib/jvm/java-21-openjdk
+export ANDROID_HOME="$HOME/Android/Sdk"
+export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+sdkmanager --install "platform-tools" "platforms;android-37.0" "build-tools;36.0.0" "cmake;3.22.1" "ndk;28.0.13004108"
+
+./gradlew :app:assembleDebug
+```
+
+### Windows
 
 ```powershell
 $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
