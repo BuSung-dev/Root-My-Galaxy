@@ -21,6 +21,12 @@ class TargetProfileTest {
     }
 
     @Test
+    fun shizukuRequirementDefaultsOffAndCanBeEnabled() {
+        assertFalse(profile.requiresShizuku)
+        assertTrue(profile.copy(requiresShizuku = true).requiresShizuku)
+    }
+
+    @Test
     fun rejectsUnlistedModelOrKernelVersion() {
         assertFalse(profile.matches(snapshot("SM-S928B", "6.6.98-android15-8-build")))
         assertFalse(profile.matches(snapshot("SM-S938N", "6.6.102-android15-8-build")))

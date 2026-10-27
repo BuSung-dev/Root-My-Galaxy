@@ -45,6 +45,7 @@ android {
 
     packaging {
         jniLibs.useLegacyPackaging = true
+        jniLibs.keepDebugSymbols += "**/libcve43499root.so"
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
 }
